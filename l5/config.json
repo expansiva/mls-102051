@@ -1,6 +1,10 @@
 {
   "defaultProjectId": "102051",
   "projects": {
+    "102020": {
+      "root": "../mls-102020",
+      "type": "lib"
+    },
     "102025": {
       "root": "../mls-102025",
       "type": "lib"
