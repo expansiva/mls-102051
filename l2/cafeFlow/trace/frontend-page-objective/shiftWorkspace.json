@@ -1,0 +1,48 @@
+{
+  "savedAt": "2026-07-23T17:08:11.993Z",
+  "pageId": "shiftWorkspace",
+  "genome": "page21",
+  "objective": {
+    "actor": "Gerente de turno (café)",
+    "jobToBeDone": "Abrir o turno diário no início do expediente, acompanhar a operação ao longo do dia e fechar o turno ao final, revisando o relatório de fechamento com totais de vendas, pagamentos e alertas de estoque.",
+    "primaryDecision": "Abrir ou fechar o turno diário — a ação que habilita ou encerra toda a operação do dia.",
+    "decisiveInfo": [
+      "shiftDate (data operacional do turno)",
+      "status do turno (aberto / fechado)",
+      "cashTotal e otherPaymentsTotal (totais de fechamento)",
+      "totalSalesAmount, totalOrdersCount, totalItemsSold (resumo do dia)",
+      "lowStockSignalsCount, stockoutSignalsCount (alertas de estoque)",
+      "topSellingItemsSummary (destaques de vendas)"
+    ],
+    "usageFrequency": "Diária / operacional — uma abertura e um fechamento por dia, com revisão do relatório imediatamente após o fechamento.",
+    "criticalActions": [
+      {
+        "action": "openDailyShiftCmd",
+        "presentation": "primary-button com formulário mínimo (shiftDate pré-preenchida com hoje; openedByUserId derivado da sessão; notes opcional)"
+      },
+      {
+        "action": "closeDailyShiftCmd",
+        "presentation": "contextual-transition-actions — botão de fechamento visível apenas quando o turno está aberto; cashTotal e otherPaymentsTotal como únicos inputs reais; confirmação antes de submeter"
+      },
+      {
+        "action": "getShiftClosingReport",
+        "presentation": "summary-first — relatório exibido automaticamente após o fechamento, com totais em destaque e detalhes abaixo"
+      }
+    ],
+    "informationHierarchy": [
+      "1. Status atual do turno (aberto / sem turno) — âncora visual imediata",
+      "2. Formulário de abertura de turno (quando não há turno aberto)",
+      "3. Painel de fechamento com totais do dia e inputs de caixa (quando turno está aberto)",
+      "4. Relatório de fechamento completo (após fechar o turno)"
+    ],
+    "successCriteria": "O gerente abre o turno em menos de 10 segundos, fecha informando apenas os totais de caixa e revisa o relatório sem precisar navegar para outra tela.",
+    "antiPatterns": [
+      "Campo de dailyShiftId como input manual — deve ser derivado do turno ativo",
+      "Status do turno como <select> livre — transições devem ser botões contextuais",
+      "Formulário de fechamento sempre visível independente do estado do turno",
+      "Relatório em página separada — deve aparecer inline após o fechamento",
+      "openedByUserId e closedByUserId como inputs editáveis — derivados da sessão",
+      "closedAt como input manual — gerado pelo sistema"
+    ]
+  }
+}

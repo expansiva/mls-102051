@@ -1,0 +1,48 @@
+{
+  "savedAt": "2026-07-23T17:07:58.782Z",
+  "pageId": "menuManagement",
+  "genome": "page21",
+  "objective": {
+    "actor": "Gerente de café",
+    "jobToBeDone": "Visualizar, filtrar, cadastrar e editar itens do cardápio — incluindo preço, categoria, status e vínculo de estoque — para manter o cardápio do PDV sempre atualizado.",
+    "primaryDecision": "Selecionar um item existente para editar ou iniciar o cadastro de um novo item do cardápio.",
+    "decisiveInfo": [
+      "name",
+      "menuCategoryId",
+      "price",
+      "status",
+      "displayOrder",
+      "requiresStockLink",
+      "pauseReason"
+    ],
+    "usageFrequency": "Ocasional / back-office — o gerente acessa para manutenção do cardápio, não em fluxo contínuo de operação.",
+    "criticalActions": [
+      {
+        "action": "listMenuItems",
+        "presentation": "primary-surface — tabela paginada com filtros embutidos por categoria, status e nome"
+      },
+      {
+        "action": "createMenuItemCmd",
+        "presentation": "primary-button na toolbar que abre painel lateral de criação"
+      },
+      {
+        "action": "updateMenuItemCmd",
+        "presentation": "master-detail — painel de edição contextual ao selecionar linha; transições de status (ativo/pausado) como botões explícitos, nunca select livre"
+      }
+    ],
+    "informationHierarchy": [
+      "1. Filtros de categoria e status (contexto de navegação)",
+      "2. Lista de itens com nome, categoria, preço, status e ordem de exibição",
+      "3. Painel de detalhe/edição do item selecionado (nome, categoria, preço, descrição, imagem, displayOrder, requiresStockLink, status)",
+      "4. Formulário de criação de novo item (acessado via toolbar)"
+    ],
+    "successCriteria": "O gerente encontra qualquer item em menos de 3 cliques, edita campos e altera status sem sair da tela, e cria novos itens com mínimo de digitação obrigatória.",
+    "antiPatterns": [
+      "Formulário de edição em seção separada abaixo da lista (empilhamento desnecessário)",
+      "Campo de status como <select> livre sobre todos os valores do enum",
+      "menuItemId como campo de entrada manual",
+      "Exibir timestamps de auditoria (createdAt, updatedAt) como campos editáveis",
+      "Uma seção por operação (create / update / list cada uma em seu próprio bloco independente)"
+    ]
+  }
+}

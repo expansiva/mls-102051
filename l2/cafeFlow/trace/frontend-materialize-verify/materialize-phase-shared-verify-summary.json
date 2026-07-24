@@ -1,0 +1,37 @@
+{
+  "savedAt": "2026-07-23T17:11:01.482Z",
+  "phase": "materialize-phase-shared-verify",
+  "lastRoundPlanId": "materialize-phase-shared-verify",
+  "attempt": 1,
+  "allClear": true,
+  "passedCount": 6,
+  "passed": [
+    {
+      "planId": "materialize-dashboardworkspace-l2-shared",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-kitchenworkspace-l2-shared",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-menumanagement-l2-shared",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-posworkspace-l2-shared",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-shiftworkspace-l2-shared",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-stockmanagement-l2-shared",
+      "typecheck": "passed"
+    }
+  ],
+  "brokenCount": 0,
+  "broken": [],
+  "agent": "agentCfeMaterializePhase"
+}

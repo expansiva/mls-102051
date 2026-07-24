@@ -1,0 +1,86 @@
+import { CollabLitElement } from '/_102029_/l2/collabLitElement.js';
+import type { FetchKitchenQueueOutput, ChangeOrderStatusOutput } from '/_102051_/l2/cafeFlow/web/contracts/kitchenWorkspace.js';
+export type { FetchKitchenQueueInput, FetchKitchenQueueOutput, ChangeOrderStatusInput, ChangeOrderStatusOutput, } from '/_102051_/l2/cafeFlow/web/contracts/kitchenWorkspace.js';
+declare const message_pt: {
+    'section.kitchenWorkspace.kitchenQueueSection.title': string;
+    'organism.kitchenWorkspace.fetchKitchenQueue.title': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.title': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.empty': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.orderId.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.orderType.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.tableNumber.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.customerName.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.notes.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.status.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.confirmedAt.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.inPreparationAt.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.items.label': string;
+    'intent.kitchenWorkspace.fetchKitchenQueue.list.filter.dailyShiftId.label': string;
+    'organism.kitchenWorkspace.changeOrderStatus.title': string;
+    'intent.kitchenWorkspace.changeOrderStatus.form.title': string;
+    'intent.kitchenWorkspace.changeOrderStatus.form.action.changeOrderStatus': string;
+    'intent.kitchenWorkspace.changeOrderStatus.form.field.status.label': string;
+    'intent.kitchenWorkspace.changeOrderStatus.form.field.cancellationReason.label': string;
+    'intent.kitchenWorkspace.changeOrderStatus.form.field.updatedAt.label': string;
+    'section.kitchenWorkspace.kitchen-queue-section.title': string;
+};
+type MessageType = typeof message_pt;
+export declare class CafeFlowKitchenWorkspaceBase extends CollabLitElement {
+    /** state status — pageStatus */
+    status: string;
+    /** state fetchKitchenQueueState — actionStatus, values: idle|loading|success|error */
+    fetchKitchenQueueState: 'idle' | 'loading' | 'success' | 'error';
+    /** state fetchKitchenQueueDailyShiftId — input */
+    fetchKitchenQueueDailyShiftId: string;
+    /** state fetchKitchenQueueData — queryResult, outputShape: array */
+    fetchKitchenQueueData: FetchKitchenQueueOutput[];
+    /** state changeOrderStatusState — actionStatus, values: idle|loading|success|error */
+    changeOrderStatusState: 'idle' | 'loading' | 'success' | 'error';
+    /** state changeOrderStatusOrderId — input */
+    changeOrderStatusOrderId: string;
+    /** state changeOrderStatusStatus — input */
+    changeOrderStatusStatus: string;
+    /** state changeOrderStatusCancellationReason — input */
+    changeOrderStatusCancellationReason: string;
+    /** state changeOrderStatusUpdatedAt — input */
+    changeOrderStatusUpdatedAt: string;
+    /** state changeOrderStatusOutput — commandOutput */
+    changeOrderStatusOutput: ChangeOrderStatusOutput | null;
+    /** state changeOrderStatusError — actionError */
+    changeOrderStatusError: string;
+    private readonly subscribedKeys;
+    /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
+    protected get msg(): MessageType;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    handleIcaStateChange(key: string, value: unknown): void;
+    private initStateValue;
+    /** action fetchKitchenQueue (query) — route cafeFlow.kitchenWorkspace.fetchKitchenQueue; inputs: dailyShiftId; writes ui.kitchenWorkspace.data.fetchKitchenQueue; status ui.kitchenWorkspace.action.fetchKitchenQueue.status */
+    loadFetchKitchenQueue(): Promise<void>;
+    /** handler for action fetchKitchenQueue — bind UI events here */
+    handleFetchKitchenQueueClick(_event?: Event): void;
+    /** action changeOrderStatus (command) — route cafeFlow.kitchenWorkspace.changeOrderStatus; inputs: orderId, status, cancellationReason, updatedAt; writes ui.kitchenWorkspace.output.changeOrderStatus; status ui.kitchenWorkspace.action.changeOrderStatus.status; feedback keys action.changeOrderStatus.success / action.changeOrderStatus.error */
+    changeOrderStatus(): Promise<void>;
+    /** handler for action changeOrderStatus — bind UI events here */
+    handleChangeOrderStatusClick(_event?: Event): void;
+    /** setter for state ui.kitchenWorkspace.input.fetchKitchenQueue.dailyShiftId */
+    setFetchKitchenQueueDailyShiftId(value: string): void;
+    /** handler for action set.fetchKitchenQueueDailyShiftId — bind UI events here */
+    handleFetchKitchenQueueDailyShiftIdChange(event: Event): void;
+    /** setter for state ui.kitchenWorkspace.input.changeOrderStatus.orderId */
+    setChangeOrderStatusOrderId(value: string): void;
+    /** handler for action set.changeOrderStatusOrderId — bind UI events here */
+    handleChangeOrderStatusOrderIdChange(event: Event): void;
+    /** setter for state ui.kitchenWorkspace.input.changeOrderStatus.status */
+    setChangeOrderStatusStatus(value: string): void;
+    /** handler for action set.changeOrderStatusStatus — bind UI events here */
+    handleChangeOrderStatusStatusChange(event: Event): void;
+    /** setter for state ui.kitchenWorkspace.input.changeOrderStatus.cancellationReason */
+    setChangeOrderStatusCancellationReason(value: string): void;
+    /** handler for action set.changeOrderStatusCancellationReason — bind UI events here */
+    handleChangeOrderStatusCancellationReasonChange(event: Event): void;
+    /** setter for state ui.kitchenWorkspace.input.changeOrderStatus.updatedAt */
+    setChangeOrderStatusUpdatedAt(value: string): void;
+    /** handler for action set.changeOrderStatusUpdatedAt — bind UI events here */
+    handleChangeOrderStatusUpdatedAtChange(event: Event): void;
+}

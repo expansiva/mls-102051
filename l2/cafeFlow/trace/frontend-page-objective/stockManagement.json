@@ -1,0 +1,54 @@
+{
+  "savedAt": "2026-07-23T17:08:18.142Z",
+  "pageId": "stockManagement",
+  "genome": "page21",
+  "objective": {
+    "actor": "Gerente de café",
+    "jobToBeDone": "Manter o cadastro de insumos atualizado, identificar rapidamente itens com estoque baixo e registrar ajustes manuais de saldo sem sair da tela de controle.",
+    "primaryDecision": "Selecionar um insumo da lista para editar, excluir ou registrar um ajuste de saldo — ou cadastrar um novo insumo.",
+    "decisiveInfo": [
+      "name",
+      "unit",
+      "currentBalance",
+      "minimumLevel",
+      "lowStockOnly (flag de alerta)"
+    ],
+    "usageFrequency": "Ocasional / back-office — o gerente acessa diariamente para revisar alertas e registrar ajustes pontuais.",
+    "criticalActions": [
+      {
+        "action": "listStockItems",
+        "presentation": "primary-surface com filtros embutidos (nameFilter + lowStockOnly toggle)"
+      },
+      {
+        "action": "registerStockAdjustment",
+        "presentation": "inline-row-command / painel contextual aberto ao selecionar linha"
+      },
+      {
+        "action": "editStockItem",
+        "presentation": "inline-row-command / painel contextual no master-detail"
+      },
+      {
+        "action": "removeStockItem",
+        "presentation": "inline-row-command com confirmação destrutiva"
+      },
+      {
+        "action": "addStockItem",
+        "presentation": "primary-button na toolbar que abre formulário colapsável"
+      }
+    ],
+    "informationHierarchy": [
+      "1. Resumo de alertas: total de itens com estoque baixo (summary-first)",
+      "2. Lista filtrável de insumos com saldo atual, unidade e indicador de alerta",
+      "3. Painel contextual do item selecionado: editar cadastro ou registrar ajuste",
+      "4. Formulário de cadastro de novo insumo (colapsável, acionado por toolbar)"
+    ],
+    "successCriteria": "O gerente identifica itens críticos em menos de 5 segundos, registra um ajuste de saldo em menos de 3 cliques e cadastra um novo insumo sem navegar para outra página.",
+    "antiPatterns": [
+      "Formulário de ajuste em página separada",
+      "Campo stockItemId como input manual",
+      "Status como <select> livre",
+      "Seção independente para cada operação CRUD",
+      "Timestamps e IDs técnicos expostos como campos editáveis"
+    ]
+  }
+}

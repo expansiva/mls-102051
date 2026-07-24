@@ -1,0 +1,21 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/journeys/followOrderUntilServe.defs.ts" enhancement="_blank"/>
+
+export const followOrderUntilServeJourney = {
+  "journeyId": "followOrderUntilServe",
+  "actorId": "atendente",
+  "title": "Acompanhar pedido até servir ou entregar",
+  "goal": "Saber quando o pedido está pronto e concluir o atendimento ao cliente",
+  "steps": [
+    "Consultar status do pedido",
+    "Avisar que está pronto",
+    "Marcar como servido/entregue"
+  ],
+  "outcome": "Pedido finalizado no atendimento, com baixa automática de ingredientes vinculados.",
+  "operationIds": [
+    "trackOrders",
+    "updateOrderStatus"
+  ],
+  "workspaceId": "posWorkspace"
+} as const;
+
+export default followOrderUntilServeJourney;

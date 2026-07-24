@@ -1,0 +1,195 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/operations/viewKitchenQueue.defs.ts" enhancement="_blank"/>
+
+export const operationViewKitchenQueue = {
+  "operationId": "viewKitchenQueue",
+  "title": "Ver fila da cozinha",
+  "actors": [
+    "cozinheiro"
+  ],
+  "entity": "Order",
+  "kind": "query",
+  "reads": [
+    "Order",
+    "OrderItem",
+    "DailyShift"
+  ],
+  "writes": [],
+  "rulesApplied": [
+    "orderEntersKitchenQueueAfterAttendantConfirmation",
+    "completedOrdersLeaveKitchenQueue",
+    "orderItemsArePrepReference",
+    "ordersRequireOpenDailyShift",
+    "orderRequiresTableOrTakeout"
+  ],
+  "story": {
+    "actor": "cozinheiro",
+    "goal": "Ver a fila de pedidos da cozinha com itens e observações para priorizar o preparo do turno",
+    "steps": [
+      "O cozinheiro abre a fila da cozinha vinculada ao turno diário aberto",
+      "O sistema lista apenas pedidos confirmados e em preparo, com itens, quantidades e observações",
+      "O cozinheiro visualiza canal (mesa/takeout), mesa ou cliente e observações para ordenar o preparo"
+    ],
+    "outcome": "Fila de trabalho da cozinha visível com pedidos ativos e detalhes necessários ao preparo"
+  },
+  "accessPattern": {
+    "kind": "list",
+    "description": "Lista pedidos confirmados e em preparo do turno aberto, com itens e observações para a fila da cozinha",
+    "entity": "Order",
+    "keyField": "Order.orderId",
+    "filters": [
+      "Order.status",
+      "Order.dailyShiftId"
+    ],
+    "sort": [
+      "Order.confirmedAt"
+    ],
+    "pagination": "none",
+    "selection": "single",
+    "output": [
+      "Order.orderId",
+      "Order.orderType",
+      "Order.tableNumber",
+      "Order.customerName",
+      "Order.notes",
+      "Order.status",
+      "Order.confirmedAt",
+      "Order.inPreparationAt",
+      "OrderItem.orderItemId",
+      "OrderItem.menuItemName",
+      "OrderItem.quantity",
+      "OrderItem.observations",
+      "OrderItem.status"
+    ]
+  },
+  "outputShape": {
+    "kind": "list",
+    "fields": [
+      {
+        "name": "orderId",
+        "type": "string",
+        "required": true,
+        "fieldRef": "Order.orderId"
+      },
+      {
+        "name": "orderType",
+        "type": "string",
+        "required": true,
+        "fieldRef": "Order.orderType"
+      },
+      {
+        "name": "tableNumber",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.tableNumber"
+      },
+      {
+        "name": "customerName",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.customerName"
+      },
+      {
+        "name": "notes",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.notes"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "required": true,
+        "fieldRef": "Order.status"
+      },
+      {
+        "name": "confirmedAt",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.confirmedAt"
+      },
+      {
+        "name": "inPreparationAt",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.inPreparationAt"
+      },
+      {
+        "name": "items",
+        "type": "array",
+        "required": true,
+        "item": {
+          "fields": [
+            {
+              "name": "orderItemId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "OrderItem.orderItemId"
+            },
+            {
+              "name": "menuItemName",
+              "type": "string",
+              "required": true,
+              "fieldRef": "OrderItem.menuItemName"
+            },
+            {
+              "name": "quantity",
+              "type": "number",
+              "required": true,
+              "fieldRef": "OrderItem.quantity"
+            },
+            {
+              "name": "observations",
+              "type": "string",
+              "required": false,
+              "fieldRef": "OrderItem.observations"
+            },
+            {
+              "name": "status",
+              "type": "string",
+              "required": true,
+              "fieldRef": "OrderItem.status"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "inputId": "dailyShiftId",
+      "fieldRef": "Order.dailyShiftId",
+      "required": true,
+      "source": "activeLifecycleInstance",
+      "description": "Turno diário aberto ao qual a fila da cozinha está vinculada"
+    }
+  ],
+  "contextResolution": [
+    {
+      "inputId": "dailyShiftId",
+      "targetRef": "Order.dailyShiftId",
+      "source": "activeLifecycleInstance",
+      "originRef": "DailyShift.dailyShiftId",
+      "description": "Resolve o único DailyShift com status open no momento da consulta"
+    }
+  ],
+  "acceptanceAssertions": [
+    "A fila exibe apenas pedidos do turno diário aberto com status confirmed ou inPreparation",
+    "Pedidos com status registered não aparecem na fila da cozinha",
+    "Pedidos com status ready, served ou cancelled não aparecem na fila ativa da cozinha",
+    "Cada pedido na fila inclui seus itens com nome, quantidade e observações de preparo",
+    "A listagem está ordenada por confirmedAt para priorizar o fluxo do turno",
+    "A consulta só retorna dados quando existe um turno diário aberto"
+  ],
+  "pageId": "viewKitchenQueue",
+  "commandName": "viewKitchenQueue",
+  "bffName": "cafeFlow.viewKitchenQueue.viewKitchenQueue",
+  "capability": {
+    "capabilityId": "viewKitchenQueue",
+    "title": "Ver fila da cozinha",
+    "actor": "cozinheiro",
+    "priority": "now"
+  },
+  "statusFrontend": "toCreate",
+  "statusBackend": "toCreate"
+} as const;
+
+export default operationViewKitchenQueue;

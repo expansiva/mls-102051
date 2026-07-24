@@ -1,0 +1,307 @@
+{
+  "savedAt": "2026-07-22T13:15:42.366Z",
+  "stepId": "e6-detail-shiftCommand",
+  "agentName": "agentNsJourneyMap",
+  "attempt": 3,
+  "payload": {
+    "workspace": {
+      "workspaceId": "shiftCommand",
+      "title": "Turno e visão do dia",
+      "actors": [
+        "gerente"
+      ],
+      "kind": "workflow",
+      "entity": "Shift",
+      "workflowId": "shiftLifecycle",
+      "bffCalls": [
+        {
+          "bffId": "openShiftCommand",
+          "kind": "command",
+          "uses": [
+            {
+              "operationId": "openShift"
+            }
+          ],
+          "input": [],
+          "route": "cafeFlow.shiftCommand.openShiftCommand"
+        },
+        {
+          "bffId": "dashboardQuery",
+          "kind": "query",
+          "uses": [
+            {
+              "operationId": "viewDashboard"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "name": "shiftId",
+                "from": "viewDashboard.shiftId"
+              },
+              {
+                "name": "unitId",
+                "from": "viewDashboard.unitId"
+              },
+              {
+                "name": "status",
+                "from": "viewDashboard.status"
+              },
+              {
+                "name": "openedAt",
+                "from": "viewDashboard.openedAt"
+              },
+              {
+                "name": "totalSales",
+                "from": "viewDashboard.totalSales"
+              },
+              {
+                "name": "totalOrders",
+                "from": "viewDashboard.totalOrders"
+              },
+              {
+                "name": "topSellers",
+                "from": "viewDashboard.$items",
+                "type": "array",
+                "item": {
+                  "fields": [
+                    {
+                      "name": "menuItemId",
+                      "from": "$items.menuItemId"
+                    },
+                    {
+                      "name": "name",
+                      "from": "$items.name"
+                    },
+                    {
+                      "name": "quantity",
+                      "from": "$items.quantity"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "lowStockAlerts",
+                "from": "viewDashboard.lowStockAlerts.$items",
+                "type": "array",
+                "item": {
+                  "fields": [
+                    {
+                      "name": "stockItemId",
+                      "from": "lowStockAlerts.$items.stockItemId"
+                    },
+                    {
+                      "name": "name",
+                      "from": "lowStockAlerts.$items.name"
+                    },
+                    {
+                      "name": "currentQuantity",
+                      "from": "lowStockAlerts.$items.currentQuantity"
+                    },
+                    {
+                      "name": "minimumLevel",
+                      "from": "lowStockAlerts.$items.minimumLevel"
+                    },
+                    {
+                      "name": "unit",
+                      "from": "lowStockAlerts.$items.unit"
+                    },
+                    {
+                      "name": "status",
+                      "from": "lowStockAlerts.$items.status"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "route": "cafeFlow.shiftCommand.dashboardQuery"
+        },
+        {
+          "bffId": "closeShiftCommand",
+          "kind": "command",
+          "uses": [
+            {
+              "operationId": "closeShift"
+            }
+          ],
+          "input": [],
+          "route": "cafeFlow.shiftCommand.closeShiftCommand"
+        },
+        {
+          "bffId": "shiftReportQuery",
+          "kind": "query",
+          "uses": [
+            {
+              "operationId": "viewShiftReport"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "name": "shiftReportId",
+                "from": "viewShiftReport.shiftReportId"
+              },
+              {
+                "name": "shiftId",
+                "from": "viewShiftReport.shiftId"
+              },
+              {
+                "name": "totalSalesDineIn",
+                "from": "viewShiftReport.totalSalesDineIn"
+              },
+              {
+                "name": "totalSalesTakeout",
+                "from": "viewShiftReport.totalSalesTakeout"
+              },
+              {
+                "name": "totalSales",
+                "from": "viewShiftReport.totalSales"
+              },
+              {
+                "name": "totalOrders",
+                "from": "viewShiftReport.totalOrders"
+              },
+              {
+                "name": "totalCancellations",
+                "from": "viewShiftReport.totalCancellations"
+              },
+              {
+                "name": "topSellingItemName",
+                "from": "viewShiftReport.topSellingItemName"
+              },
+              {
+                "name": "topSellingItemQuantity",
+                "from": "viewShiftReport.topSellingItemQuantity"
+              },
+              {
+                "name": "generatedAt",
+                "from": "viewShiftReport.generatedAt"
+              },
+              {
+                "name": "preservedUntil",
+                "from": "viewShiftReport.preservedUntil"
+              },
+              {
+                "name": "notes",
+                "from": "viewShiftReport.notes"
+              }
+            ]
+          },
+          "route": "cafeFlow.shiftCommand.shiftReportQuery"
+        }
+      ],
+      "sections": [
+        {
+          "sectionId": "shiftOpen",
+          "intent": "O gerente abre o turno do dia da unidade, informando observações opcionais.",
+          "organisms": [
+            {
+              "role": "primarySurface",
+              "action": "openShiftCommand"
+            }
+          ]
+        },
+        {
+          "sectionId": "dayDashboard",
+          "intent": "O gerente acompanha os indicadores do dia, o ranking de mais vendidos e os alertas de estoque baixo.",
+          "organisms": [
+            {
+              "role": "primarySurface",
+              "dataSource": "dashboardQuery"
+            }
+          ]
+        },
+        {
+          "sectionId": "shiftClose",
+          "intent": "O gerente fecha o turno e visualiza o relatório de fechamento gerado.",
+          "organisms": [
+            {
+              "role": "primarySurface",
+              "action": "closeShiftCommand"
+            },
+            {
+              "role": "detailPanel",
+              "dataSource": "shiftReportQuery"
+            }
+          ]
+        }
+      ],
+      "operationIds": [
+        "openShift",
+        "viewDashboard",
+        "closeShift",
+        "viewShiftReport"
+      ],
+      "purpose": "O gerente abre o turno, acompanha o dashboard do dia e fecha o turno consultando o relatório de fechamento."
+    },
+    "errors": [
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"menuItemId\" from \"$items.menuItemId\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"name\" from \"$items.name\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"quantity\" from \"$items.quantity\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknown",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"lowStockAlerts\" from \"viewDashboard.lowStockAlerts.$items\" is not a valid top-level path of viewDashboard (a $items.<col> column belongs inside an item.fields block, not at the output top level)",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"stockItemId\" from \"lowStockAlerts.$items.stockItemId\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"name\" from \"lowStockAlerts.$items.name\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"currentQuantity\" from \"lowStockAlerts.$items.currentQuantity\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"minimumLevel\" from \"lowStockAlerts.$items.minimumLevel\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"unit\" from \"lowStockAlerts.$items.unit\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace shiftCommand bffCall dashboardQuery: output field \"status\" from \"lowStockAlerts.$items.status\" does not reference an operation in uses",
+        "path": "shiftCommand"
+      }
+    ]
+  },
+  "error": "bff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"menuItemId\" from \"$items.menuItemId\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"name\" from \"$items.name\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"quantity\" from \"$items.quantity\" does not reference an operation in uses\nbff.output.from.unknown: workspace shiftCommand bffCall dashboardQuery: output field \"lowStockAlerts\" from \"viewDashboard.lowStockAlerts.$items\" is not a valid top-level path of viewDashboard (a $items.<col> column belongs inside an item.fields block, not at the output top level)\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"stockItemId\" from \"lowStockAlerts.$items.stockItemId\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"name\" from \"lowStockAlerts.$items.name\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"currentQuantity\" from \"lowStockAlerts.$items.currentQuantity\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"minimumLevel\" from \"lowStockAlerts.$items.minimumLevel\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"unit\" from \"lowStockAlerts.$items.unit\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace shiftCommand bffCall dashboardQuery: output field \"status\" from \"lowStockAlerts.$items.status\" does not reference an operation in uses",
+  "promptChars": 8170
+}

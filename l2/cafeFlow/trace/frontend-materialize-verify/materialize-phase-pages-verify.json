@@ -1,0 +1,81 @@
+{
+  "savedAt": "2026-07-23T02:53:44.082Z",
+  "planId": "materialize-phase-pages-verify",
+  "attempt": 1,
+  "brokenCount": 4,
+  "broken": [
+    {
+      "planId": "materialize-kitchenworkspace-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.success\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.success' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.error\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.error' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'."
+      ],
+      "warnings": [
+        "kitchenWorkspace: technical id is an editable text field: intent.kitchenWorkspace.fetchKitchenQueue.list.dailyShiftId",
+        "kitchenWorkspace: mutation feedback i18n missing: changeOrderStatus"
+      ]
+    },
+    {
+      "planId": "materialize-posworkspace-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1."
+      ],
+      "warnings": [
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryOpenOrders.list.dailyShiftId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryMenuItems.list.menuCategoryId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.menuItemId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.dailyShiftId",
+        "posWorkspace: mutation feedback i18n missing: cmdCreateOrder",
+        "posWorkspace: mutation feedback i18n missing: cmdUpdateOrderStatus",
+        "posWorkspace: mutation feedback i18n missing: cmdRecordBasicPayment"
+      ]
+    },
+    {
+      "planId": "materialize-kitchenworkspace-page21-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts",
+      "typecheck": "not-applicable",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.success\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.success' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.error\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.error' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'."
+      ],
+      "warnings": [
+        "kitchenWorkspace: technical id is an editable text field: intent.kitchenWorkspace.fetchKitchenQueue.list.dailyShiftId",
+        "kitchenWorkspace: mutation feedback i18n missing: changeOrderStatus"
+      ]
+    },
+    {
+      "planId": "materialize-posworkspace-page21-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts",
+      "typecheck": "not-applicable",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1."
+      ],
+      "warnings": [
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryOpenOrders.list.dailyShiftId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryMenuItems.list.menuCategoryId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.menuItemId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.dailyShiftId",
+        "posWorkspace: mutation feedback i18n missing: cmdCreateOrder",
+        "posWorkspace: mutation feedback i18n missing: cmdUpdateOrderStatus",
+        "posWorkspace: mutation feedback i18n missing: cmdRecordBasicPayment"
+      ]
+    }
+  ],
+  "agent": "agentCfeMaterializePhase"
+}

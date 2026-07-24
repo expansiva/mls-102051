@@ -1,0 +1,40 @@
+{
+  "savedAt": "2026-07-23T02:55:06.380Z",
+  "planId": "materialize-phase-pages-verify-v2",
+  "attempt": 2,
+  "brokenCount": 2,
+  "broken": [
+    {
+      "planId": "materialize-posworkspace-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS7006 - Parameter 'order' implicitly has an 'any' type."
+      ],
+      "warnings": [
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryOpenOrders.list.dailyShiftId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryMenuItems.list.menuCategoryId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.menuItemId",
+        "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.dailyShiftId",
+        "posWorkspace: mutation feedback i18n missing: cmdCreateOrder",
+        "posWorkspace: mutation feedback i18n missing: cmdUpdateOrderStatus",
+        "posWorkspace: mutation feedback i18n missing: cmdRecordBasicPayment"
+      ]
+    },
+    {
+      "planId": "materialize-kitchenworkspace-page21-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts",
+      "typecheck": "not-applicable",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts - TS7006 - Parameter 'item' implicitly has an 'any' type."
+      ],
+      "warnings": [
+        "kitchenWorkspace: technical id is an editable text field: intent.kitchenWorkspace.fetchKitchenQueue.list.dailyShiftId",
+        "kitchenWorkspace: mutation feedback i18n missing: changeOrderStatus"
+      ]
+    }
+  ],
+  "agent": "agentCfeMaterializePhase"
+}

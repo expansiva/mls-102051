@@ -20,6 +20,38 @@
   "links": [],
   "servicesConfigEnabled": false,
   "modules": [
+    {
+      "moduleName": "cafeFlow",
+      "backend": {
+        "backendControllers": "./_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers",
+        "persistence": {
+          "tableDefsDir": "./_102051_/l1/cafeFlow/layer_1_external/adapters/persistence"
+        },
+        "routeKeys": [
+          "cafeFlow.dashboardWorkspace.getAiPromotionSuggestions",
+          "cafeFlow.dashboardWorkspace.getAiSalesSummary",
+          "cafeFlow.dashboardWorkspace.getDashboard",
+          "cafeFlow.kitchenWorkspace.changeOrderStatus",
+          "cafeFlow.kitchenWorkspace.fetchKitchenQueue",
+          "cafeFlow.menuManagement.createMenuItemCmd",
+          "cafeFlow.menuManagement.listMenuItems",
+          "cafeFlow.menuManagement.updateMenuItemCmd",
+          "cafeFlow.posWorkspace.cmdCreateOrder",
+          "cafeFlow.posWorkspace.cmdRecordBasicPayment",
+          "cafeFlow.posWorkspace.cmdUpdateOrderStatus",
+          "cafeFlow.posWorkspace.queryMenuItems",
+          "cafeFlow.posWorkspace.queryOpenOrders",
+          "cafeFlow.shiftWorkspace.closeDailyShiftCmd",
+          "cafeFlow.shiftWorkspace.getShiftClosingReport",
+          "cafeFlow.shiftWorkspace.openDailyShiftCmd",
+          "cafeFlow.stockManagement.addStockItem",
+          "cafeFlow.stockManagement.editStockItem",
+          "cafeFlow.stockManagement.listStockItems",
+          "cafeFlow.stockManagement.registerStockAdjustment",
+          "cafeFlow.stockManagement.removeStockItem"
+        ]
+      }
+    }
   ],
   "layouts": {
     "1": {

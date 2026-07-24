@@ -1,0 +1,143 @@
+{
+  "savedAt": "2026-07-22T13:08:16.299Z",
+  "stepId": "e6-detail-kitchenQueue",
+  "agentName": "agentNsJourneyMap",
+  "attempt": 1,
+  "payload": {
+    "workspace": {
+      "workspaceId": "kitchenQueue",
+      "title": "Fila de preparo da cozinha",
+      "actors": [
+        "cozinheiro"
+      ],
+      "kind": "workflow",
+      "entity": "Order",
+      "workflowId": "orderLifecycle",
+      "bffCalls": [
+        {
+          "bffId": "kitchenQueueList",
+          "kind": "query",
+          "uses": [
+            {
+              "operationId": "viewKitchenQueue"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "paginated",
+            "fields": [
+              {
+                "name": "items",
+                "from": "viewKitchenQueue.$items",
+                "type": "array",
+                "item": {
+                  "fields": [
+                    {
+                      "name": "orderId",
+                      "from": "viewKitchenQueue.$items.orderId",
+                      "type": "string"
+                    },
+                    {
+                      "name": "type",
+                      "from": "viewKitchenQueue.$items.type",
+                      "type": "string"
+                    },
+                    {
+                      "name": "tableNumber",
+                      "from": "viewKitchenQueue.$items.tableNumber",
+                      "type": "string"
+                    },
+                    {
+                      "name": "customerName",
+                      "from": "viewKitchenQueue.$items.customerName",
+                      "type": "string"
+                    },
+                    {
+                      "name": "status",
+                      "from": "viewKitchenQueue.$items.status",
+                      "type": "string"
+                    },
+                    {
+                      "name": "notes",
+                      "from": "viewKitchenQueue.$items.notes",
+                      "type": "string"
+                    },
+                    {
+                      "name": "receivedAt",
+                      "from": "viewKitchenQueue.$items.receivedAt",
+                      "type": "string"
+                    },
+                    {
+                      "name": "inPreparationAt",
+                      "from": "viewKitchenQueue.$items.inPreparationAt",
+                      "type": "string"
+                    },
+                    {
+                      "name": "readyAt",
+                      "from": "viewKitchenQueue.$items.readyAt",
+                      "type": "string"
+                    },
+                    {
+                      "name": "createdAt",
+                      "from": "viewKitchenQueue.$items.createdAt",
+                      "type": "string"
+                    },
+                    {
+                      "name": "items",
+                      "from": "viewKitchenQueue.$items.items",
+                      "type": "array"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "route": "cafeFlow.kitchenQueue.kitchenQueueList"
+        },
+        {
+          "bffId": "updateOrderStatus",
+          "kind": "command",
+          "uses": [
+            {
+              "operationId": "updateOrderStatus"
+            }
+          ],
+          "input": [],
+          "route": "cafeFlow.kitchenQueue.updateOrderStatus"
+        }
+      ],
+      "sections": [
+        {
+          "sectionId": "queueBoard",
+          "intent": "O cozinheiro visualiza a fila unificada de pedidos ativos (mesa e takeout) ordenada por recebimento e avança o status de cada pedido.",
+          "organisms": [
+            {
+              "role": "primarySurface",
+              "dataSource": "kitchenQueueList"
+            },
+            {
+              "role": "contextualAction",
+              "action": "updateOrderStatus",
+              "attachTo": "kitchenQueueList"
+            }
+          ]
+        }
+      ],
+      "operationIds": [
+        "viewKitchenQueue",
+        "updateOrderStatus"
+      ],
+      "purpose": "O cozinheiro acompanha a fila de pedidos e conduz cada pedido do recebimento até a entrega ou retirada."
+    },
+    "errors": [
+      {
+        "severity": "error",
+        "code": "workspace.actors.notCovering",
+        "message": "workspace kitchenQueue: hosts an operation for actor \"atendente\" not in the workspace actors [cozinheiro]",
+        "path": "kitchenQueue"
+      }
+    ]
+  },
+  "error": "workspace.actors.notCovering: workspace kitchenQueue: hosts an operation for actor \"atendente\" not in the workspace actors [cozinheiro]",
+  "promptChars": 6271
+}

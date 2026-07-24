@@ -1,0 +1,223 @@
+import { CollabLitElement } from '/_102029_/l2/collabLitElement.js';
+import type { ListMenuItemsOutput, CreateMenuItemCmdOutput, UpdateMenuItemCmdOutput } from '/_102051_/l2/cafeFlow/web/contracts/menuManagement.js';
+export type { ListMenuItemsInput, ListMenuItemsOutput, CreateMenuItemCmdInput, CreateMenuItemCmdOutput, UpdateMenuItemCmdInput, UpdateMenuItemCmdOutput, } from '/_102051_/l2/cafeFlow/web/contracts/menuManagement.js';
+declare const message_pt: {
+    'section.menuManagement.menuItemList.title': string;
+    'organism.menuManagement.listMenuItems.title': string;
+    'intent.menuManagement.listMenuItems.list.title': string;
+    'intent.menuManagement.listMenuItems.list.empty': string;
+    'intent.menuManagement.listMenuItems.list.column.menuItems.label': string;
+    'intent.menuManagement.listMenuItems.list.column.total.label': string;
+    'intent.menuManagement.listMenuItems.list.filter.status.label': string;
+    'intent.menuManagement.listMenuItems.list.filter.menuCategoryId.label': string;
+    'intent.menuManagement.listMenuItems.list.filter.name.label': string;
+    'intent.menuManagement.listMenuItems.list.filter.page.label': string;
+    'intent.menuManagement.listMenuItems.list.filter.pageSize.label': string;
+    'organism.menuManagement.createMenuItemCmd.title': string;
+    'intent.menuManagement.createMenuItemCmd.form.title': string;
+    'intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.name.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.description.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.price.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.status.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label': string;
+    'organism.menuManagement.updateMenuItemCmd.title': string;
+    'intent.menuManagement.updateMenuItemCmd.form.title': string;
+    'intent.menuManagement.updateMenuItemCmd.form.action.updateMenuItemCmd': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.menuCategoryId.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.name.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.description.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.price.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.status.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.pauseReason.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.imageUrl.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.displayOrder.label': string;
+    'intent.menuManagement.updateMenuItemCmd.form.field.requiresStockLink.label': string;
+    'section.menuManagement.sec-menu-item-workbench.title': string;
+    'organism.menuManagement.summary-first10.title': string;
+    'intent.menuManagement.summary-first10.content.title': string;
+    'section.menuManagement.sec-create-menu-item.title': string;
+};
+type MessageType = typeof message_pt;
+export declare class CafeFlowMenuManagementBase extends CollabLitElement {
+    /** state ui.menuManagement.status — pageStatus */
+    status: string;
+    /** state ui.menuManagement.action.listMenuItems.status — actionStatus, values: idle|loading|success|error */
+    listMenuItemsState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.menuManagement.input.listMenuItems.status — input */
+    listMenuItemsStatus: string;
+    /** state ui.menuManagement.input.listMenuItems.menuCategoryId — input */
+    listMenuItemsMenuCategoryId: string;
+    /** state ui.menuManagement.input.listMenuItems.name — input */
+    listMenuItemsName: string;
+    /** state ui.menuManagement.input.listMenuItems.page — input */
+    listMenuItemsPage: string;
+    /** state ui.menuManagement.input.listMenuItems.pageSize — input */
+    listMenuItemsPageSize: string;
+    /** state ui.menuManagement.data.listMenuItems — queryResult, outputShape: paginated */
+    listMenuItemsData: ListMenuItemsOutput;
+    /** state ui.menuManagement.action.createMenuItemCmd.status — actionStatus, values: idle|loading|success|error */
+    createMenuItemCmdState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.menuManagement.input.createMenuItemCmd.menuCategoryId — input */
+    createMenuItemCmdMenuCategoryId: string;
+    /** state ui.menuManagement.input.createMenuItemCmd.name — input */
+    createMenuItemCmdName: string;
+    /** state ui.menuManagement.input.createMenuItemCmd.description — input */
+    createMenuItemCmdDescription: string;
+    /** state ui.menuManagement.input.createMenuItemCmd.price — input */
+    createMenuItemCmdPrice: string;
+    /** state ui.menuManagement.input.createMenuItemCmd.status — input */
+    createMenuItemCmdStatus: string;
+    /** state ui.menuManagement.input.createMenuItemCmd.imageUrl — input */
+    createMenuItemCmdImageUrl: string;
+    /** state ui.menuManagement.input.createMenuItemCmd.displayOrder — input */
+    createMenuItemCmdDisplayOrder: string;
+    /** state ui.menuManagement.input.createMenuItemCmd.requiresStockLink — input */
+    createMenuItemCmdRequiresStockLink: string;
+    /** state ui.menuManagement.output.createMenuItemCmd — commandOutput */
+    createMenuItemCmdOutput: CreateMenuItemCmdOutput | null;
+    /** state ui.menuManagement.action.createMenuItemCmd.error — actionError */
+    createMenuItemCmdError: string;
+    /** state ui.menuManagement.action.updateMenuItemCmd.status — actionStatus, values: idle|loading|success|error */
+    updateMenuItemCmdState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.menuManagement.input.updateMenuItemCmd.menuItemId — input */
+    updateMenuItemCmdMenuItemId: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.menuCategoryId — input */
+    updateMenuItemCmdMenuCategoryId: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.name — input */
+    updateMenuItemCmdName: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.description — input */
+    updateMenuItemCmdDescription: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.price — input */
+    updateMenuItemCmdPrice: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.status — input */
+    updateMenuItemCmdStatus: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.pauseReason — input */
+    updateMenuItemCmdPauseReason: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.imageUrl — input */
+    updateMenuItemCmdImageUrl: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.displayOrder — input */
+    updateMenuItemCmdDisplayOrder: string;
+    /** state ui.menuManagement.input.updateMenuItemCmd.requiresStockLink — input */
+    updateMenuItemCmdRequiresStockLink: string;
+    /** state ui.menuManagement.output.updateMenuItemCmd — commandOutput */
+    updateMenuItemCmdOutput: UpdateMenuItemCmdOutput | null;
+    /** state ui.menuManagement.action.updateMenuItemCmd.error — actionError */
+    updateMenuItemCmdError: string;
+    private readonly subscribedKeys;
+    /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
+    protected get msg(): MessageType;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    handleIcaStateChange(key: string, value: unknown): void;
+    private applyRouteParams;
+    private parseOptionalNumber;
+    private parseBoolean;
+    /** action listMenuItems (query) — route cafeFlow.menuManagement.listMenuItems; inputs: status, menuCategoryId, name, page, pageSize; writes ui.menuManagement.data.listMenuItems; status ui.menuManagement.action.listMenuItems.status */
+    loadListMenuItems(): Promise<void>;
+    /** handler for action listMenuItems — bind UI events here */
+    handleListMenuItemsClick(_event?: Event): void;
+    /** action createMenuItemCmd (command) — route cafeFlow.menuManagement.createMenuItemCmd; inputs: menuCategoryId, name, description, price, status, imageUrl, displayOrder, requiresStockLink; writes ui.menuManagement.output.createMenuItemCmd; status ui.menuManagement.action.createMenuItemCmd.status; feedback keys action.createMenuItemCmd.success / action.createMenuItemCmd.error */
+    createMenuItemCmd(): Promise<void>;
+    /** handler for action createMenuItemCmd — bind UI events here */
+    handleCreateMenuItemCmdClick(_event?: Event): void;
+    /** action updateMenuItemCmd (command) — route cafeFlow.menuManagement.updateMenuItemCmd; inputs: menuItemId, menuCategoryId, name, description, price, status, pauseReason, imageUrl, displayOrder, requiresStockLink; writes ui.menuManagement.output.updateMenuItemCmd; status ui.menuManagement.action.updateMenuItemCmd.status; feedback keys action.updateMenuItemCmd.success / action.updateMenuItemCmd.error */
+    updateMenuItemCmd(): Promise<void>;
+    /** handler for action updateMenuItemCmd — bind UI events here */
+    handleUpdateMenuItemCmdClick(_event?: Event): void;
+    /** setter for state ui.menuManagement.input.listMenuItems.status */
+    setListMenuItemsStatus(value: string): void;
+    /** handler for action set.listMenuItemsStatus — bind UI events here */
+    handleListMenuItemsStatusChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.listMenuItems.menuCategoryId */
+    setListMenuItemsMenuCategoryId(value: string): void;
+    /** handler for action set.listMenuItemsMenuCategoryId — bind UI events here */
+    handleListMenuItemsMenuCategoryIdChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.listMenuItems.name */
+    setListMenuItemsName(value: string): void;
+    /** handler for action set.listMenuItemsName — bind UI events here */
+    handleListMenuItemsNameChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.listMenuItems.page */
+    setListMenuItemsPage(value: string): void;
+    /** handler for action set.listMenuItemsPage — bind UI events here */
+    handleListMenuItemsPageChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.listMenuItems.pageSize */
+    setListMenuItemsPageSize(value: string): void;
+    /** handler for action set.listMenuItemsPageSize — bind UI events here */
+    handleListMenuItemsPageSizeChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.menuCategoryId */
+    setCreateMenuItemCmdMenuCategoryId(value: string): void;
+    /** handler for action set.createMenuItemCmdMenuCategoryId — bind UI events here */
+    handleCreateMenuItemCmdMenuCategoryIdChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.name */
+    setCreateMenuItemCmdName(value: string): void;
+    /** handler for action set.createMenuItemCmdName — bind UI events here */
+    handleCreateMenuItemCmdNameChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.description */
+    setCreateMenuItemCmdDescription(value: string): void;
+    /** handler for action set.createMenuItemCmdDescription — bind UI events here */
+    handleCreateMenuItemCmdDescriptionChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.price */
+    setCreateMenuItemCmdPrice(value: string): void;
+    /** handler for action set.createMenuItemCmdPrice — bind UI events here */
+    handleCreateMenuItemCmdPriceChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.status */
+    setCreateMenuItemCmdStatus(value: string): void;
+    /** handler for action set.createMenuItemCmdStatus — bind UI events here */
+    handleCreateMenuItemCmdStatusChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.imageUrl */
+    setCreateMenuItemCmdImageUrl(value: string): void;
+    /** handler for action set.createMenuItemCmdImageUrl — bind UI events here */
+    handleCreateMenuItemCmdImageUrlChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.displayOrder */
+    setCreateMenuItemCmdDisplayOrder(value: string): void;
+    /** handler for action set.createMenuItemCmdDisplayOrder — bind UI events here */
+    handleCreateMenuItemCmdDisplayOrderChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.createMenuItemCmd.requiresStockLink */
+    setCreateMenuItemCmdRequiresStockLink(value: string): void;
+    /** handler for action set.createMenuItemCmdRequiresStockLink — bind UI events here */
+    handleCreateMenuItemCmdRequiresStockLinkChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.menuItemId */
+    setUpdateMenuItemCmdMenuItemId(value: string): void;
+    /** handler for action set.updateMenuItemCmdMenuItemId — bind UI events here */
+    handleUpdateMenuItemCmdMenuItemIdChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.menuCategoryId */
+    setUpdateMenuItemCmdMenuCategoryId(value: string): void;
+    /** handler for action set.updateMenuItemCmdMenuCategoryId — bind UI events here */
+    handleUpdateMenuItemCmdMenuCategoryIdChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.name */
+    setUpdateMenuItemCmdName(value: string): void;
+    /** handler for action set.updateMenuItemCmdName — bind UI events here */
+    handleUpdateMenuItemCmdNameChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.description */
+    setUpdateMenuItemCmdDescription(value: string): void;
+    /** handler for action set.updateMenuItemCmdDescription — bind UI events here */
+    handleUpdateMenuItemCmdDescriptionChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.price */
+    setUpdateMenuItemCmdPrice(value: string): void;
+    /** handler for action set.updateMenuItemCmdPrice — bind UI events here */
+    handleUpdateMenuItemCmdPriceChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.status */
+    setUpdateMenuItemCmdStatus(value: string): void;
+    /** handler for action set.updateMenuItemCmdStatus — bind UI events here */
+    handleUpdateMenuItemCmdStatusChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.pauseReason */
+    setUpdateMenuItemCmdPauseReason(value: string): void;
+    /** handler for action set.updateMenuItemCmdPauseReason — bind UI events here */
+    handleUpdateMenuItemCmdPauseReasonChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.imageUrl */
+    setUpdateMenuItemCmdImageUrl(value: string): void;
+    /** handler for action set.updateMenuItemCmdImageUrl — bind UI events here */
+    handleUpdateMenuItemCmdImageUrlChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.displayOrder */
+    setUpdateMenuItemCmdDisplayOrder(value: string): void;
+    /** handler for action set.updateMenuItemCmdDisplayOrder — bind UI events here */
+    handleUpdateMenuItemCmdDisplayOrderChange(event: Event): void;
+    /** setter for state ui.menuManagement.input.updateMenuItemCmd.requiresStockLink */
+    setUpdateMenuItemCmdRequiresStockLink(value: string): void;
+    /** handler for action set.updateMenuItemCmdRequiresStockLink — bind UI events here */
+    handleUpdateMenuItemCmdRequiresStockLinkChange(event: Event): void;
+}

@@ -1,0 +1,129 @@
+{
+  "savedAt": "2026-07-22T14:45:32.296Z",
+  "stepId": "e3-entity-MenuCategory",
+  "agentName": "agentNsOntology",
+  "attempt": 1,
+  "payload": {
+    "artifact": {
+      "entityId": "MenuCategory",
+      "title": "Categoria do Cardápio",
+      "description": "Agrupamento estável de itens do cardápio usado para organizar o POS e a consulta rápida.",
+      "kind": "mdm",
+      "ownership": "moduleOwned",
+      "fields": [
+        {
+          "fieldId": "menuCategoryId",
+          "type": "uuid",
+          "required": true,
+          "description": "Identificador único da categoria do cardápio."
+        },
+        {
+          "fieldId": "name",
+          "type": "string",
+          "required": true,
+          "description": "Nome exibido da categoria (ex.: Bebidas, Pratos Principais)."
+        },
+        {
+          "fieldId": "displayOrder",
+          "type": "number",
+          "required": true,
+          "description": "Ordem de exibição da categoria no POS para consulta rápida."
+        },
+        {
+          "fieldId": "status",
+          "type": "string",
+          "required": true,
+          "description": "Situação da categoria no cardápio ativo.",
+          "enum": [
+            "active",
+            "inactive"
+          ]
+        },
+        {
+          "fieldId": "createdAt",
+          "type": "datetime",
+          "required": true,
+          "description": "Data e hora de criação da categoria."
+        },
+        {
+          "fieldId": "updatedAt",
+          "type": "datetime",
+          "required": true,
+          "description": "Data e hora da última alteração da categoria."
+        }
+      ],
+      "statusEnum": [
+        "active",
+        "inactive"
+      ],
+      "lifecycleStates": [
+        "active",
+        "inactive"
+      ]
+    },
+    "gate": {
+      "ok": true,
+      "artifact": {
+        "entityId": "MenuCategory",
+        "title": "Categoria do Cardápio",
+        "description": "Agrupamento estável de itens do cardápio usado para organizar o POS e a consulta rápida.",
+        "kind": "mdm",
+        "ownership": "moduleOwned",
+        "fields": [
+          {
+            "fieldId": "menuCategoryId",
+            "type": "uuid",
+            "required": true,
+            "description": "Identificador único da categoria do cardápio."
+          },
+          {
+            "fieldId": "name",
+            "type": "string",
+            "required": true,
+            "description": "Nome exibido da categoria (ex.: Bebidas, Pratos Principais)."
+          },
+          {
+            "fieldId": "displayOrder",
+            "type": "number",
+            "required": true,
+            "description": "Ordem de exibição da categoria no POS para consulta rápida."
+          },
+          {
+            "fieldId": "status",
+            "type": "string",
+            "required": true,
+            "description": "Situação da categoria no cardápio ativo.",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          {
+            "fieldId": "createdAt",
+            "type": "datetime",
+            "required": true,
+            "description": "Data e hora de criação da categoria."
+          },
+          {
+            "fieldId": "updatedAt",
+            "type": "datetime",
+            "required": true,
+            "description": "Data e hora da última alteração da categoria."
+          }
+        ],
+        "statusEnum": [
+          "active",
+          "inactive"
+        ],
+        "lifecycleStates": [
+          "active",
+          "inactive"
+        ]
+      },
+      "errors": [],
+      "warnings": [],
+      "attempts": 1,
+      "needsHumanInput": false
+    }
+  }
+}

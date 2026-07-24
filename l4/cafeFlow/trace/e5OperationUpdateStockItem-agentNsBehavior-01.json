@@ -1,0 +1,342 @@
+{
+  "savedAt": "2026-07-22T14:49:29.332Z",
+  "stepId": "e5-operation-updateStockItem",
+  "agentName": "agentNsBehavior",
+  "attempt": 1,
+  "payload": {
+    "artifact": {
+      "operationId": "updateStockItem",
+      "title": "Atualizar item de estoque",
+      "actors": [
+        "gerente"
+      ],
+      "entity": "StockItem",
+      "kind": "update",
+      "reads": [
+        "StockItem"
+      ],
+      "writes": [
+        "StockItem"
+      ],
+      "rulesApplied": [
+        "lowStockMustBeVisible"
+      ],
+      "story": {
+        "actor": "gerente",
+        "goal": "Atualizar os dados cadastrais de um item de estoque existente para manter o controle da despensa alinhado à operação",
+        "steps": [
+          "O gerente abre o item de estoque selecionado para edição",
+          "O gerente altera nome, unidade de medida, nível mínimo e/ou descrição do insumo",
+          "O gerente confirma a atualização do cadastro"
+        ],
+        "outcome": "O cadastro do item de estoque fica persistido com os novos dados e o nível mínimo atualizado passa a alimentar os alertas de estoque baixo"
+      },
+      "accessPattern": {
+        "kind": "commandInput",
+        "description": "Formulário de edição do cadastro de um item de estoque existente, identificado pelo stockItemId",
+        "entity": "StockItem",
+        "keyField": "StockItem.stockItemId",
+        "pagination": "none",
+        "selection": "single",
+        "output": [
+          "StockItem.stockItemId",
+          "StockItem.name",
+          "StockItem.unit",
+          "StockItem.currentBalance",
+          "StockItem.minimumLevel",
+          "StockItem.description",
+          "StockItem.updatedAt"
+        ]
+      },
+      "outputShape": {
+        "kind": "object",
+        "fields": [
+          {
+            "name": "stockItemId",
+            "type": "string",
+            "required": true,
+            "fieldRef": "StockItem.stockItemId"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": true,
+            "fieldRef": "StockItem.name"
+          },
+          {
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "fieldRef": "StockItem.unit"
+          },
+          {
+            "name": "currentBalance",
+            "type": "number",
+            "required": true,
+            "fieldRef": "StockItem.currentBalance"
+          },
+          {
+            "name": "minimumLevel",
+            "type": "number",
+            "required": true,
+            "fieldRef": "StockItem.minimumLevel"
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "required": false,
+            "fieldRef": "StockItem.description"
+          },
+          {
+            "name": "updatedAt",
+            "type": "string",
+            "required": true,
+            "fieldRef": "StockItem.updatedAt"
+          }
+        ]
+      },
+      "inputs": [
+        {
+          "inputId": "stockItemId",
+          "fieldRef": "StockItem.stockItemId",
+          "required": true,
+          "source": "routeParam",
+          "description": "Identificador do item de estoque a ser atualizado"
+        },
+        {
+          "inputId": "name",
+          "fieldRef": "StockItem.name",
+          "required": true,
+          "source": "userInput",
+          "description": "Nome atualizado do insumo físico controlado pela cafeteria"
+        },
+        {
+          "inputId": "unit",
+          "fieldRef": "StockItem.unit",
+          "required": true,
+          "source": "userInput",
+          "description": "Unidade de medida utilizada para contabilizar o saldo e as movimentações do insumo"
+        },
+        {
+          "inputId": "minimumLevel",
+          "fieldRef": "StockItem.minimumLevel",
+          "required": true,
+          "source": "userInput",
+          "description": "Nível mínimo configurado para disparo do alerta de estoque baixo"
+        },
+        {
+          "inputId": "description",
+          "fieldRef": "StockItem.description",
+          "required": false,
+          "source": "userInput",
+          "description": "Descrição complementar do insumo para identificação pela equipe"
+        },
+        {
+          "inputId": "updatedAt",
+          "fieldRef": "StockItem.updatedAt",
+          "required": true,
+          "source": "systemDefault",
+          "description": "Data e hora em que a atualização do cadastro é registrada"
+        }
+      ],
+      "contextResolution": [
+        {
+          "inputId": "stockItemId",
+          "targetRef": "StockItem.stockItemId",
+          "source": "routeParam",
+          "originRef": "routeParam.stockItemId",
+          "description": "Identificador do item de estoque obtido do parâmetro de rota da tela de edição"
+        },
+        {
+          "inputId": "updatedAt",
+          "targetRef": "StockItem.updatedAt",
+          "source": "systemDefault",
+          "originRef": "systemDefault.now",
+          "description": "Timestamp atual gerado pelo sistema no momento da confirmação da atualização"
+        }
+      ],
+      "acceptanceAssertions": [
+        "Após a confirmação, o item de estoque identificado por stockItemId existe com os novos valores de name, unit, minimumLevel e description informados",
+        "O campo updatedAt do item de estoque é atualizado com o momento da alteração",
+        "Itens cujo currentBalance fique abaixo do novo minimumLevel passam a ser elegíveis para destaque de estoque baixo no controle de estoque e no dashboard",
+        "O currentBalance do item não é alterado por esta operação de atualização cadastral"
+      ],
+      "pageId": "updateStockItem",
+      "commandName": "updateStockItem",
+      "bffName": "cafeFlow.updateStockItem.updateStockItem",
+      "capability": {
+        "capabilityId": "updateStockItem",
+        "title": "Atualizar item de estoque",
+        "actor": "gerente",
+        "priority": "now"
+      },
+      "statusFrontend": "toCreate",
+      "statusBackend": "toCreate"
+    },
+    "gate": {
+      "ok": true,
+      "artifact": {
+        "operationId": "updateStockItem",
+        "title": "Atualizar item de estoque",
+        "actors": [
+          "gerente"
+        ],
+        "entity": "StockItem",
+        "kind": "update",
+        "reads": [
+          "StockItem"
+        ],
+        "writes": [
+          "StockItem"
+        ],
+        "rulesApplied": [
+          "lowStockMustBeVisible"
+        ],
+        "story": {
+          "actor": "gerente",
+          "goal": "Atualizar os dados cadastrais de um item de estoque existente para manter o controle da despensa alinhado à operação",
+          "steps": [
+            "O gerente abre o item de estoque selecionado para edição",
+            "O gerente altera nome, unidade de medida, nível mínimo e/ou descrição do insumo",
+            "O gerente confirma a atualização do cadastro"
+          ],
+          "outcome": "O cadastro do item de estoque fica persistido com os novos dados e o nível mínimo atualizado passa a alimentar os alertas de estoque baixo"
+        },
+        "accessPattern": {
+          "kind": "commandInput",
+          "description": "Formulário de edição do cadastro de um item de estoque existente, identificado pelo stockItemId",
+          "entity": "StockItem",
+          "keyField": "StockItem.stockItemId",
+          "pagination": "none",
+          "selection": "single",
+          "output": [
+            "StockItem.stockItemId",
+            "StockItem.name",
+            "StockItem.unit",
+            "StockItem.currentBalance",
+            "StockItem.minimumLevel",
+            "StockItem.description",
+            "StockItem.updatedAt"
+          ]
+        },
+        "outputShape": {
+          "kind": "object",
+          "fields": [
+            {
+              "name": "stockItemId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "StockItem.stockItemId"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "fieldRef": "StockItem.name"
+            },
+            {
+              "name": "unit",
+              "type": "string",
+              "required": true,
+              "fieldRef": "StockItem.unit"
+            },
+            {
+              "name": "currentBalance",
+              "type": "number",
+              "required": true,
+              "fieldRef": "StockItem.currentBalance"
+            },
+            {
+              "name": "minimumLevel",
+              "type": "number",
+              "required": true,
+              "fieldRef": "StockItem.minimumLevel"
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "required": false,
+              "fieldRef": "StockItem.description"
+            },
+            {
+              "name": "updatedAt",
+              "type": "string",
+              "required": true,
+              "fieldRef": "StockItem.updatedAt"
+            }
+          ]
+        },
+        "inputs": [
+          {
+            "inputId": "stockItemId",
+            "fieldRef": "StockItem.stockItemId",
+            "required": true,
+            "source": "routeParam",
+            "description": "Identificador do item de estoque a ser atualizado"
+          },
+          {
+            "inputId": "name",
+            "fieldRef": "StockItem.name",
+            "required": true,
+            "source": "userInput",
+            "description": "Nome atualizado do insumo físico controlado pela cafeteria"
+          },
+          {
+            "inputId": "unit",
+            "fieldRef": "StockItem.unit",
+            "required": true,
+            "source": "userInput",
+            "description": "Unidade de medida utilizada para contabilizar o saldo e as movimentações do insumo"
+          },
+          {
+            "inputId": "minimumLevel",
+            "fieldRef": "StockItem.minimumLevel",
+            "required": true,
+            "source": "userInput",
+            "description": "Nível mínimo configurado para disparo do alerta de estoque baixo"
+          },
+          {
+            "inputId": "description",
+            "fieldRef": "StockItem.description",
+            "required": false,
+            "source": "userInput",
+            "description": "Descrição complementar do insumo para identificação pela equipe"
+          },
+          {
+            "inputId": "updatedAt",
+            "fieldRef": "StockItem.updatedAt",
+            "required": true,
+            "source": "systemDefault",
+            "description": "Data e hora em que a atualização do cadastro é registrada"
+          }
+        ],
+        "contextResolution": [
+          {
+            "inputId": "stockItemId",
+            "targetRef": "StockItem.stockItemId",
+            "source": "routeParam",
+            "originRef": "routeParam.stockItemId",
+            "description": "Identificador do item de estoque obtido do parâmetro de rota da tela de edição"
+          },
+          {
+            "inputId": "updatedAt",
+            "targetRef": "StockItem.updatedAt",
+            "source": "systemDefault",
+            "originRef": "systemDefault.now",
+            "description": "Timestamp atual gerado pelo sistema no momento da confirmação da atualização"
+          }
+        ],
+        "acceptanceAssertions": [
+          "Após a confirmação, o item de estoque identificado por stockItemId existe com os novos valores de name, unit, minimumLevel e description informados",
+          "O campo updatedAt do item de estoque é atualizado com o momento da alteração",
+          "Itens cujo currentBalance fique abaixo do novo minimumLevel passam a ser elegíveis para destaque de estoque baixo no controle de estoque e no dashboard",
+          "O currentBalance do item não é alterado por esta operação de atualização cadastral"
+        ]
+      },
+      "errors": [],
+      "warnings": [],
+      "attempts": 1,
+      "needsHumanInput": false
+    }
+  }
+}

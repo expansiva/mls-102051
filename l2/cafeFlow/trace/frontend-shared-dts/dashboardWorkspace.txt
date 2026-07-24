@@ -1,0 +1,112 @@
+import { CollabLitElement } from '/_102029_/l2/collabLitElement.js';
+import type { GetDashboardOutput, GetAiSalesSummaryOutput, GetAiPromotionSuggestionsOutput } from '/_102051_/l2/cafeFlow/web/contracts/dashboardWorkspace.js';
+export type { GetDashboardInput, GetDashboardOutput, GetAiSalesSummaryInput, GetAiSalesSummaryOutput, GetAiPromotionSuggestionsInput, GetAiPromotionSuggestionsOutput, } from '/_102051_/l2/cafeFlow/web/contracts/dashboardWorkspace.js';
+declare const message_pt: {
+    "section.dashboardWorkspace.sec-kpi-overview.title": string;
+    "organism.dashboardWorkspace.getDashboard.title": string;
+    "intent.dashboardWorkspace.getDashboard.list.title": string;
+    "intent.dashboardWorkspace.getDashboard.list.empty": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.operationalDashboardId.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.dailyShiftId.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.referenceDate.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.todaySalesTotal.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.todayOrdersCount.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.todayItemsSold.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.topMenuItemId.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.topMenuItemQuantity.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.topSellingItemsCount.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.lowStockItemsCount.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.outOfStockItemsCount.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.hasLowStockAlert.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.lastComputedAt.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.topSellingItems.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.column.lowStockAlerts.label": string;
+    "intent.dashboardWorkspace.getDashboard.list.filter.dailyShiftId.label": string;
+    "section.dashboardWorkspace.sec-top-selling.title": string;
+    "section.dashboardWorkspace.sec-stock-alerts.title": string;
+    "section.dashboardWorkspace.sec-ai-sales-summary.title": string;
+    "organism.dashboardWorkspace.getAiSalesSummary.title": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.title": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.empty": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.aiSalesSummaryId.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.operationalDashboardId.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.summaryDate.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.periodStart.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.periodEnd.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.summaryText.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.modelId.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.promptTokens.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.completionTokens.label": string;
+    "intent.dashboardWorkspace.getAiSalesSummary.list.column.generatedAt.label": string;
+    "section.dashboardWorkspace.sec-ai-promotion-suggestions.title": string;
+    "organism.dashboardWorkspace.getAiPromotionSuggestions.title": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.title": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.empty": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.aiPromotionSuggestionId.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.operationalDashboardId.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.menuItemId.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.menuItemName.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.menuCategoryId.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.reason.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.salesLast7Days.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.salesToday.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.currentStockLevel.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.confidenceScore.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.suggestedDiscountPercent.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.status.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.generatedAt.label": string;
+    "intent.dashboardWorkspace.getAiPromotionSuggestions.list.column.expiresAt.label": string;
+};
+type MessageType = typeof message_pt;
+export declare class CafeFlowDashboardWorkspaceBase extends CollabLitElement {
+    /** state status — pageStatus */
+    status: string;
+    /** state getDashboardState — actionStatus, values: idle|loading|success|error */
+    getDashboardState: 'idle' | 'loading' | 'success' | 'error';
+    /** state getDashboardDailyShiftId — input */
+    getDashboardDailyShiftId: string;
+    /** state getDashboardData — queryResult, outputShape: object */
+    getDashboardData: GetDashboardOutput | null;
+    /** state getAiSalesSummaryState — actionStatus, values: idle|loading|success|error */
+    getAiSalesSummaryState: 'idle' | 'loading' | 'success' | 'error';
+    /** state getAiSalesSummaryOperationalDashboardId — input */
+    getAiSalesSummaryOperationalDashboardId: string;
+    /** state getAiSalesSummaryData — queryResult, outputShape: object */
+    getAiSalesSummaryData: GetAiSalesSummaryOutput | null;
+    /** state getAiPromotionSuggestionsState — actionStatus, values: idle|loading|success|error */
+    getAiPromotionSuggestionsState: 'idle' | 'loading' | 'success' | 'error';
+    /** state getAiPromotionSuggestionsOperationalDashboardId — input */
+    getAiPromotionSuggestionsOperationalDashboardId: string;
+    /** state getAiPromotionSuggestionsData — queryResult, outputShape: array */
+    getAiPromotionSuggestionsData: GetAiPromotionSuggestionsOutput[];
+    /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
+    protected get msg(): MessageType;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    /** handleIcaStateChange — collabState notify contract */
+    handleIcaStateChange(key: string, value: unknown): void;
+    /** action getDashboard (query) — route cafeFlow.dashboardWorkspace.getDashboard; inputs: dailyShiftId; writes ui.dashboardWorkspace.data.getDashboard; status ui.dashboardWorkspace.action.getDashboard.status */
+    loadGetDashboard(): Promise<void>;
+    /** handler for action getDashboard — bind UI events here */
+    handleGetDashboardClick(_event?: Event): void;
+    /** action getAiSalesSummary (query) — route cafeFlow.dashboardWorkspace.getAiSalesSummary; inputs: operationalDashboardId; writes ui.dashboardWorkspace.data.getAiSalesSummary; status ui.dashboardWorkspace.action.getAiSalesSummary.status */
+    loadGetAiSalesSummary(): Promise<void>;
+    /** handler for action getAiSalesSummary — bind UI events here */
+    handleGetAiSalesSummaryClick(_event?: Event): void;
+    /** action getAiPromotionSuggestions (query) — route cafeFlow.dashboardWorkspace.getAiPromotionSuggestions; inputs: operationalDashboardId; writes ui.dashboardWorkspace.data.getAiPromotionSuggestions; status ui.dashboardWorkspace.action.getAiPromotionSuggestions.status */
+    loadGetAiPromotionSuggestions(): Promise<void>;
+    /** handler for action getAiPromotionSuggestions — bind UI events here */
+    handleGetAiPromotionSuggestionsClick(_event?: Event): void;
+    /** setter for state ui.dashboardWorkspace.input.getDashboard.dailyShiftId */
+    setGetDashboardDailyShiftId(value: string): void;
+    /** handler for action set.getDashboardDailyShiftId — bind UI events here */
+    handleGetDashboardDailyShiftIdChange(event: Event): void;
+    /** setter for state ui.dashboardWorkspace.input.getAiSalesSummary.operationalDashboardId */
+    setGetAiSalesSummaryOperationalDashboardId(value: string): void;
+    /** handler for action set.getAiSalesSummaryOperationalDashboardId — bind UI events here */
+    handleGetAiSalesSummaryOperationalDashboardIdChange(event: Event): void;
+    /** setter for state ui.dashboardWorkspace.input.getAiPromotionSuggestions.operationalDashboardId */
+    setGetAiPromotionSuggestionsOperationalDashboardId(value: string): void;
+    /** handler for action set.getAiPromotionSuggestionsOperationalDashboardId — bind UI events here */
+    handleGetAiPromotionSuggestionsOperationalDashboardIdChange(event: Event): void;
+}

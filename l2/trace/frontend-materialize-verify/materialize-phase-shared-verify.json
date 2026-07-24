@@ -1,0 +1,105 @@
+{
+  "savedAt": "2026-07-23T01:06:08.299Z",
+  "planId": "materialize-phase-shared-verify",
+  "attempt": 1,
+  "brokenCount": 6,
+  "broken": [
+    {
+      "planId": "materialize-dashboardworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts",
+      "typecheck": "failed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/dashboardWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/dashboardWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/dashboardWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.test.ts - TS2792 - Cannot find module '../contracts/dashboardWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'."
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-kitchenworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.ts",
+      "typecheck": "failed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/kitchenWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/kitchenWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/kitchenWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.test.ts - TS2792 - Cannot find module '../contracts/kitchenWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'."
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-menumanagement-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/menuManagement.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/menuManagement.ts",
+      "typecheck": "failed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/menuManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/menuManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/menuManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.test.ts - TS2792 - Cannot find module '../contracts/menuManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'."
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-posworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/posWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/posWorkspace.ts",
+      "typecheck": "failed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/posWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/posWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/posWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.test.ts - TS2792 - Cannot find module '../contracts/posWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'."
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-shiftworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/shiftWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/shiftWorkspace.ts",
+      "typecheck": "failed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/shiftWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/shiftWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/shiftWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.test.ts - TS2792 - Cannot find module '../contracts/shiftWorkspace.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'."
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-stockmanagement-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/stockManagement.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/stockManagement.ts",
+      "typecheck": "failed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/stockManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/stockManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.ts - TS2792 - Cannot find module '/_102051_/l2/cafeFlow/web/contracts/stockManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.test.ts - TS2792 - Cannot find module '../contracts/stockManagement.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/stockManagement.test.ts - TS2344 - Type 'false' does not satisfy the constraint 'true'."
+      ],
+      "warnings": []
+    }
+  ],
+  "agent": "agentCfeMaterializePhase"
+}

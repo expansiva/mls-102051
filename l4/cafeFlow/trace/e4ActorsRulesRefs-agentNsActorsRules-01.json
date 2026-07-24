@@ -1,0 +1,670 @@
+{
+  "savedAt": "2026-07-22T14:46:42.416Z",
+  "stepId": "e4-actors-rules-refs",
+  "agentName": "agentNsActorsRules",
+  "attempt": 1,
+  "payload": {
+    "artifact": {
+      "schemaVersion": "2026-07-07-ns-e4-v1",
+      "moduleName": "cafeFlow",
+      "userLanguage": "pt-BR",
+      "createdAt": "2026-07-22T14:46:42.407Z",
+      "actors": [
+        {
+          "actorId": "atendente",
+          "title": "Atendente",
+          "description": "Registra pedidos no PDV (mesa ou takeout), confirma o envio à cozinha, acompanha o status dos pedidos e marca como servidos/entregues os pedidos prontos.",
+          "roleScope": "cafeFlow:atendente"
+        },
+        {
+          "actorId": "cozinheiro",
+          "title": "Cozinheiro",
+          "description": "Recebe os pedidos confirmados na fila da cozinha, consulta itens e observações, e atualiza o status de preparo (recebido → em preparo → pronto).",
+          "roleScope": "cafeFlow:cozinheiro"
+        },
+        {
+          "actorId": "gerente",
+          "title": "Gerente",
+          "description": "Mantém cardápio e itens de estoque, ajusta manualmente o estoque, abre e fecha o turno diário, gera o relatório de fechamento e acompanha o dashboard operacional.",
+          "roleScope": "cafeFlow:gerente"
+        }
+      ],
+      "rules": [
+        {
+          "ruleId": "orderRequiresTableOrTakeout",
+          "title": "Pedido deve ser mesa ou takeout",
+          "description": "Todo pedido registrado deve ser classificado como mesa (table) ou takeout; nenhum pedido pode existir sem essa definição.",
+          "appliesTo": [
+            "Order"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "Todo pedido deve ser mesa ou takeout."
+          ]
+        },
+        {
+          "ruleId": "onlyActiveMenuItemsCanBeOrdered",
+          "title": "Somente itens ativos do cardápio podem ser lançados no pedido",
+          "description": "Somente itens do cardápio com status ativo podem ser lançados em um pedido; itens pausados ficam indisponíveis no POS.",
+          "appliesTo": [
+            "OrderItem",
+            "MenuItem"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "Somente itens ativos do cardápio podem ser lançados.",
+            "Itens pausados não devem aparecer para novos lançamentos no POS."
+          ]
+        },
+        {
+          "ruleId": "orderEntersKitchenQueueAfterAttendantConfirmation",
+          "title": "Pedido entra na fila da cozinha só após confirmação do atendente",
+          "description": "Um pedido só entra na fila ativa da cozinha após confirmação explícita do atendente; pedidos não confirmados não são visíveis à cozinha.",
+          "appliesTo": [
+            "Order"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "O pedido só entra na fila da cozinha após confirmação do atendente.",
+            "A cozinha só atua em pedidos enviados/confirmados."
+          ]
+        },
+        {
+          "ruleId": "orderTotalFromPriceAtLaunchTime",
+          "title": "Total do pedido usa preço e quantidade no momento do lançamento",
+          "description": "O total do pedido é calculado a partir do preço de cardápio e da quantidade de cada item no instante do lançamento; alterações posteriores no cardápio não recalculam pedidos já registrados.",
+          "appliesTo": [
+            "Order",
+            "OrderItem"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "O total do pedido reflete preço e quantidade dos itens no momento do lançamento."
+          ]
+        },
+        {
+          "ruleId": "onlyReadyOrdersCanBeServed",
+          "title": "Somente pedidos prontos podem ser marcados como servidos",
+          "description": "Somente pedidos com status pronto podem ser marcados como servidos/entregues pelo atendente; não é permitido servir pedidos em outros estados.",
+          "appliesTo": [
+            "Order"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "Somente pedidos prontos podem ser marcados como servidos/entregues pelo atendente."
+          ]
+        },
+        {
+          "ruleId": "autoStockDeductionOnServe",
+          "title": "Baixa automática de estoque ao concluir/servir o pedido",
+          "description": "Ao concluir/servir o pedido, é gerada automaticamente a baixa de estoque dos ingredientes vinculados aos seus itens, nas quantidades definidas no vínculo item-ingrediente.",
+          "appliesTo": [
+            "Order",
+            "StockConsumption",
+            "MenuItemIngredient"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "A baixa automática de estoque ocorre ao concluir/servir o pedido.",
+            "Baixa automática ocorre ao concluir/servir pedidos com ingredientes vinculados.",
+            "Vínculo com ingredientes é necessário para baixa automática ao concluir o pedido."
+          ]
+        },
+        {
+          "ruleId": "completedOrdersLeaveKitchenQueue",
+          "title": "Pedidos concluídos não voltam à fila ativa da cozinha",
+          "description": "Pedidos já concluídos/servidos são removidos da fila ativa da cozinha e não voltam a ela.",
+          "appliesTo": [
+            "Order"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "Pedidos já concluídos não voltam para a fila ativa da cozinha."
+          ]
+        },
+        {
+          "ruleId": "kitchenStatusProgressesInOrder",
+          "title": "Status de preparo progride de forma coerente",
+          "description": "O status de preparo da cozinha deve progredir em ordem coerente (recebido → em preparo → pronto); transições fora dessa ordem não são permitidas.",
+          "appliesTo": [
+            "Order"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "O status de preparo deve progredir de forma coerente (ex.: recebido → em preparo → pronto)."
+          ]
+        },
+        {
+          "ruleId": "orderItemsArePrepReference",
+          "title": "Itens e observações do pedido são referência de preparo",
+          "description": "Itens e observações registrados no pedido confirmado são a referência para o preparo; qualquer alteração após o envio à cozinha exige alinhamento com o atendente.",
+          "appliesTo": [
+            "Order",
+            "OrderItem"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "Itens e observações do pedido são a referência de preparo; alterações depois do envio exigem alinhamento com o atendente."
+          ]
+        },
+        {
+          "ruleId": "menuItemNeedsCategoryAndPrice",
+          "title": "Item de cardápio requer categoria e preço para ser vendido",
+          "description": "Um item do cardápio só pode ser vendido se estiver vinculado a uma categoria e possuir preço definido; itens sem categoria ou sem preço não ficam disponíveis para venda.",
+          "appliesTo": [
+            "MenuItem"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "Item precisa de categoria e preço para ser vendido."
+          ]
+        },
+        {
+          "ruleId": "managerManualStockAdjustmentAllowed",
+          "title": "Gerente pode ajustar manualmente o estoque para corrigir divergências",
+          "description": "O gerente pode registrar ajustes manuais de estoque para corrigir divergências; ajustes exigem referência a um item de estoque e ficam registrados como evento.",
+          "appliesTo": [
+            "StockAdjustment",
+            "StockItem"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "Ajuste manual é permitido ao gerente para corrigir divergências."
+          ]
+        },
+        {
+          "ruleId": "lowStockMustBeVisible",
+          "title": "Estoque baixo deve ser visível no dashboard e no controle de estoque",
+          "description": "Itens de estoque que atingirem nível baixo devem ficar destacados tanto no controle de estoque quanto no dashboard operacional.",
+          "appliesTo": [
+            "StockItem",
+            "OperationalDashboard"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "Estoque baixo deve ser visível no dashboard e no controle de estoque."
+          ]
+        },
+        {
+          "ruleId": "ordersRequireOpenDailyShift",
+          "title": "Pedidos do dia exigem turno diário aberto",
+          "description": "Toda operação de pedido do dia deve estar vinculada a um turno diário que esteja aberto; não é permitido criar pedidos sem turno aberto no momento.",
+          "appliesTo": [
+            "Order",
+            "DailyShift"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "A operação de pedidos do dia deve estar vinculada a um turno diário aberto."
+          ]
+        },
+        {
+          "ruleId": "shiftClosingReportContents",
+          "title": "Relatório de fechamento resume vendas, destaques e estoque baixo",
+          "description": "O relatório de fechamento resume as vendas do turno, destaca os itens mais vendidos e sinaliza itens com estoque baixo ou em ruptura.",
+          "appliesTo": [
+            "ShiftClosingReport",
+            "DailyShift"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "O relatório de fechamento resume vendas do turno, destaques de itens e sinais de estoque baixo/ruptura."
+          ]
+        },
+        {
+          "ruleId": "shiftClosingRecordsBasicTotalsAndPayments",
+          "title": "Fechamento registra totais e formas de pagamento básicas",
+          "description": "O fechamento de turno registra totais e formas de pagamento básicas, sem cálculos contábeis avançados.",
+          "appliesTo": [
+            "ShiftClosingReport",
+            "OrderPayment"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "Fechamento registra totais e formas de pagamento básicas, sem contabilidade avançada."
+          ]
+        },
+        {
+          "ruleId": "aiSummaryUsesExistingOperationalData",
+          "title": "IA usa dados de vendas já existentes (hoje e últimos 7 dias)",
+          "description": "O assistente de IA gera o resumo de vendas do dia utilizando exclusivamente dados de vendas do dia corrente e dos últimos 7 dias já existentes na operação.",
+          "appliesTo": [
+            "AiSalesSummary",
+            "OperationalDashboard"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "O assistente de IA usa dados de vendas do dia e dos últimos 7 dias já existentes na operação."
+          ]
+        },
+        {
+          "ruleId": "aiPromotionSuggestionsAreDecisionSupport",
+          "title": "Sugestões de promoção são apoio à decisão, sem campanhas automáticas",
+          "description": "As sugestões de promoção geradas pela IA são apenas apoio à decisão do gerente e não disparam campanhas automatizadas.",
+          "appliesTo": [
+            "AiPromotionSuggestion"
+          ],
+          "layer": "application",
+          "sourceJourneyRules": [
+            "Sugestões de promoção são apoio à decisão; não disparam campanhas automatizadas."
+          ]
+        },
+        {
+          "ruleId": "dashboardHighlightsCoreMetrics",
+          "title": "Dashboard destaca vendas de hoje, mais vendidos e estoque baixo",
+          "description": "O dashboard operacional deve destacar, no mínimo: vendas do dia corrente, itens mais vendidos e itens com estoque baixo.",
+          "appliesTo": [
+            "OperationalDashboard"
+          ],
+          "layer": "domain",
+          "sourceJourneyRules": [
+            "Dashboard destaca vendas de hoje, mais vendidos e estoque baixo."
+          ]
+        }
+      ],
+      "externalRefs": {
+        "mdm": [
+          {
+            "title": "Cardápio (itens e categorias)",
+            "reason": "Itens do cardápio e categorias precisam de identidade estável e rara mudança, próprios para o MDM."
+          },
+          {
+            "title": "Itens de estoque (insumos)",
+            "reason": "Itens de estoque são referência estável para baixa automática e ajustes."
+          }
+        ],
+        "horizontals": [],
+        "plugins": [],
+        "agents": [
+          {
+            "title": "Assistente de IA do módulo",
+            "reason": "Gerar o resumo de vendas do dia e sugestões de itens a promover a partir dos dados de vendas existentes."
+          },
+          {
+            "title": "Capacidades de plataforma (auth/RBAC/i18n/multi-tenant/LLM proxy)",
+            "reason": "Autenticação, RBAC, multi-tenant, i18n e proxy de LLM são capacidades já fornecidas pela plataforma collab.codes."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "ok": true,
+      "artifact": {
+        "schemaVersion": "2026-07-07-ns-e4-v1",
+        "moduleName": "cafeFlow",
+        "userLanguage": "pt-BR",
+        "createdAt": "2026-07-22T14:46:42.407Z",
+        "actors": [
+          {
+            "actorId": "atendente",
+            "title": "Atendente",
+            "description": "Registra pedidos no PDV (mesa ou takeout), confirma o envio à cozinha, acompanha o status dos pedidos e marca como servidos/entregues os pedidos prontos.",
+            "roleScope": "cafeFlow:atendente"
+          },
+          {
+            "actorId": "cozinheiro",
+            "title": "Cozinheiro",
+            "description": "Recebe os pedidos confirmados na fila da cozinha, consulta itens e observações, e atualiza o status de preparo (recebido → em preparo → pronto).",
+            "roleScope": "cafeFlow:cozinheiro"
+          },
+          {
+            "actorId": "gerente",
+            "title": "Gerente",
+            "description": "Mantém cardápio e itens de estoque, ajusta manualmente o estoque, abre e fecha o turno diário, gera o relatório de fechamento e acompanha o dashboard operacional.",
+            "roleScope": "cafeFlow:gerente"
+          }
+        ],
+        "rules": [
+          {
+            "ruleId": "orderRequiresTableOrTakeout",
+            "title": "Pedido deve ser mesa ou takeout",
+            "description": "Todo pedido registrado deve ser classificado como mesa (table) ou takeout; nenhum pedido pode existir sem essa definição.",
+            "appliesTo": [
+              "Order"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "Todo pedido deve ser mesa ou takeout."
+            ]
+          },
+          {
+            "ruleId": "onlyActiveMenuItemsCanBeOrdered",
+            "title": "Somente itens ativos do cardápio podem ser lançados no pedido",
+            "description": "Somente itens do cardápio com status ativo podem ser lançados em um pedido; itens pausados ficam indisponíveis no POS.",
+            "appliesTo": [
+              "OrderItem",
+              "MenuItem"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "Somente itens ativos do cardápio podem ser lançados.",
+              "Itens pausados não devem aparecer para novos lançamentos no POS."
+            ]
+          },
+          {
+            "ruleId": "orderEntersKitchenQueueAfterAttendantConfirmation",
+            "title": "Pedido entra na fila da cozinha só após confirmação do atendente",
+            "description": "Um pedido só entra na fila ativa da cozinha após confirmação explícita do atendente; pedidos não confirmados não são visíveis à cozinha.",
+            "appliesTo": [
+              "Order"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "O pedido só entra na fila da cozinha após confirmação do atendente.",
+              "A cozinha só atua em pedidos enviados/confirmados."
+            ]
+          },
+          {
+            "ruleId": "orderTotalFromPriceAtLaunchTime",
+            "title": "Total do pedido usa preço e quantidade no momento do lançamento",
+            "description": "O total do pedido é calculado a partir do preço de cardápio e da quantidade de cada item no instante do lançamento; alterações posteriores no cardápio não recalculam pedidos já registrados.",
+            "appliesTo": [
+              "Order",
+              "OrderItem"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "O total do pedido reflete preço e quantidade dos itens no momento do lançamento."
+            ]
+          },
+          {
+            "ruleId": "onlyReadyOrdersCanBeServed",
+            "title": "Somente pedidos prontos podem ser marcados como servidos",
+            "description": "Somente pedidos com status pronto podem ser marcados como servidos/entregues pelo atendente; não é permitido servir pedidos em outros estados.",
+            "appliesTo": [
+              "Order"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "Somente pedidos prontos podem ser marcados como servidos/entregues pelo atendente."
+            ]
+          },
+          {
+            "ruleId": "autoStockDeductionOnServe",
+            "title": "Baixa automática de estoque ao concluir/servir o pedido",
+            "description": "Ao concluir/servir o pedido, é gerada automaticamente a baixa de estoque dos ingredientes vinculados aos seus itens, nas quantidades definidas no vínculo item-ingrediente.",
+            "appliesTo": [
+              "Order",
+              "StockConsumption",
+              "MenuItemIngredient"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "A baixa automática de estoque ocorre ao concluir/servir o pedido.",
+              "Baixa automática ocorre ao concluir/servir pedidos com ingredientes vinculados.",
+              "Vínculo com ingredientes é necessário para baixa automática ao concluir o pedido."
+            ]
+          },
+          {
+            "ruleId": "completedOrdersLeaveKitchenQueue",
+            "title": "Pedidos concluídos não voltam à fila ativa da cozinha",
+            "description": "Pedidos já concluídos/servidos são removidos da fila ativa da cozinha e não voltam a ela.",
+            "appliesTo": [
+              "Order"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "Pedidos já concluídos não voltam para a fila ativa da cozinha."
+            ]
+          },
+          {
+            "ruleId": "kitchenStatusProgressesInOrder",
+            "title": "Status de preparo progride de forma coerente",
+            "description": "O status de preparo da cozinha deve progredir em ordem coerente (recebido → em preparo → pronto); transições fora dessa ordem não são permitidas.",
+            "appliesTo": [
+              "Order"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "O status de preparo deve progredir de forma coerente (ex.: recebido → em preparo → pronto)."
+            ]
+          },
+          {
+            "ruleId": "orderItemsArePrepReference",
+            "title": "Itens e observações do pedido são referência de preparo",
+            "description": "Itens e observações registrados no pedido confirmado são a referência para o preparo; qualquer alteração após o envio à cozinha exige alinhamento com o atendente.",
+            "appliesTo": [
+              "Order",
+              "OrderItem"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "Itens e observações do pedido são a referência de preparo; alterações depois do envio exigem alinhamento com o atendente."
+            ]
+          },
+          {
+            "ruleId": "menuItemNeedsCategoryAndPrice",
+            "title": "Item de cardápio requer categoria e preço para ser vendido",
+            "description": "Um item do cardápio só pode ser vendido se estiver vinculado a uma categoria e possuir preço definido; itens sem categoria ou sem preço não ficam disponíveis para venda.",
+            "appliesTo": [
+              "MenuItem"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "Item precisa de categoria e preço para ser vendido."
+            ]
+          },
+          {
+            "ruleId": "managerManualStockAdjustmentAllowed",
+            "title": "Gerente pode ajustar manualmente o estoque para corrigir divergências",
+            "description": "O gerente pode registrar ajustes manuais de estoque para corrigir divergências; ajustes exigem referência a um item de estoque e ficam registrados como evento.",
+            "appliesTo": [
+              "StockAdjustment",
+              "StockItem"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "Ajuste manual é permitido ao gerente para corrigir divergências."
+            ]
+          },
+          {
+            "ruleId": "lowStockMustBeVisible",
+            "title": "Estoque baixo deve ser visível no dashboard e no controle de estoque",
+            "description": "Itens de estoque que atingirem nível baixo devem ficar destacados tanto no controle de estoque quanto no dashboard operacional.",
+            "appliesTo": [
+              "StockItem",
+              "OperationalDashboard"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "Estoque baixo deve ser visível no dashboard e no controle de estoque."
+            ]
+          },
+          {
+            "ruleId": "ordersRequireOpenDailyShift",
+            "title": "Pedidos do dia exigem turno diário aberto",
+            "description": "Toda operação de pedido do dia deve estar vinculada a um turno diário que esteja aberto; não é permitido criar pedidos sem turno aberto no momento.",
+            "appliesTo": [
+              "Order",
+              "DailyShift"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "A operação de pedidos do dia deve estar vinculada a um turno diário aberto."
+            ]
+          },
+          {
+            "ruleId": "shiftClosingReportContents",
+            "title": "Relatório de fechamento resume vendas, destaques e estoque baixo",
+            "description": "O relatório de fechamento resume as vendas do turno, destaca os itens mais vendidos e sinaliza itens com estoque baixo ou em ruptura.",
+            "appliesTo": [
+              "ShiftClosingReport",
+              "DailyShift"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "O relatório de fechamento resume vendas do turno, destaques de itens e sinais de estoque baixo/ruptura."
+            ]
+          },
+          {
+            "ruleId": "shiftClosingRecordsBasicTotalsAndPayments",
+            "title": "Fechamento registra totais e formas de pagamento básicas",
+            "description": "O fechamento de turno registra totais e formas de pagamento básicas, sem cálculos contábeis avançados.",
+            "appliesTo": [
+              "ShiftClosingReport",
+              "OrderPayment"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "Fechamento registra totais e formas de pagamento básicas, sem contabilidade avançada."
+            ]
+          },
+          {
+            "ruleId": "aiSummaryUsesExistingOperationalData",
+            "title": "IA usa dados de vendas já existentes (hoje e últimos 7 dias)",
+            "description": "O assistente de IA gera o resumo de vendas do dia utilizando exclusivamente dados de vendas do dia corrente e dos últimos 7 dias já existentes na operação.",
+            "appliesTo": [
+              "AiSalesSummary",
+              "OperationalDashboard"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "O assistente de IA usa dados de vendas do dia e dos últimos 7 dias já existentes na operação."
+            ]
+          },
+          {
+            "ruleId": "aiPromotionSuggestionsAreDecisionSupport",
+            "title": "Sugestões de promoção são apoio à decisão, sem campanhas automáticas",
+            "description": "As sugestões de promoção geradas pela IA são apenas apoio à decisão do gerente e não disparam campanhas automatizadas.",
+            "appliesTo": [
+              "AiPromotionSuggestion"
+            ],
+            "layer": "application",
+            "sourceJourneyRules": [
+              "Sugestões de promoção são apoio à decisão; não disparam campanhas automatizadas."
+            ]
+          },
+          {
+            "ruleId": "dashboardHighlightsCoreMetrics",
+            "title": "Dashboard destaca vendas de hoje, mais vendidos e estoque baixo",
+            "description": "O dashboard operacional deve destacar, no mínimo: vendas do dia corrente, itens mais vendidos e itens com estoque baixo.",
+            "appliesTo": [
+              "OperationalDashboard"
+            ],
+            "layer": "domain",
+            "sourceJourneyRules": [
+              "Dashboard destaca vendas de hoje, mais vendidos e estoque baixo."
+            ]
+          }
+        ],
+        "externalRefs": {
+          "mdm": [
+            {
+              "title": "Cardápio (itens e categorias)",
+              "reason": "Itens do cardápio e categorias precisam de identidade estável e rara mudança, próprios para o MDM."
+            },
+            {
+              "title": "Itens de estoque (insumos)",
+              "reason": "Itens de estoque são referência estável para baixa automática e ajustes."
+            }
+          ],
+          "horizontals": [],
+          "plugins": [],
+          "agents": [
+            {
+              "title": "Assistente de IA do módulo",
+              "reason": "Gerar o resumo de vendas do dia e sugestões de itens a promover a partir dos dados de vendas existentes."
+            },
+            {
+              "title": "Capacidades de plataforma (auth/RBAC/i18n/multi-tenant/LLM proxy)",
+              "reason": "Autenticação, RBAC, multi-tenant, i18n e proxy de LLM são capacidades já fornecidas pela plataforma collab.codes."
+            }
+          ]
+        }
+      },
+      "errors": [],
+      "warnings": [],
+      "attempts": 1,
+      "needsHumanInput": false,
+      "pipeline": {
+        "schemaVersion": "2026-07-05-ns-pipeline-v1",
+        "flowId": "agentNewSolution",
+        "moduleName": "cafeFlow",
+        "createdAt": "2026-07-22T14:39:05.429Z",
+        "updatedAt": "2026-07-22T14:46:42.410Z",
+        "steps": {
+          "e1-draft": {
+            "status": "approved",
+            "updatedAt": "2026-07-22T14:39:05.432Z",
+            "dirty": false,
+            "inputsHash": "djb2:26438d3c",
+            "lastGate": {
+              "ok": true,
+              "checkedAt": "2026-07-22T14:39:05.430Z",
+              "errors": [],
+              "warnings": []
+            },
+            "approvedAt": "2026-07-22T14:39:05.432Z",
+            "approvedBy": "auto"
+          },
+          "checkpoint-draft": {
+            "status": "pending",
+            "updatedAt": "2026-07-22T14:39:05.429Z"
+          },
+          "e2-journeys": {
+            "status": "approved",
+            "updatedAt": "2026-07-22T14:42:12.492Z",
+            "dirty": false,
+            "inputsHash": "djb2:e29093f3",
+            "lastGate": {
+              "ok": true,
+              "checkedAt": "2026-07-22T14:42:11.991Z",
+              "errors": [],
+              "warnings": []
+            },
+            "approvedAt": "2026-07-22T14:42:12.492Z",
+            "approvedBy": "human",
+            "artifactVersion": 1
+          },
+          "checkpoint-journeys": {
+            "status": "approved",
+            "updatedAt": "2026-07-22T14:42:12.492Z",
+            "dirty": false,
+            "approvedAt": "2026-07-22T14:42:12.492Z",
+            "approvedBy": "human",
+            "artifactVersion": 1
+          },
+          "e3-ontology": {
+            "status": "approved",
+            "updatedAt": "2026-07-22T14:46:01.285Z",
+            "dirty": false,
+            "inputsHash": "djb2:cc470054",
+            "lastGate": {
+              "ok": true,
+              "checkedAt": "2026-07-22T14:45:06.130Z",
+              "errors": [],
+              "warnings": []
+            },
+            "approvedAt": "2026-07-22T14:46:01.285Z",
+            "approvedBy": "auto"
+          },
+          "e4-actors-rules-refs": {
+            "status": "pending",
+            "updatedAt": "2026-07-22T14:46:42.410Z",
+            "dirty": false,
+            "inputsHash": "djb2:a3428ab4",
+            "lastGate": {
+              "ok": true,
+              "checkedAt": "2026-07-22T14:46:42.410Z",
+              "errors": [],
+              "warnings": []
+            }
+          },
+          "e5-workflows-operations": {
+            "status": "pending",
+            "updatedAt": "2026-07-22T14:46:01.285Z"
+          },
+          "e6-journey-map": {
+            "status": "pending",
+            "updatedAt": "2026-07-22T14:46:01.285Z"
+          },
+          "e7-validation-summary": {
+            "status": "pending",
+            "updatedAt": "2026-07-22T14:46:01.285Z"
+          }
+        }
+      }
+    }
+  },
+  "promptChars": 14282
+}

@@ -1,0 +1,281 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/operations/closeDailyShift.defs.ts" enhancement="_blank"/>
+
+export const operationCloseDailyShift = {
+  "operationId": "closeDailyShift",
+  "title": "Fechar turno diário",
+  "actors": [
+    "gerente"
+  ],
+  "entity": "DailyShift",
+  "kind": "update",
+  "reads": [
+    "DailyShift",
+    "Order",
+    "OrderItem",
+    "OrderPayment",
+    "StockItem",
+    "ShiftClosingReport"
+  ],
+  "writes": [
+    "DailyShift",
+    "ShiftClosingReport"
+  ],
+  "rulesApplied": [
+    "ordersRequireOpenDailyShift",
+    "shiftClosingReportContents"
+  ],
+  "story": {
+    "actor": "gerente",
+    "goal": "Encerrar o turno diário aberto e obter o relatório de fechamento com totais e sinais de estoque",
+    "steps": [
+      "Identificar o turno diário aberto em andamento",
+      "Conferir totais de pedidos, vendas e formas de pagamento básicas calculados no turno",
+      "Informar opcionalmente totais de dinheiro/outros pagamentos e observações de fechamento",
+      "Confirmar o fechamento do turno",
+      "Sistema grava o turno como fechado, preenche totais e gera o relatório de fechamento"
+    ],
+    "outcome": "Turno fechado com totais compreensíveis e relatório de fechamento disponível, sem novos pedidos vinculados a esse turno"
+  },
+  "accessPattern": {
+    "kind": "commandInput",
+    "description": "Formulário de fechamento do turno diário aberto, com conferência de totais e geração do relatório",
+    "entity": "DailyShift",
+    "keyField": "DailyShift.dailyShiftId",
+    "pagination": "none",
+    "selection": "single",
+    "output": [
+      "DailyShift.dailyShiftId",
+      "DailyShift.shiftDate",
+      "DailyShift.status",
+      "DailyShift.closedByUserId",
+      "DailyShift.closedAt",
+      "DailyShift.totalOrders",
+      "DailyShift.totalSalesAmount",
+      "DailyShift.totalItemsSold",
+      "DailyShift.cashTotal",
+      "DailyShift.otherPaymentsTotal",
+      "DailyShift.notes",
+      "ShiftClosingReport.shiftClosingReportId"
+    ]
+  },
+  "outputShape": {
+    "kind": "object",
+    "fields": [
+      {
+        "name": "dailyShiftId",
+        "type": "string",
+        "required": true,
+        "fieldRef": "DailyShift.dailyShiftId"
+      },
+      {
+        "name": "shiftDate",
+        "type": "string",
+        "required": true,
+        "fieldRef": "DailyShift.shiftDate"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "required": true,
+        "fieldRef": "DailyShift.status"
+      },
+      {
+        "name": "closedByUserId",
+        "type": "string",
+        "required": true,
+        "fieldRef": "DailyShift.closedByUserId"
+      },
+      {
+        "name": "closedAt",
+        "type": "string",
+        "required": true,
+        "fieldRef": "DailyShift.closedAt"
+      },
+      {
+        "name": "totalOrders",
+        "type": "number",
+        "required": true,
+        "fieldRef": "DailyShift.totalOrders"
+      },
+      {
+        "name": "totalSalesAmount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "DailyShift.totalSalesAmount"
+      },
+      {
+        "name": "totalItemsSold",
+        "type": "number",
+        "required": true,
+        "fieldRef": "DailyShift.totalItemsSold"
+      },
+      {
+        "name": "cashTotal",
+        "type": "number",
+        "required": true,
+        "fieldRef": "DailyShift.cashTotal"
+      },
+      {
+        "name": "otherPaymentsTotal",
+        "type": "number",
+        "required": true,
+        "fieldRef": "DailyShift.otherPaymentsTotal"
+      },
+      {
+        "name": "notes",
+        "type": "string",
+        "required": false,
+        "fieldRef": "DailyShift.notes"
+      },
+      {
+        "name": "shiftClosingReportId",
+        "type": "string",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.shiftClosingReportId"
+      },
+      {
+        "name": "totalSalesAmountReport",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.totalSalesAmount"
+      },
+      {
+        "name": "totalOrdersCount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.totalOrdersCount"
+      },
+      {
+        "name": "totalItemsSoldReport",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.totalItemsSold"
+      },
+      {
+        "name": "cashPaymentsAmount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.cashPaymentsAmount"
+      },
+      {
+        "name": "otherPaymentsAmount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.otherPaymentsAmount"
+      },
+      {
+        "name": "topSellingItemsSummary",
+        "type": "string",
+        "required": false,
+        "fieldRef": "ShiftClosingReport.topSellingItemsSummary"
+      },
+      {
+        "name": "lowStockSignalsCount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.lowStockSignalsCount"
+      },
+      {
+        "name": "stockoutSignalsCount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.stockoutSignalsCount"
+      },
+      {
+        "name": "generatedAt",
+        "type": "string",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.generatedAt"
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "inputId": "dailyShiftId",
+      "fieldRef": "DailyShift.dailyShiftId",
+      "required": true,
+      "source": "activeLifecycleInstance",
+      "description": "Identificador do turno diário aberto que será fechado"
+    },
+    {
+      "inputId": "cashTotal",
+      "fieldRef": "DailyShift.cashTotal",
+      "required": false,
+      "source": "userInput",
+      "description": "Total em dinheiro conferido pelo gerente no fechamento básico"
+    },
+    {
+      "inputId": "otherPaymentsTotal",
+      "fieldRef": "DailyShift.otherPaymentsTotal",
+      "required": false,
+      "source": "userInput",
+      "description": "Total em outras formas de pagamento conferido pelo gerente no fechamento básico"
+    },
+    {
+      "inputId": "notes",
+      "fieldRef": "DailyShift.notes",
+      "required": false,
+      "source": "userInput",
+      "description": "Observações livres registradas no fechamento do turno"
+    },
+    {
+      "inputId": "closedByUserId",
+      "fieldRef": "DailyShift.closedByUserId",
+      "required": true,
+      "source": "actorSession",
+      "description": "Identificador do gerente autenticado que confirma o fechamento"
+    },
+    {
+      "inputId": "closedAt",
+      "fieldRef": "DailyShift.closedAt",
+      "required": true,
+      "source": "systemDefault",
+      "description": "Data e hora em que o turno é encerrado"
+    }
+  ],
+  "contextResolution": [
+    {
+      "inputId": "dailyShiftId",
+      "targetRef": "DailyShift.dailyShiftId",
+      "source": "activeLifecycleInstance",
+      "originRef": "DailyShift.dailyShiftId",
+      "description": "Resolve o único DailyShift com status open no ciclo de vida operacional ativo"
+    },
+    {
+      "inputId": "closedByUserId",
+      "targetRef": "DailyShift.closedByUserId",
+      "source": "actorSession",
+      "originRef": "actorSession.actorId",
+      "description": "Obtém o actorId do gerente autenticado na sessão para gravar quem fechou o turno"
+    },
+    {
+      "inputId": "closedAt",
+      "targetRef": "DailyShift.closedAt",
+      "source": "systemDefault",
+      "originRef": "systemDefault.now",
+      "description": "Usa o timestamp atual do servidor como momento de fechamento do turno"
+    }
+  ],
+  "acceptanceAssertions": [
+    "Após a confirmação, o DailyShift alvo existe com status closed",
+    "closedAt e closedByUserId ficam preenchidos no DailyShift fechado",
+    "totalOrders, totalSalesAmount e totalItemsSold refletem os pedidos do turno no fechamento",
+    "cashTotal e otherPaymentsTotal ficam registrados conforme conferência básica de pagamentos",
+    "Um ShiftClosingReport vinculado ao dailyShiftId é gerado e fica disponível com totais de vendas, contagem de pedidos e itens",
+    "O ShiftClosingReport inclui topSellingItemsSummary e contagens de lowStockSignalsCount e stockoutSignalsCount",
+    "Após o fechamento não é permitido criar novos pedidos vinculados a esse turno (turno deixa de estar open)"
+  ],
+  "pageId": "dailyShiftLifecycle",
+  "commandName": "closeDailyShift",
+  "bffName": "cafeFlow.dailyShiftLifecycle.closeDailyShift",
+  "capability": {
+    "capabilityId": "dailyShiftLifecycle",
+    "title": "Ciclo do turno diário",
+    "actor": "gerente",
+    "priority": "now"
+  },
+  "statusFrontend": "toCreate",
+  "statusBackend": "toCreate"
+} as const;
+
+export default operationCloseDailyShift;

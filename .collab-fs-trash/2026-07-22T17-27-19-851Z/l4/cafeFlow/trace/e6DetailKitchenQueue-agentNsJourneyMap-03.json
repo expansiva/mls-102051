@@ -1,0 +1,191 @@
+{
+  "savedAt": "2026-07-22T13:15:34.793Z",
+  "stepId": "e6-detail-kitchenQueue",
+  "agentName": "agentNsJourneyMap",
+  "attempt": 3,
+  "payload": {
+    "workspace": {
+      "workspaceId": "kitchenQueue",
+      "title": "Fila de preparo da cozinha",
+      "actors": [
+        "cozinheiro"
+      ],
+      "kind": "workflow",
+      "entity": "Order",
+      "workflowId": "orderLifecycle",
+      "bffCalls": [
+        {
+          "bffId": "kitchenQueueList",
+          "kind": "query",
+          "uses": [
+            {
+              "operationId": "viewKitchenQueue"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "list",
+            "fields": [
+              {
+                "name": "orderId",
+                "from": "viewKitchenQueue.$items.orderId",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "type",
+                "from": "viewKitchenQueue.$items.type",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "tableNumber",
+                "from": "viewKitchenQueue.$items.tableNumber",
+                "type": "number"
+              },
+              {
+                "name": "customerName",
+                "from": "viewKitchenQueue.$items.customerName",
+                "type": "string"
+              },
+              {
+                "name": "status",
+                "from": "viewKitchenQueue.$items.status",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "notes",
+                "from": "viewKitchenQueue.$items.notes",
+                "type": "string"
+              },
+              {
+                "name": "receivedAt",
+                "from": "viewKitchenQueue.$items.receivedAt",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "inPreparationAt",
+                "from": "viewKitchenQueue.$items.inPreparationAt",
+                "type": "string"
+              },
+              {
+                "name": "readyAt",
+                "from": "viewKitchenQueue.$items.readyAt",
+                "type": "string"
+              },
+              {
+                "name": "createdAt",
+                "from": "viewKitchenQueue.$items.createdAt",
+                "type": "string"
+              },
+              {
+                "name": "items",
+                "from": "viewKitchenQueue.$items.items",
+                "type": "array",
+                "required": true
+              }
+            ]
+          },
+          "route": "cafeFlow.kitchenQueue.kitchenQueueList"
+        },
+        {
+          "bffId": "updateOrderStatus",
+          "kind": "command",
+          "uses": [
+            {
+              "operationId": "updateOrderStatus"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "name": "orderId",
+                "from": "updateOrderStatus.orderId",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "status",
+                "from": "updateOrderStatus.status",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "type",
+                "from": "updateOrderStatus.type",
+                "type": "string"
+              },
+              {
+                "name": "tableNumber",
+                "from": "updateOrderStatus.tableNumber",
+                "type": "number"
+              },
+              {
+                "name": "customerName",
+                "from": "updateOrderStatus.customerName",
+                "type": "string"
+              },
+              {
+                "name": "inPreparationAt",
+                "from": "updateOrderStatus.inPreparationAt",
+                "type": "string"
+              },
+              {
+                "name": "readyAt",
+                "from": "updateOrderStatus.readyAt",
+                "type": "string"
+              },
+              {
+                "name": "deliveredAt",
+                "from": "updateOrderStatus.deliveredAt",
+                "type": "string"
+              },
+              {
+                "name": "updatedAt",
+                "from": "updateOrderStatus.updatedAt",
+                "type": "string",
+                "required": true
+              }
+            ]
+          },
+          "route": "cafeFlow.kitchenQueue.updateOrderStatus"
+        }
+      ],
+      "sections": [
+        {
+          "sectionId": "queue",
+          "intent": "O cozinheiro visualiza a fila de pedidos ativos ordenada por recebimento, com itens e observações, e conduz cada pedido ao próximo status.",
+          "organisms": [
+            {
+              "role": "primarySurface",
+              "dataSource": "kitchenQueueList"
+            },
+            {
+              "role": "contextualAction",
+              "action": "updateOrderStatus"
+            }
+          ]
+        }
+      ],
+      "operationIds": [
+        "viewKitchenQueue",
+        "updateOrderStatus"
+      ],
+      "purpose": "O cozinheiro acompanha a fila de pedidos e conduz cada pedido do recebimento até a entrega ou retirada."
+    },
+    "errors": [
+      {
+        "severity": "error",
+        "code": "workspace.actors.notCovering",
+        "message": "workspace kitchenQueue: hosts an operation for actor \"atendente\" not in the workspace actors [cozinheiro]",
+        "path": "kitchenQueue"
+      }
+    ]
+  },
+  "error": "workspace.actors.notCovering: workspace kitchenQueue: hosts an operation for actor \"atendente\" not in the workspace actors [cozinheiro]",
+  "promptChars": 6271
+}

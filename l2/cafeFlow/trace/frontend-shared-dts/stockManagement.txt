@@ -1,0 +1,232 @@
+import { CollabLitElement } from '/_102029_/l2/collabLitElement.js';
+import type { ListStockItemsOutput, AddStockItemOutput, EditStockItemOutput, RemoveStockItemOutput, RegisterStockAdjustmentOutput } from '/_102051_/l2/cafeFlow/web/contracts/stockManagement.js';
+export type { ListStockItemsInput, ListStockItemsOutput, AddStockItemInput, AddStockItemOutput, EditStockItemInput, EditStockItemOutput, RemoveStockItemInput, RemoveStockItemOutput, RegisterStockAdjustmentInput, RegisterStockAdjustmentOutput, } from '/_102051_/l2/cafeFlow/web/contracts/stockManagement.js';
+declare const message_pt: {
+    'section.stockManagement.sec-stockItemList.title': string;
+    'organism.stockManagement.inline-row-command10.title': string;
+    'intent.stockManagement.inline-row-command10.content.title': string;
+    'organism.stockManagement.listStockItems.title': string;
+    'intent.stockManagement.listStockItems.list.title': string;
+    'intent.stockManagement.listStockItems.list.empty': string;
+    'intent.stockManagement.listStockItems.list.column.stockItems.label': string;
+    'intent.stockManagement.listStockItems.list.column.total.label': string;
+    'intent.stockManagement.listStockItems.list.filter.nameFilter.label': string;
+    'intent.stockManagement.listStockItems.list.filter.lowStockOnly.label': string;
+    'intent.stockManagement.listStockItems.list.filter.page.label': string;
+    'intent.stockManagement.listStockItems.list.filter.pageSize.label': string;
+    'organism.stockManagement.editStockItem.title': string;
+    'intent.stockManagement.editStockItem.form.title': string;
+    'intent.stockManagement.editStockItem.form.action.editStockItem': string;
+    'intent.stockManagement.editStockItem.form.field.name.label': string;
+    'intent.stockManagement.editStockItem.form.field.unit.label': string;
+    'intent.stockManagement.editStockItem.form.field.minimumLevel.label': string;
+    'intent.stockManagement.editStockItem.form.field.description.label': string;
+    'organism.stockManagement.removeStockItem.title': string;
+    'intent.stockManagement.removeStockItem.form.title': string;
+    'intent.stockManagement.removeStockItem.form.action.removeStockItem': string;
+    'organism.stockManagement.registerStockAdjustment.title': string;
+    'intent.stockManagement.registerStockAdjustment.form.title': string;
+    'intent.stockManagement.registerStockAdjustment.form.action.registerStockAdjustment': string;
+    'intent.stockManagement.registerStockAdjustment.form.field.stockItemId.label': string;
+    'intent.stockManagement.registerStockAdjustment.form.field.quantity.label': string;
+    'intent.stockManagement.registerStockAdjustment.form.field.direction.label': string;
+    'intent.stockManagement.registerStockAdjustment.form.field.reason.label': string;
+    'intent.stockManagement.registerStockAdjustment.form.field.notes.label': string;
+    'section.stockManagement.sec-createStockItem.title': string;
+    'organism.stockManagement.addStockItem.title': string;
+    'intent.stockManagement.addStockItem.form.title': string;
+    'intent.stockManagement.addStockItem.form.action.addStockItem': string;
+    'intent.stockManagement.addStockItem.form.field.name.label': string;
+    'intent.stockManagement.addStockItem.form.field.unit.label': string;
+    'intent.stockManagement.addStockItem.form.field.currentBalance.label': string;
+    'intent.stockManagement.addStockItem.form.field.minimumLevel.label': string;
+    'intent.stockManagement.addStockItem.form.field.description.label': string;
+    'section.stockManagement.sec-stock-overview.title': string;
+    'section.stockManagement.sec-stock-master-detail.title': string;
+    'section.stockManagement.sec-add-stock-item.title': string;
+};
+type MessageType = typeof message_pt;
+export declare class CafeFlowStockManagementBase extends CollabLitElement {
+    /** state status — pageStatus */
+    status: string;
+    /** state listStockItemsState — actionStatus, values: idle|loading|success|error */
+    listStockItemsState: 'idle' | 'loading' | 'success' | 'error';
+    /** state listStockItemsNameFilter — input */
+    listStockItemsNameFilter: string;
+    /** state listStockItemsLowStockOnly — input */
+    listStockItemsLowStockOnly: string;
+    /** state listStockItemsPage — input */
+    listStockItemsPage: string;
+    /** state listStockItemsPageSize — input */
+    listStockItemsPageSize: string;
+    /** state listStockItemsData — queryResult, outputShape: paginated */
+    listStockItemsData: ListStockItemsOutput;
+    /** state addStockItemState — actionStatus, values: idle|loading|success|error */
+    addStockItemState: 'idle' | 'loading' | 'success' | 'error';
+    /** state addStockItemName — input */
+    addStockItemName: string;
+    /** state addStockItemUnit — input */
+    addStockItemUnit: string;
+    /** state addStockItemCurrentBalance — input */
+    addStockItemCurrentBalance: string;
+    /** state addStockItemMinimumLevel — input */
+    addStockItemMinimumLevel: string;
+    /** state addStockItemDescription — input */
+    addStockItemDescription: string;
+    /** state addStockItemOutput — commandOutput */
+    addStockItemOutput: AddStockItemOutput | null;
+    /** state addStockItemError — actionError */
+    addStockItemError: string;
+    /** state editStockItemState — actionStatus, values: idle|loading|success|error */
+    editStockItemState: 'idle' | 'loading' | 'success' | 'error';
+    /** state editStockItemStockItemId — input */
+    editStockItemStockItemId: string;
+    /** state editStockItemName — input */
+    editStockItemName: string;
+    /** state editStockItemUnit — input */
+    editStockItemUnit: string;
+    /** state editStockItemMinimumLevel — input */
+    editStockItemMinimumLevel: string;
+    /** state editStockItemDescription — input */
+    editStockItemDescription: string;
+    /** state editStockItemOutput — commandOutput */
+    editStockItemOutput: EditStockItemOutput | null;
+    /** state editStockItemError — actionError */
+    editStockItemError: string;
+    /** state removeStockItemState — actionStatus, values: idle|loading|success|error */
+    removeStockItemState: 'idle' | 'loading' | 'success' | 'error';
+    /** state removeStockItemStockItemId — input */
+    removeStockItemStockItemId: string;
+    /** state removeStockItemOutput — commandOutput */
+    removeStockItemOutput: RemoveStockItemOutput | null;
+    /** state removeStockItemError — actionError */
+    removeStockItemError: string;
+    /** state registerStockAdjustmentState — actionStatus, values: idle|loading|success|error */
+    registerStockAdjustmentState: 'idle' | 'loading' | 'success' | 'error';
+    /** state registerStockAdjustmentStockItemId — input */
+    registerStockAdjustmentStockItemId: string;
+    /** state registerStockAdjustmentQuantity — input */
+    registerStockAdjustmentQuantity: string;
+    /** state registerStockAdjustmentDirection — input */
+    registerStockAdjustmentDirection: string;
+    /** state registerStockAdjustmentReason — input */
+    registerStockAdjustmentReason: string;
+    /** state registerStockAdjustmentNotes — input */
+    registerStockAdjustmentNotes: string;
+    /** state registerStockAdjustmentOutput — commandOutput */
+    registerStockAdjustmentOutput: RegisterStockAdjustmentOutput | null;
+    /** state registerStockAdjustmentError — actionError */
+    registerStockAdjustmentError: string;
+    private readonly subscribedKeys;
+    /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
+    protected get msg(): MessageType;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    /** Deliver collabState notifications into local @property fields and re-render. */
+    handleIcaStateChange(key: string, value: unknown): void;
+    private initStateValue;
+    private applyRouteParams;
+    private parseOptionalNumber;
+    private parseOptionalBoolean;
+    private readErrorMessage;
+    /** action listStockItems (query) — route cafeFlow.stockManagement.listStockItems; inputs: nameFilter, lowStockOnly, page, pageSize; writes ui.stockManagement.data.listStockItems; status ui.stockManagement.action.listStockItems.status */
+    loadListStockItems(): Promise<void>;
+    /** handler for action listStockItems — bind UI events here */
+    handleListStockItemsClick(_event?: Event): void;
+    /** action addStockItem (command) — route cafeFlow.stockManagement.addStockItem; inputs: name, unit, currentBalance, minimumLevel, description; writes ui.stockManagement.output.addStockItem; status ui.stockManagement.action.addStockItem.status; feedback keys action.addStockItem.success / action.addStockItem.error */
+    addStockItem(): Promise<void>;
+    /** handler for action addStockItem — bind UI events here */
+    handleAddStockItemClick(_event?: Event): void;
+    /** action editStockItem (command) — route cafeFlow.stockManagement.editStockItem; inputs: stockItemId, name, unit, minimumLevel, description; writes ui.stockManagement.output.editStockItem; status ui.stockManagement.action.editStockItem.status; feedback keys action.editStockItem.success / action.editStockItem.error */
+    editStockItem(): Promise<void>;
+    /** handler for action editStockItem — bind UI events here */
+    handleEditStockItemClick(_event?: Event): void;
+    /** action removeStockItem (command) — route cafeFlow.stockManagement.removeStockItem; inputs: stockItemId; writes ui.stockManagement.output.removeStockItem; status ui.stockManagement.action.removeStockItem.status; feedback keys action.removeStockItem.success / action.removeStockItem.error */
+    removeStockItem(): Promise<void>;
+    /** handler for action removeStockItem — bind UI events here */
+    handleRemoveStockItemClick(_event?: Event): void;
+    /** action registerStockAdjustment (command) — route cafeFlow.stockManagement.registerStockAdjustment; inputs: stockItemId, quantity, direction, reason, notes; writes ui.stockManagement.output.registerStockAdjustment; status ui.stockManagement.action.registerStockAdjustment.status; feedback keys action.registerStockAdjustment.success / action.registerStockAdjustment.error */
+    registerStockAdjustment(): Promise<void>;
+    /** handler for action registerStockAdjustment — bind UI events here */
+    handleRegisterStockAdjustmentClick(_event?: Event): void;
+    /** setter for state ui.stockManagement.input.listStockItems.nameFilter */
+    setListStockItemsNameFilter(value: string): void;
+    /** handler for action set.listStockItemsNameFilter — bind UI events here */
+    handleListStockItemsNameFilterChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.listStockItems.lowStockOnly */
+    setListStockItemsLowStockOnly(value: string): void;
+    /** handler for action set.listStockItemsLowStockOnly — bind UI events here */
+    handleListStockItemsLowStockOnlyChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.listStockItems.page */
+    setListStockItemsPage(value: string): void;
+    /** handler for action set.listStockItemsPage — bind UI events here */
+    handleListStockItemsPageChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.listStockItems.pageSize */
+    setListStockItemsPageSize(value: string): void;
+    /** handler for action set.listStockItemsPageSize — bind UI events here */
+    handleListStockItemsPageSizeChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.addStockItem.name */
+    setAddStockItemName(value: string): void;
+    /** handler for action set.addStockItemName — bind UI events here */
+    handleAddStockItemNameChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.addStockItem.unit */
+    setAddStockItemUnit(value: string): void;
+    /** handler for action set.addStockItemUnit — bind UI events here */
+    handleAddStockItemUnitChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.addStockItem.currentBalance */
+    setAddStockItemCurrentBalance(value: string): void;
+    /** handler for action set.addStockItemCurrentBalance — bind UI events here */
+    handleAddStockItemCurrentBalanceChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.addStockItem.minimumLevel */
+    setAddStockItemMinimumLevel(value: string): void;
+    /** handler for action set.addStockItemMinimumLevel — bind UI events here */
+    handleAddStockItemMinimumLevelChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.addStockItem.description */
+    setAddStockItemDescription(value: string): void;
+    /** handler for action set.addStockItemDescription — bind UI events here */
+    handleAddStockItemDescriptionChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.editStockItem.stockItemId */
+    setEditStockItemStockItemId(value: string): void;
+    /** handler for action set.editStockItemStockItemId — bind UI events here */
+    handleEditStockItemStockItemIdChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.editStockItem.name */
+    setEditStockItemName(value: string): void;
+    /** handler for action set.editStockItemName — bind UI events here */
+    handleEditStockItemNameChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.editStockItem.unit */
+    setEditStockItemUnit(value: string): void;
+    /** handler for action set.editStockItemUnit — bind UI events here */
+    handleEditStockItemUnitChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.editStockItem.minimumLevel */
+    setEditStockItemMinimumLevel(value: string): void;
+    /** handler for action set.editStockItemMinimumLevel — bind UI events here */
+    handleEditStockItemMinimumLevelChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.editStockItem.description */
+    setEditStockItemDescription(value: string): void;
+    /** handler for action set.editStockItemDescription — bind UI events here */
+    handleEditStockItemDescriptionChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.removeStockItem.stockItemId */
+    setRemoveStockItemStockItemId(value: string): void;
+    /** handler for action set.removeStockItemStockItemId — bind UI events here */
+    handleRemoveStockItemStockItemIdChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.registerStockAdjustment.stockItemId */
+    setRegisterStockAdjustmentStockItemId(value: string): void;
+    /** handler for action set.registerStockAdjustmentStockItemId — bind UI events here */
+    handleRegisterStockAdjustmentStockItemIdChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.registerStockAdjustment.quantity */
+    setRegisterStockAdjustmentQuantity(value: string): void;
+    /** handler for action set.registerStockAdjustmentQuantity — bind UI events here */
+    handleRegisterStockAdjustmentQuantityChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.registerStockAdjustment.direction */
+    setRegisterStockAdjustmentDirection(value: string): void;
+    /** handler for action set.registerStockAdjustmentDirection — bind UI events here */
+    handleRegisterStockAdjustmentDirectionChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.registerStockAdjustment.reason */
+    setRegisterStockAdjustmentReason(value: string): void;
+    /** handler for action set.registerStockAdjustmentReason — bind UI events here */
+    handleRegisterStockAdjustmentReasonChange(event: Event): void;
+    /** setter for state ui.stockManagement.input.registerStockAdjustment.notes */
+    setRegisterStockAdjustmentNotes(value: string): void;
+    /** handler for action set.registerStockAdjustmentNotes — bind UI events here */
+    handleRegisterStockAdjustmentNotesChange(event: Event): void;
+}

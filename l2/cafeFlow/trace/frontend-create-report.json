@@ -1,0 +1,36 @@
+{
+  "savedAt": "2026-07-23T17:13:59.735Z",
+  "pagesDone": [
+    "dashboardWorkspace",
+    "kitchenWorkspace",
+    "menuManagement",
+    "posWorkspace",
+    "shiftWorkspace",
+    "stockManagement"
+  ],
+  "ownersDone": [
+    "workflow:orderLifecycle",
+    "workflow:dailyShiftLifecycle",
+    "operation:createOrder",
+    "operation:updateOrderStatus",
+    "operation:recordBasicPayment",
+    "operation:browseMenuForPos",
+    "operation:viewKitchenQueue",
+    "operation:trackOrders",
+    "operation:browseMenuItems",
+    "operation:createMenuItem",
+    "operation:updateMenuItem",
+    "operation:browseStockItems",
+    "operation:createStockItem",
+    "operation:updateStockItem",
+    "operation:deleteStockItem",
+    "operation:createStockAdjustment",
+    "operation:openDailyShift",
+    "operation:closeDailyShift",
+    "operation:viewShiftClosingReport",
+    "operation:viewOperationalDashboard",
+    "operation:generateAiSalesSummary",
+    "operation:generateAiPromotionSuggestions"
+  ],
+  "skippedPages": []
+}

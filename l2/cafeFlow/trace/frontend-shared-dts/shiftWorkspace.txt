@@ -1,0 +1,141 @@
+import { CollabLitElement } from '/_102029_/l2/collabLitElement.js';
+import type { OpenDailyShiftCmdOutput, CloseDailyShiftCmdOutput, GetShiftClosingReportOutput } from '/_102051_/l2/cafeFlow/web/contracts/shiftWorkspace.js';
+export type { OpenDailyShiftCmdInput, OpenDailyShiftCmdOutput, CloseDailyShiftCmdInput, CloseDailyShiftCmdOutput, GetShiftClosingReportInput, GetShiftClosingReportOutput, } from '/_102051_/l2/cafeFlow/web/contracts/shiftWorkspace.js';
+declare const message_pt: {
+    "section.shiftWorkspace.openShiftSection.title": string;
+    "organism.shiftWorkspace.openDailyShiftCmd.title": string;
+    "intent.shiftWorkspace.openDailyShiftCmd.form.title": string;
+    "intent.shiftWorkspace.openDailyShiftCmd.form.action.openDailyShiftCmd": string;
+    "intent.shiftWorkspace.openDailyShiftCmd.form.field.shiftDate.label": string;
+    "intent.shiftWorkspace.openDailyShiftCmd.form.field.openedByUserId.label": string;
+    "intent.shiftWorkspace.openDailyShiftCmd.form.field.notes.label": string;
+    "section.shiftWorkspace.closeShiftSection.title": string;
+    "organism.shiftWorkspace.closeDailyShiftCmd.title": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.title": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.action.closeDailyShiftCmd": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.field.dailyShiftId.label": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.field.cashTotal.label": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.field.otherPaymentsTotal.label": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.field.notes.label": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.field.closedByUserId.label": string;
+    "intent.shiftWorkspace.closeDailyShiftCmd.form.field.closedAt.label": string;
+    "organism.shiftWorkspace.getShiftClosingReport.title": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.title": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.empty": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.shiftClosingReportId.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.dailyShiftId.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.shiftDate.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.totalSalesAmount.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.totalOrdersCount.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.totalItemsSold.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.cashPaymentsAmount.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.otherPaymentsAmount.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.topSellingItemsSummary.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.lowStockSignalsCount.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.stockoutSignalsCount.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.closingNotes.label": string;
+    "intent.shiftWorkspace.getShiftClosingReport.list.column.generatedAt.label": string;
+    "section.shiftWorkspace.sec-shift-status.title": string;
+    "section.shiftWorkspace.sec-open-shift.title": string;
+    "section.shiftWorkspace.sec-close-shift.title": string;
+};
+type MessageType = typeof message_pt;
+export declare class CafeFlowShiftWorkspaceBase extends CollabLitElement {
+    /** state status — pageStatus */
+    status: string;
+    /** state openDailyShiftCmdState — actionStatus, values: idle|loading|success|error */
+    openDailyShiftCmdState: "idle" | "loading" | "success" | "error";
+    /** state openDailyShiftCmdShiftDate — input */
+    openDailyShiftCmdShiftDate: string;
+    /** state openDailyShiftCmdOpenedByUserId — input */
+    openDailyShiftCmdOpenedByUserId: string;
+    /** state openDailyShiftCmdNotes — input */
+    openDailyShiftCmdNotes: string;
+    /** state openDailyShiftCmdOutput — commandOutput */
+    openDailyShiftCmdOutput: OpenDailyShiftCmdOutput | null;
+    /** state openDailyShiftCmdError — actionError */
+    openDailyShiftCmdError: string;
+    /** state closeDailyShiftCmdState — actionStatus, values: idle|loading|success|error */
+    closeDailyShiftCmdState: "idle" | "loading" | "success" | "error";
+    /** state closeDailyShiftCmdDailyShiftId — input */
+    closeDailyShiftCmdDailyShiftId: string;
+    /** state closeDailyShiftCmdCashTotal — input */
+    closeDailyShiftCmdCashTotal: string;
+    /** state closeDailyShiftCmdOtherPaymentsTotal — input */
+    closeDailyShiftCmdOtherPaymentsTotal: string;
+    /** state closeDailyShiftCmdNotes — input */
+    closeDailyShiftCmdNotes: string;
+    /** state closeDailyShiftCmdClosedByUserId — input */
+    closeDailyShiftCmdClosedByUserId: string;
+    /** state closeDailyShiftCmdClosedAt — input */
+    closeDailyShiftCmdClosedAt: string;
+    /** state closeDailyShiftCmdOutput — commandOutput */
+    closeDailyShiftCmdOutput: CloseDailyShiftCmdOutput | null;
+    /** state closeDailyShiftCmdError — actionError */
+    closeDailyShiftCmdError: string;
+    /** state getShiftClosingReportState — actionStatus, values: idle|loading|success|error */
+    getShiftClosingReportState: "idle" | "loading" | "success" | "error";
+    /** state getShiftClosingReportShiftClosingReportId — input */
+    getShiftClosingReportShiftClosingReportId: string;
+    /** state getShiftClosingReportData — queryResult, outputShape: object */
+    getShiftClosingReportData: GetShiftClosingReportOutput | null;
+    /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
+    protected get msg(): MessageType;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    /** handleIcaStateChange — collabState notify contract */
+    handleIcaStateChange(key: string, value: unknown): void;
+    private syncRouteParamsFromLocation;
+    /** action openDailyShiftCmd (command) — route cafeFlow.shiftWorkspace.openDailyShiftCmd; inputs: shiftDate, openedByUserId, notes; writes ui.shiftWorkspace.output.openDailyShiftCmd; status ui.shiftWorkspace.action.openDailyShiftCmd.status; feedback keys action.openDailyShiftCmd.success / action.openDailyShiftCmd.error */
+    openDailyShiftCmd(): Promise<void>;
+    /** handler for action openDailyShiftCmd — bind UI events here */
+    handleOpenDailyShiftCmdClick(_event?: Event): void;
+    /** action closeDailyShiftCmd (command) — route cafeFlow.shiftWorkspace.closeDailyShiftCmd; inputs: dailyShiftId, cashTotal, otherPaymentsTotal, notes, closedByUserId, closedAt; writes ui.shiftWorkspace.output.closeDailyShiftCmd; status ui.shiftWorkspace.action.closeDailyShiftCmd.status; feedback keys action.closeDailyShiftCmd.success / action.closeDailyShiftCmd.error */
+    closeDailyShiftCmd(): Promise<void>;
+    /** handler for action closeDailyShiftCmd — bind UI events here */
+    handleCloseDailyShiftCmdClick(_event?: Event): void;
+    /** action getShiftClosingReport (query) — route cafeFlow.shiftWorkspace.getShiftClosingReport; inputs: shiftClosingReportId; writes ui.shiftWorkspace.data.getShiftClosingReport; status ui.shiftWorkspace.action.getShiftClosingReport.status */
+    loadGetShiftClosingReport(): Promise<void>;
+    /** handler for action getShiftClosingReport — bind UI events here */
+    handleGetShiftClosingReportClick(_event?: Event): void;
+    /** setter for state ui.shiftWorkspace.input.openDailyShiftCmd.shiftDate */
+    setOpenDailyShiftCmdShiftDate(value: string): void;
+    /** handler for action set.openDailyShiftCmdShiftDate — bind UI events here */
+    handleOpenDailyShiftCmdShiftDateChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.openDailyShiftCmd.openedByUserId */
+    setOpenDailyShiftCmdOpenedByUserId(value: string): void;
+    /** handler for action set.openDailyShiftCmdOpenedByUserId — bind UI events here */
+    handleOpenDailyShiftCmdOpenedByUserIdChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.openDailyShiftCmd.notes */
+    setOpenDailyShiftCmdNotes(value: string): void;
+    /** handler for action set.openDailyShiftCmdNotes — bind UI events here */
+    handleOpenDailyShiftCmdNotesChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.closeDailyShiftCmd.dailyShiftId */
+    setCloseDailyShiftCmdDailyShiftId(value: string): void;
+    /** handler for action set.closeDailyShiftCmdDailyShiftId — bind UI events here */
+    handleCloseDailyShiftCmdDailyShiftIdChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.closeDailyShiftCmd.cashTotal */
+    setCloseDailyShiftCmdCashTotal(value: string): void;
+    /** handler for action set.closeDailyShiftCmdCashTotal — bind UI events here */
+    handleCloseDailyShiftCmdCashTotalChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.closeDailyShiftCmd.otherPaymentsTotal */
+    setCloseDailyShiftCmdOtherPaymentsTotal(value: string): void;
+    /** handler for action set.closeDailyShiftCmdOtherPaymentsTotal — bind UI events here */
+    handleCloseDailyShiftCmdOtherPaymentsTotalChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.closeDailyShiftCmd.notes */
+    setCloseDailyShiftCmdNotes(value: string): void;
+    /** handler for action set.closeDailyShiftCmdNotes — bind UI events here */
+    handleCloseDailyShiftCmdNotesChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.closeDailyShiftCmd.closedByUserId */
+    setCloseDailyShiftCmdClosedByUserId(value: string): void;
+    /** handler for action set.closeDailyShiftCmdClosedByUserId — bind UI events here */
+    handleCloseDailyShiftCmdClosedByUserIdChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.closeDailyShiftCmd.closedAt */
+    setCloseDailyShiftCmdClosedAt(value: string): void;
+    /** handler for action set.closeDailyShiftCmdClosedAt — bind UI events here */
+    handleCloseDailyShiftCmdClosedAtChange(event: Event): void;
+    /** setter for state ui.shiftWorkspace.input.getShiftClosingReport.shiftClosingReportId */
+    setGetShiftClosingReportShiftClosingReportId(value: string): void;
+    /** handler for action set.getShiftClosingReportShiftClosingReportId — bind UI events here */
+    handleGetShiftClosingReportShiftClosingReportIdChange(event: Event): void;
+}

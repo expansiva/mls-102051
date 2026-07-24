@@ -1,0 +1,188 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/operations/updateOrderStatus.defs.ts" enhancement="_blank"/>
+
+export const operationUpdateOrderStatus = {
+  "operationId": "updateOrderStatus",
+  "title": "Atualizar status do pedido",
+  "actors": [
+    "atendente",
+    "cozinheiro"
+  ],
+  "entity": "Order",
+  "kind": "update",
+  "reads": [
+    "Order",
+    "OrderItem",
+    "MenuItemIngredient",
+    "StockItem"
+  ],
+  "writes": [
+    "Order",
+    "StockConsumption",
+    "StockItem"
+  ],
+  "rulesApplied": [
+    "orderEntersKitchenQueueAfterAttendantConfirmation",
+    "onlyReadyOrdersCanBeServed",
+    "autoStockDeductionOnServe",
+    "completedOrdersLeaveKitchenQueue",
+    "kitchenStatusProgressesInOrder"
+  ],
+  "story": {
+    "actor": "atendente",
+    "goal": "Avançar o status do pedido no ciclo coordenado entre salão e cozinha até a conclusão ou cancelamento",
+    "steps": [
+      "Seleciona o pedido na lista ou fila operacional do salão/cozinha",
+      "Informa o novo status permitido pela transição (confirmed, inPreparation, ready, served ou cancelled)",
+      "Quando o destino for cancelamento, informa o motivo",
+      "Confirma a atualização do status"
+    ],
+    "outcome": "O pedido reflete o novo status com o carimbo de tempo correspondente; se servido, a baixa automática de estoque é gerada e o pedido deixa a fila ativa da cozinha"
+  },
+  "accessPattern": {
+    "kind": "commandInput",
+    "description": "Comando para avançar o status do pedido selecionado no ciclo salão-cozinha",
+    "entity": "Order",
+    "keyField": "Order.orderId",
+    "pagination": "none",
+    "selection": "single",
+    "output": [
+      "Order.orderId",
+      "Order.status",
+      "Order.confirmedAt",
+      "Order.inPreparationAt",
+      "Order.readyAt",
+      "Order.servedAt",
+      "Order.cancelledAt",
+      "Order.cancellationReason",
+      "Order.updatedAt"
+    ]
+  },
+  "outputShape": {
+    "kind": "object",
+    "fields": [
+      {
+        "name": "orderId",
+        "type": "string",
+        "required": true,
+        "fieldRef": "Order.orderId"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "required": true,
+        "fieldRef": "Order.status"
+      },
+      {
+        "name": "confirmedAt",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.confirmedAt"
+      },
+      {
+        "name": "inPreparationAt",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.inPreparationAt"
+      },
+      {
+        "name": "readyAt",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.readyAt"
+      },
+      {
+        "name": "servedAt",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.servedAt"
+      },
+      {
+        "name": "cancelledAt",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.cancelledAt"
+      },
+      {
+        "name": "cancellationReason",
+        "type": "string",
+        "required": false,
+        "fieldRef": "Order.cancellationReason"
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "required": true,
+        "fieldRef": "Order.updatedAt"
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "inputId": "orderId",
+      "fieldRef": "Order.orderId",
+      "required": true,
+      "source": "selectedEntity",
+      "description": "Identificador do pedido cujo status será atualizado"
+    },
+    {
+      "inputId": "status",
+      "fieldRef": "Order.status",
+      "required": true,
+      "source": "userInput",
+      "description": "Novo status do pedido no ciclo (confirmed, inPreparation, ready, served ou cancelled)"
+    },
+    {
+      "inputId": "cancellationReason",
+      "fieldRef": "Order.cancellationReason",
+      "required": false,
+      "source": "userInput",
+      "description": "Motivo do cancelamento quando o novo status é cancelled"
+    },
+    {
+      "inputId": "updatedAt",
+      "fieldRef": "Order.updatedAt",
+      "required": true,
+      "source": "systemDefault",
+      "description": "Data e hora da atualização do registro do pedido"
+    }
+  ],
+  "contextResolution": [
+    {
+      "inputId": "orderId",
+      "targetRef": "Order.orderId",
+      "source": "selectedEntity",
+      "originRef": "Order.orderId",
+      "description": "Pedido selecionado na fila da cozinha ou na lista de acompanhamento do salão"
+    },
+    {
+      "inputId": "updatedAt",
+      "targetRef": "Order.updatedAt",
+      "source": "systemDefault",
+      "originRef": "systemDefault.now",
+      "description": "Timestamp atual do servidor no momento da atualização de status"
+    }
+  ],
+  "acceptanceAssertions": [
+    "Após confirmação explícita do atendente, o pedido passa para status confirmed, recebe confirmedAt e fica visível na fila ativa da cozinha",
+    "O cozinheiro só pode avançar de confirmed para inPreparation e de inPreparation para ready; transições fora dessa ordem são rejeitadas",
+    "Ao iniciar o preparo, o pedido fica com status inPreparation e inPreparationAt preenchido",
+    "Ao sinalizar pronto, o pedido fica com status ready e readyAt preenchido",
+    "Somente pedidos com status ready podem ser marcados como served pelo atendente; demais estados são rejeitados para essa transição",
+    "Ao marcar como served, o pedido recebe status served e servedAt, deixa a fila ativa da cozinha e não retorna a ela",
+    "Ao concluir/servir o pedido, são gerados StockConsumption para os ingredientes vinculados aos OrderItems e o currentBalance dos StockItems correspondentes é reduzido nas quantidades do vínculo",
+    "Ao cancelar, o pedido recebe status cancelled, cancelledAt e cancellationReason opcional, e não permanece na fila ativa da cozinha"
+  ],
+  "pageId": "orderLifecycle",
+  "commandName": "updateOrderStatus",
+  "bffName": "cafeFlow.orderLifecycle.updateOrderStatus",
+  "capability": {
+    "capabilityId": "orderLifecycle",
+    "title": "Ciclo de vida do pedido",
+    "actor": "atendente",
+    "priority": "now"
+  },
+  "statusFrontend": "toCreate",
+  "statusBackend": "toCreate"
+} as const;
+
+export default operationUpdateOrderStatus;

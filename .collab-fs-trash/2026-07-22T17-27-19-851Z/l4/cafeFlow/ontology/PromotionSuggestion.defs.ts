@@ -1,0 +1,89 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/ontology/PromotionSuggestion.defs.ts" enhancement="_blank"/>
+
+export const cafeFlowEntityPromotionSuggestion = {
+  "entityId": "PromotionSuggestion",
+  "title": "Sugestão de Itens a Promover (IA)",
+  "description": "Lista de itens candidatos a promoção gerada pelo assistente de IA com base nos últimos 7 dias de operação, apenas como sugestão para decisão do gerente.",
+  "kind": "metric",
+  "ownership": "moduleOwned",
+  "fields": [
+    {
+      "fieldId": "promotionSuggestionId",
+      "type": "uuid",
+      "required": true,
+      "description": "Identificador único da sugestão de promoção gerada pela IA."
+    },
+    {
+      "fieldId": "shiftId",
+      "type": "uuid",
+      "required": true,
+      "description": "Identificador do turno ao qual a sugestão está vinculada, delimitando o contexto operacional da unidade."
+    },
+    {
+      "fieldId": "generatedAt",
+      "type": "datetime",
+      "required": true,
+      "description": "Data e hora em que a sugestão foi gerada pelo assistente de IA."
+    },
+    {
+      "fieldId": "analysisWindowDays",
+      "type": "number",
+      "required": true,
+      "description": "Janela de dias de operação analisada para gerar a sugestão (regra fixa: últimos 7 dias)."
+    },
+    {
+      "fieldId": "menuItemIds",
+      "type": "MenuItem",
+      "required": true,
+      "description": "Lista de identificadores dos itens do cardápio candidatos a promoção conforme análise dos últimos 7 dias."
+    },
+    {
+      "fieldId": "reason",
+      "type": "text",
+      "required": false,
+      "description": "Justificativa gerada pela IA explicando por que os itens foram sugeridos (ex.: baixa saída, margem, estoque parado)."
+    },
+    {
+      "fieldId": "managerDecision",
+      "type": "string",
+      "required": false,
+      "description": "Decisão do gerente sobre a sugestão.",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected"
+      ]
+    },
+    {
+      "fieldId": "managerNotes",
+      "type": "text",
+      "required": false,
+      "description": "Observações registradas pelo gerente ao avaliar a sugestão."
+    },
+    {
+      "fieldId": "decidedAt",
+      "type": "datetime",
+      "required": false,
+      "description": "Data e hora em que o gerente registrou sua decisão sobre a sugestão."
+    },
+    {
+      "fieldId": "createdAt",
+      "type": "datetime",
+      "required": true,
+      "description": "Data e hora de criação do registro da sugestão."
+    },
+    {
+      "fieldId": "updatedAt",
+      "type": "datetime",
+      "required": true,
+      "description": "Data e hora da última atualização do registro da sugestão."
+    }
+  ],
+  "lifecycleStates": [
+    "pending",
+    "accepted",
+    "rejected"
+  ]
+} as const;
+
+export default cafeFlowEntityPromotionSuggestion;

@@ -1,0 +1,520 @@
+{
+  "savedAt": "2026-07-22T14:49:36.716Z",
+  "stepId": "e5-operation-viewOperationalDashboard",
+  "agentName": "agentNsBehavior",
+  "attempt": 1,
+  "payload": {
+    "artifact": {
+      "operationId": "viewOperationalDashboard",
+      "title": "Ver dashboard operacional",
+      "actors": [
+        "gerente"
+      ],
+      "entity": "OperationalDashboard",
+      "kind": "view",
+      "reads": [
+        "OperationalDashboard",
+        "DailyShift",
+        "Order",
+        "OrderItem",
+        "MenuItem",
+        "StockItem"
+      ],
+      "writes": [],
+      "rulesApplied": [
+        "lowStockMustBeVisible",
+        "dashboardHighlightsCoreMetrics"
+      ],
+      "story": {
+        "actor": "Gerente",
+        "goal": "Consultar o panorama do turno aberto com vendas de hoje, itens mais vendidos e alertas de estoque baixo para decidir ações imediatas",
+        "steps": [
+          "Abrir o dashboard operacional do turno corrente",
+          "Visualizar totais de vendas, pedidos e itens vendidos do dia",
+          "Conferir os itens de cardápio mais vendidos no turno",
+          "Identificar alertas de estoque baixo e ruptura destacados no painel"
+        ],
+        "outcome": "Panorama do dia visível com métricas centrais e alertas de estoque, base para ações de cardápio, reposição e prioridade de venda"
+      },
+      "accessPattern": {
+        "kind": "lookup",
+        "description": "Localiza o snapshot do dashboard operacional pelo turno diário aberto e devolve métricas do dia, destaques de venda e alertas de estoque",
+        "entity": "OperationalDashboard",
+        "keyField": "OperationalDashboard.dailyShiftId",
+        "pagination": "none",
+        "selection": "none",
+        "output": [
+          "OperationalDashboard.operationalDashboardId",
+          "OperationalDashboard.dailyShiftId",
+          "OperationalDashboard.referenceDate",
+          "OperationalDashboard.todaySalesTotal",
+          "OperationalDashboard.todayOrdersCount",
+          "OperationalDashboard.todayItemsSold",
+          "OperationalDashboard.topMenuItemId",
+          "OperationalDashboard.topMenuItemQuantity",
+          "OperationalDashboard.topSellingItemsCount",
+          "OperationalDashboard.lowStockItemsCount",
+          "OperationalDashboard.outOfStockItemsCount",
+          "OperationalDashboard.hasLowStockAlert",
+          "OperationalDashboard.lastComputedAt",
+          "MenuItem.menuItemId",
+          "MenuItem.name",
+          "StockItem.stockItemId",
+          "StockItem.name",
+          "StockItem.currentBalance",
+          "StockItem.minimumLevel",
+          "StockItem.unit"
+        ]
+      },
+      "outputShape": {
+        "kind": "object",
+        "fields": [
+          {
+            "name": "operationalDashboardId",
+            "type": "string",
+            "required": true,
+            "fieldRef": "OperationalDashboard.operationalDashboardId"
+          },
+          {
+            "name": "dailyShiftId",
+            "type": "string",
+            "required": true,
+            "fieldRef": "OperationalDashboard.dailyShiftId"
+          },
+          {
+            "name": "referenceDate",
+            "type": "string",
+            "required": true,
+            "fieldRef": "OperationalDashboard.referenceDate"
+          },
+          {
+            "name": "todaySalesTotal",
+            "type": "number",
+            "required": true,
+            "fieldRef": "OperationalDashboard.todaySalesTotal"
+          },
+          {
+            "name": "todayOrdersCount",
+            "type": "number",
+            "required": true,
+            "fieldRef": "OperationalDashboard.todayOrdersCount"
+          },
+          {
+            "name": "todayItemsSold",
+            "type": "number",
+            "required": true,
+            "fieldRef": "OperationalDashboard.todayItemsSold"
+          },
+          {
+            "name": "topMenuItemId",
+            "type": "string",
+            "required": false,
+            "fieldRef": "OperationalDashboard.topMenuItemId"
+          },
+          {
+            "name": "topMenuItemQuantity",
+            "type": "number",
+            "required": false,
+            "fieldRef": "OperationalDashboard.topMenuItemQuantity"
+          },
+          {
+            "name": "topSellingItemsCount",
+            "type": "number",
+            "required": true,
+            "fieldRef": "OperationalDashboard.topSellingItemsCount"
+          },
+          {
+            "name": "lowStockItemsCount",
+            "type": "number",
+            "required": true,
+            "fieldRef": "OperationalDashboard.lowStockItemsCount"
+          },
+          {
+            "name": "outOfStockItemsCount",
+            "type": "number",
+            "required": true,
+            "fieldRef": "OperationalDashboard.outOfStockItemsCount"
+          },
+          {
+            "name": "hasLowStockAlert",
+            "type": "boolean",
+            "required": true,
+            "fieldRef": "OperationalDashboard.hasLowStockAlert"
+          },
+          {
+            "name": "lastComputedAt",
+            "type": "string",
+            "required": true,
+            "fieldRef": "OperationalDashboard.lastComputedAt"
+          },
+          {
+            "name": "topSellingItems",
+            "type": "array",
+            "required": true,
+            "item": {
+              "fields": [
+                {
+                  "name": "menuItemId",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.menuItemId"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.name"
+                },
+                {
+                  "name": "quantitySold",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "name": "unitPrice",
+                  "type": "number",
+                  "required": true,
+                  "fieldRef": "MenuItem.price"
+                }
+              ]
+            }
+          },
+          {
+            "name": "lowStockAlerts",
+            "type": "array",
+            "required": true,
+            "item": {
+              "fields": [
+                {
+                  "name": "stockItemId",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "StockItem.stockItemId"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "StockItem.name"
+                },
+                {
+                  "name": "currentBalance",
+                  "type": "number",
+                  "required": true,
+                  "fieldRef": "StockItem.currentBalance"
+                },
+                {
+                  "name": "minimumLevel",
+                  "type": "number",
+                  "required": true,
+                  "fieldRef": "StockItem.minimumLevel"
+                },
+                {
+                  "name": "unit",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "StockItem.unit"
+                },
+                {
+                  "name": "isOutOfStock",
+                  "type": "boolean",
+                  "required": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "inputs": [
+        {
+          "inputId": "dailyShiftId",
+          "fieldRef": "OperationalDashboard.dailyShiftId",
+          "required": true,
+          "source": "activeLifecycleInstance",
+          "description": "Identificador do turno diário aberto a partir do qual o dashboard operacional é calculado e exibido"
+        }
+      ],
+      "contextResolution": [
+        {
+          "inputId": "dailyShiftId",
+          "targetRef": "OperationalDashboard.dailyShiftId",
+          "source": "activeLifecycleInstance",
+          "originRef": "DailyShift.dailyShiftId",
+          "description": "Resolve o único DailyShift com status open no momento para montar o dashboard do turno corrente"
+        }
+      ],
+      "acceptanceAssertions": [
+        "Ao abrir o dashboard, o panorama do turno aberto fica visível com vendas de hoje (todaySalesTotal), quantidade de pedidos (todayOrdersCount) e itens vendidos (todayItemsSold)",
+        "O dashboard destaca os itens mais vendidos do turno em topSellingItems, incluindo ao menos o item líder quando houver vendas",
+        "Itens de estoque abaixo do nível mínimo ou em ruptura aparecem destacados em lowStockAlerts com hasLowStockAlert verdadeiro quando houver ao menos um alerta",
+        "lowStockItemsCount e outOfStockItemsCount refletem a quantidade atual de itens em risco e em ruptura",
+        "O dashboard é calculado a partir do DailyShift aberto (dailyShiftId) e lastComputedAt indica o momento da última agregação"
+      ],
+      "pageId": "viewOperationalDashboard",
+      "commandName": "viewOperationalDashboard",
+      "bffName": "cafeFlow.viewOperationalDashboard.viewOperationalDashboard",
+      "capability": {
+        "capabilityId": "viewOperationalDashboard",
+        "title": "Ver dashboard operacional",
+        "actor": "gerente",
+        "priority": "now"
+      },
+      "statusFrontend": "toCreate",
+      "statusBackend": "toCreate"
+    },
+    "gate": {
+      "ok": true,
+      "artifact": {
+        "operationId": "viewOperationalDashboard",
+        "title": "Ver dashboard operacional",
+        "actors": [
+          "gerente"
+        ],
+        "entity": "OperationalDashboard",
+        "kind": "view",
+        "reads": [
+          "OperationalDashboard",
+          "DailyShift",
+          "Order",
+          "OrderItem",
+          "MenuItem",
+          "StockItem"
+        ],
+        "writes": [],
+        "rulesApplied": [
+          "lowStockMustBeVisible",
+          "dashboardHighlightsCoreMetrics"
+        ],
+        "story": {
+          "actor": "Gerente",
+          "goal": "Consultar o panorama do turno aberto com vendas de hoje, itens mais vendidos e alertas de estoque baixo para decidir ações imediatas",
+          "steps": [
+            "Abrir o dashboard operacional do turno corrente",
+            "Visualizar totais de vendas, pedidos e itens vendidos do dia",
+            "Conferir os itens de cardápio mais vendidos no turno",
+            "Identificar alertas de estoque baixo e ruptura destacados no painel"
+          ],
+          "outcome": "Panorama do dia visível com métricas centrais e alertas de estoque, base para ações de cardápio, reposição e prioridade de venda"
+        },
+        "accessPattern": {
+          "kind": "lookup",
+          "description": "Localiza o snapshot do dashboard operacional pelo turno diário aberto e devolve métricas do dia, destaques de venda e alertas de estoque",
+          "entity": "OperationalDashboard",
+          "keyField": "OperationalDashboard.dailyShiftId",
+          "pagination": "none",
+          "selection": "none",
+          "output": [
+            "OperationalDashboard.operationalDashboardId",
+            "OperationalDashboard.dailyShiftId",
+            "OperationalDashboard.referenceDate",
+            "OperationalDashboard.todaySalesTotal",
+            "OperationalDashboard.todayOrdersCount",
+            "OperationalDashboard.todayItemsSold",
+            "OperationalDashboard.topMenuItemId",
+            "OperationalDashboard.topMenuItemQuantity",
+            "OperationalDashboard.topSellingItemsCount",
+            "OperationalDashboard.lowStockItemsCount",
+            "OperationalDashboard.outOfStockItemsCount",
+            "OperationalDashboard.hasLowStockAlert",
+            "OperationalDashboard.lastComputedAt",
+            "MenuItem.menuItemId",
+            "MenuItem.name",
+            "StockItem.stockItemId",
+            "StockItem.name",
+            "StockItem.currentBalance",
+            "StockItem.minimumLevel",
+            "StockItem.unit"
+          ]
+        },
+        "outputShape": {
+          "kind": "object",
+          "fields": [
+            {
+              "name": "operationalDashboardId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "OperationalDashboard.operationalDashboardId"
+            },
+            {
+              "name": "dailyShiftId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "OperationalDashboard.dailyShiftId"
+            },
+            {
+              "name": "referenceDate",
+              "type": "string",
+              "required": true,
+              "fieldRef": "OperationalDashboard.referenceDate"
+            },
+            {
+              "name": "todaySalesTotal",
+              "type": "number",
+              "required": true,
+              "fieldRef": "OperationalDashboard.todaySalesTotal"
+            },
+            {
+              "name": "todayOrdersCount",
+              "type": "number",
+              "required": true,
+              "fieldRef": "OperationalDashboard.todayOrdersCount"
+            },
+            {
+              "name": "todayItemsSold",
+              "type": "number",
+              "required": true,
+              "fieldRef": "OperationalDashboard.todayItemsSold"
+            },
+            {
+              "name": "topMenuItemId",
+              "type": "string",
+              "required": false,
+              "fieldRef": "OperationalDashboard.topMenuItemId"
+            },
+            {
+              "name": "topMenuItemQuantity",
+              "type": "number",
+              "required": false,
+              "fieldRef": "OperationalDashboard.topMenuItemQuantity"
+            },
+            {
+              "name": "topSellingItemsCount",
+              "type": "number",
+              "required": true,
+              "fieldRef": "OperationalDashboard.topSellingItemsCount"
+            },
+            {
+              "name": "lowStockItemsCount",
+              "type": "number",
+              "required": true,
+              "fieldRef": "OperationalDashboard.lowStockItemsCount"
+            },
+            {
+              "name": "outOfStockItemsCount",
+              "type": "number",
+              "required": true,
+              "fieldRef": "OperationalDashboard.outOfStockItemsCount"
+            },
+            {
+              "name": "hasLowStockAlert",
+              "type": "boolean",
+              "required": true,
+              "fieldRef": "OperationalDashboard.hasLowStockAlert"
+            },
+            {
+              "name": "lastComputedAt",
+              "type": "string",
+              "required": true,
+              "fieldRef": "OperationalDashboard.lastComputedAt"
+            },
+            {
+              "name": "topSellingItems",
+              "type": "array",
+              "required": true,
+              "item": {
+                "fields": [
+                  {
+                    "name": "menuItemId",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.menuItemId"
+                  },
+                  {
+                    "name": "name",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.name"
+                  },
+                  {
+                    "name": "quantitySold",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "unitPrice",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "MenuItem.price"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "lowStockAlerts",
+              "type": "array",
+              "required": true,
+              "item": {
+                "fields": [
+                  {
+                    "name": "stockItemId",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "StockItem.stockItemId"
+                  },
+                  {
+                    "name": "name",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "StockItem.name"
+                  },
+                  {
+                    "name": "currentBalance",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "StockItem.currentBalance"
+                  },
+                  {
+                    "name": "minimumLevel",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "StockItem.minimumLevel"
+                  },
+                  {
+                    "name": "unit",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "StockItem.unit"
+                  },
+                  {
+                    "name": "isOutOfStock",
+                    "type": "boolean",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "inputs": [
+          {
+            "inputId": "dailyShiftId",
+            "fieldRef": "OperationalDashboard.dailyShiftId",
+            "required": true,
+            "source": "activeLifecycleInstance",
+            "description": "Identificador do turno diário aberto a partir do qual o dashboard operacional é calculado e exibido"
+          }
+        ],
+        "contextResolution": [
+          {
+            "inputId": "dailyShiftId",
+            "targetRef": "OperationalDashboard.dailyShiftId",
+            "source": "activeLifecycleInstance",
+            "originRef": "DailyShift.dailyShiftId",
+            "description": "Resolve o único DailyShift com status open no momento para montar o dashboard do turno corrente"
+          }
+        ],
+        "acceptanceAssertions": [
+          "Ao abrir o dashboard, o panorama do turno aberto fica visível com vendas de hoje (todaySalesTotal), quantidade de pedidos (todayOrdersCount) e itens vendidos (todayItemsSold)",
+          "O dashboard destaca os itens mais vendidos do turno em topSellingItems, incluindo ao menos o item líder quando houver vendas",
+          "Itens de estoque abaixo do nível mínimo ou em ruptura aparecem destacados em lowStockAlerts com hasLowStockAlert verdadeiro quando houver ao menos um alerta",
+          "lowStockItemsCount e outOfStockItemsCount refletem a quantidade atual de itens em risco e em ruptura",
+          "O dashboard é calculado a partir do DailyShift aberto (dailyShiftId) e lastComputedAt indica o momento da última agregação"
+        ]
+      },
+      "errors": [],
+      "warnings": [],
+      "attempts": 1,
+      "needsHumanInput": false
+    }
+  }
+}

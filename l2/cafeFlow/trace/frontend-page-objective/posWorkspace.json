@@ -1,0 +1,48 @@
+{
+  "savedAt": "2026-07-23T17:08:12.004Z",
+  "pageId": "posWorkspace",
+  "genome": "page21",
+  "objective": {
+    "actor": "Atendente de café (e cozinheiro para acompanhamento de fila)",
+    "jobToBeDone": "Lançar novos pedidos de mesa ou takeout, acompanhar o andamento dos pedidos abertos do turno, atualizar status ao longo do ciclo de vida e registrar o pagamento básico ao fechar o atendimento.",
+    "primaryDecision": "Criar um novo pedido selecionando itens do cardápio e confirmando o envio à cozinha.",
+    "decisiveInfo": [
+      "orderType (mesa ou takeout)",
+      "tableNumber / customerName",
+      "menuItemId + quantity + observations (itens do cardápio ativo)",
+      "status atual do pedido (para transições contextuais)",
+      "totalAmount + paymentMethod (para fechamento)"
+    ],
+    "usageFrequency": "Contínuo / mãos ocupadas — o atendente usa o POS durante todo o turno, com alta frequência de lançamentos e transições rápidas.",
+    "criticalActions": [
+      {
+        "action": "cmdCreateOrder",
+        "presentation": "primary-button dentro do painel de composição do pedido, após seleção de itens do cardápio"
+      },
+      {
+        "action": "cmdUpdateOrderStatus",
+        "presentation": "contextual-transition-actions — um botão por transição válida exibido no card/linha do pedido selecionado"
+      },
+      {
+        "action": "cmdRecordBasicPayment",
+        "presentation": "inline-row-command ou painel lateral ativado ao selecionar pedido pronto para pagamento"
+      }
+    ],
+    "informationHierarchy": [
+      "1. Lista de pedidos abertos do turno (status, tipo, mesa/cliente, horário) — visão operacional imediata",
+      "2. Filtros de pedidos (status, tipo, mesa) — refinamento rápido da fila",
+      "3. Ações de transição de status contextuais ao pedido selecionado",
+      "4. Painel de criação de novo pedido com cardápio navegável por categoria",
+      "5. Painel de registro de pagamento básico para pedido selecionado"
+    ],
+    "successCriteria": "O atendente consegue lançar um pedido completo, acompanhar a fila e registrar pagamento sem sair da tela, sem digitar IDs e sem ambiguidade sobre o estado atual de cada pedido.",
+    "antiPatterns": [
+      "Campo de status como <select> livre sobre todos os valores do enum",
+      "Campo orderId digitado manualmente",
+      "Formulário de criação de pedido separado em página diferente",
+      "Exibir campos de sistema (dailyShiftId, registeredAt, createdAt) como inputs editáveis",
+      "Seção de filtros isolada sem vínculo visual com a lista que filtra",
+      "Persuasão ou urgência artificial em tela operacional"
+    ]
+  }
+}

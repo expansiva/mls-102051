@@ -1,0 +1,26 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/journeys/runDailyShift.defs.ts" enhancement="_blank"/>
+
+export const runDailyShiftJourney = {
+  "journeyId": "runDailyShift",
+  "actorId": "gerente",
+  "title": "Abrir e fechar o turno diário",
+  "goal": "Organizar a operação do dia e fechar com relatório claro de vendas e rupturas",
+  "steps": [
+    "Abrir turno do dia",
+    "Acompanhar operação no turno",
+    "Fechar turno com relatório",
+    "Conferir totais e pagamentos básicos"
+  ],
+  "outcome": "Dia operacional encapsulado em um turno com relatório de fechamento útil para a gestão.",
+  "operationIds": [
+    "openDailyShift",
+    "viewOperationalDashboard",
+    "trackOrders",
+    "closeDailyShift",
+    "viewShiftClosingReport",
+    "recordBasicPayment"
+  ],
+  "workspaceId": "posWorkspace"
+} as const;
+
+export default runDailyShiftJourney;

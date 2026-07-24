@@ -1,0 +1,25 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/journeys/manageInventory.defs.ts" enhancement="_blank"/>
+
+export const manageInventoryJourney = {
+  "journeyId": "manageInventory",
+  "actorId": "gerente",
+  "title": "Controlar itens de estoque e rupturas",
+  "goal": "Manter o estoque simples em dia e reagir a estoque baixo",
+  "steps": [
+    "Cadastrar ou ajustar item de estoque",
+    "Revisar estoque baixo",
+    "Fazer ajuste manual"
+  ],
+  "outcome": "Estoque simples alinhado à operação, com alertas de baixo nível acionáveis.",
+  "operationIds": [
+    "browseStockItems",
+    "createStockItem",
+    "updateStockItem",
+    "deleteStockItem",
+    "createStockAdjustment",
+    "viewOperationalDashboard"
+  ],
+  "workspaceId": "stockManagement"
+} as const;
+
+export default manageInventoryJourney;

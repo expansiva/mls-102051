@@ -1,0 +1,225 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/operations/browseMenuItems.defs.ts" enhancement="_blank"/>
+
+export const operationBrowseMenuItems = {
+  "operationId": "browseMenuItems",
+  "title": "Listar itens do cardápio",
+  "actors": [
+    "gerente"
+  ],
+  "entity": "MenuItem",
+  "kind": "query",
+  "reads": [
+    "MenuItem",
+    "MenuCategory"
+  ],
+  "writes": [],
+  "rulesApplied": [
+    "onlyActiveMenuItemsCanBeOrdered",
+    "menuItemNeedsCategoryAndPrice"
+  ],
+  "story": {
+    "actor": "gerente",
+    "goal": "Visualizar os itens do cardápio para gerenciar cadastro, preços, categorias e disponibilidade no PDV",
+    "steps": [
+      "Abrir a listagem de itens do cardápio",
+      "Filtrar por categoria e status quando necessário",
+      "Revisar nome, preço, categoria, status e ordem de exibição de cada item",
+      "Selecionar um item para editar, vincular ingredientes ou alterar disponibilidade"
+    ],
+    "outcome": "O gerente enxerga o cardápio completo e pode agir sobre qualquer item a partir da lista"
+  },
+  "accessPattern": {
+    "kind": "list",
+    "description": "Lista paginável de itens do cardápio com filtros por status, categoria e nome para o gerente manter o cardápio",
+    "entity": "MenuItem",
+    "keyField": "MenuItem.menuItemId",
+    "filters": [
+      "MenuItem.status",
+      "MenuItem.menuCategoryId",
+      "MenuItem.name"
+    ],
+    "sort": [
+      "MenuItem.displayOrder",
+      "MenuItem.name"
+    ],
+    "pagination": "optional",
+    "selection": "single",
+    "output": [
+      "MenuItem.menuItemId",
+      "MenuItem.menuCategoryId",
+      "MenuItem.name",
+      "MenuItem.description",
+      "MenuItem.price",
+      "MenuItem.status",
+      "MenuItem.pausedAt",
+      "MenuItem.pauseReason",
+      "MenuItem.imageUrl",
+      "MenuItem.displayOrder",
+      "MenuItem.requiresStockLink",
+      "MenuItem.createdAt",
+      "MenuItem.updatedAt",
+      "MenuCategory.name"
+    ]
+  },
+  "outputShape": {
+    "kind": "paginated",
+    "fields": [
+      {
+        "name": "menuItems",
+        "type": "array",
+        "required": true,
+        "item": {
+          "fields": [
+            {
+              "name": "menuItemId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "MenuItem.menuItemId"
+            },
+            {
+              "name": "menuCategoryId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "MenuItem.menuCategoryId"
+            },
+            {
+              "name": "categoryName",
+              "type": "string",
+              "required": true,
+              "fieldRef": "MenuCategory.name"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "fieldRef": "MenuItem.name"
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "required": false,
+              "fieldRef": "MenuItem.description"
+            },
+            {
+              "name": "price",
+              "type": "number",
+              "required": true,
+              "fieldRef": "MenuItem.price"
+            },
+            {
+              "name": "status",
+              "type": "string",
+              "required": true,
+              "fieldRef": "MenuItem.status"
+            },
+            {
+              "name": "pausedAt",
+              "type": "string",
+              "required": false,
+              "fieldRef": "MenuItem.pausedAt"
+            },
+            {
+              "name": "pauseReason",
+              "type": "string",
+              "required": false,
+              "fieldRef": "MenuItem.pauseReason"
+            },
+            {
+              "name": "imageUrl",
+              "type": "string",
+              "required": false,
+              "fieldRef": "MenuItem.imageUrl"
+            },
+            {
+              "name": "displayOrder",
+              "type": "number",
+              "required": false,
+              "fieldRef": "MenuItem.displayOrder"
+            },
+            {
+              "name": "requiresStockLink",
+              "type": "boolean",
+              "required": true,
+              "fieldRef": "MenuItem.requiresStockLink"
+            },
+            {
+              "name": "createdAt",
+              "type": "string",
+              "required": true,
+              "fieldRef": "MenuItem.createdAt"
+            },
+            {
+              "name": "updatedAt",
+              "type": "string",
+              "required": true,
+              "fieldRef": "MenuItem.updatedAt"
+            }
+          ]
+        }
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "required": true
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "inputId": "status",
+      "fieldRef": "MenuItem.status",
+      "required": false,
+      "source": "userInput",
+      "description": "Filtro opcional pelo status do item (active ou paused)"
+    },
+    {
+      "inputId": "menuCategoryId",
+      "fieldRef": "MenuItem.menuCategoryId",
+      "required": false,
+      "source": "userInput",
+      "description": "Filtro opcional pela categoria do item"
+    },
+    {
+      "inputId": "name",
+      "fieldRef": "MenuItem.name",
+      "required": false,
+      "source": "userInput",
+      "description": "Filtro opcional por trecho do nome do item"
+    },
+    {
+      "inputId": "page",
+      "type": "number",
+      "required": false,
+      "source": "userInput",
+      "description": "Número da página para paginação opcional"
+    },
+    {
+      "inputId": "pageSize",
+      "type": "number",
+      "required": false,
+      "source": "userInput",
+      "description": "Quantidade de itens por página"
+    }
+  ],
+  "contextResolution": [],
+  "acceptanceAssertions": [
+    "A listagem retorna os itens do cardápio com menuItemId, nome, categoria, preço, status, ordem de exibição e requiresStockLink",
+    "É possível filtrar a lista por status (active/paused) e por menuCategoryId",
+    "Itens com status paused aparecem na listagem gerencial mesmo não estando disponíveis para novos lançamentos no POS",
+    "A resposta inclui o total de itens que atendem aos filtros para paginação",
+    "Cada item exibe o nome da categoria associada além do menuCategoryId"
+  ],
+  "pageId": "browseMenuItems",
+  "commandName": "browseMenuItems",
+  "bffName": "cafeFlow.browseMenuItems.browseMenuItems",
+  "capability": {
+    "capabilityId": "browseMenuItems",
+    "title": "Listar itens do cardápio",
+    "actor": "gerente",
+    "priority": "now"
+  },
+  "statusFrontend": "toCreate",
+  "statusBackend": "toCreate"
+} as const;
+
+export default operationBrowseMenuItems;

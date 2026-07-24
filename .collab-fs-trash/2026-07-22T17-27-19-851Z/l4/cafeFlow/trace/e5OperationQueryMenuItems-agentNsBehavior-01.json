@@ -1,0 +1,342 @@
+{
+  "savedAt": "2026-07-22T13:06:18.370Z",
+  "stepId": "e5-operation-queryMenuItems",
+  "agentName": "agentNsBehavior",
+  "attempt": 1,
+  "payload": {
+    "artifact": {
+      "operationId": "queryMenuItems",
+      "title": "Listar itens do cardápio",
+      "actors": [
+        "gerente"
+      ],
+      "entity": "MenuItem",
+      "kind": "query",
+      "reads": [
+        "MenuItem"
+      ],
+      "writes": [],
+      "rulesApplied": [
+        "menuItemMustBeActiveToOrder"
+      ],
+      "story": {
+        "actor": "gerente",
+        "goal": "Visualizar os itens do cardápio para gerenciar cadastro, preço, status e composição",
+        "steps": [
+          "O gerente acessa a gestão do cardápio",
+          "O sistema lista os itens com nome, categoria, preço e status",
+          "O gerente filtra por status ou categoria conforme necessário",
+          "O gerente seleciona um item para editar, vincular ingredientes ou ativar/desativar"
+        ],
+        "outcome": "Lista de itens do cardápio exibida com dados atuais para gestão"
+      },
+      "accessPattern": {
+        "kind": "list",
+        "description": "Lista paginada dos itens do cardápio com filtros por status e categoria",
+        "entity": "MenuItem",
+        "keyField": "MenuItem.menuItemId",
+        "filters": [
+          "MenuItem.status",
+          "MenuItem.category"
+        ],
+        "sort": [
+          "MenuItem.name"
+        ],
+        "pagination": "optional",
+        "selection": "single",
+        "output": [
+          "MenuItem.menuItemId",
+          "MenuItem.name",
+          "MenuItem.category",
+          "MenuItem.price",
+          "MenuItem.status",
+          "MenuItem.description",
+          "MenuItem.createdAt",
+          "MenuItem.updatedAt"
+        ]
+      },
+      "outputShape": {
+        "kind": "paginated",
+        "fields": [
+          {
+            "name": "menuItems",
+            "type": "array",
+            "required": true,
+            "item": {
+              "fields": [
+                {
+                  "name": "menuItemId",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.menuItemId"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.name"
+                },
+                {
+                  "name": "category",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.category"
+                },
+                {
+                  "name": "price",
+                  "type": "number",
+                  "required": true,
+                  "fieldRef": "MenuItem.price"
+                },
+                {
+                  "name": "status",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.status"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "fieldRef": "MenuItem.description"
+                },
+                {
+                  "name": "createdAt",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.createdAt"
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "MenuItem.updatedAt"
+                }
+              ]
+            }
+          },
+          {
+            "name": "total",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      "inputs": [
+        {
+          "inputId": "status",
+          "fieldRef": "MenuItem.status",
+          "required": false,
+          "source": "userInput",
+          "description": "Filtro opcional pelo status do item (active ou inactive)"
+        },
+        {
+          "inputId": "category",
+          "fieldRef": "MenuItem.category",
+          "required": false,
+          "source": "userInput",
+          "description": "Filtro opcional pela categoria do item no cardápio"
+        },
+        {
+          "inputId": "page",
+          "type": "number",
+          "required": false,
+          "source": "userInput",
+          "description": "Número da página para paginação opcional"
+        },
+        {
+          "inputId": "pageSize",
+          "type": "number",
+          "required": false,
+          "source": "userInput",
+          "description": "Quantidade de itens por página"
+        }
+      ],
+      "contextResolution": [],
+      "acceptanceAssertions": [
+        "A operação retorna a lista paginada de itens do cardápio com menuItemId, name, category, price, status, description, createdAt e updatedAt",
+        "Quando filtrado por status active, somente itens com status active são retornados",
+        "Quando filtrado por status inactive, somente itens com status inactive são retornados",
+        "Quando filtrado por category, somente itens da categoria informada são retornados",
+        "O campo total reflete a quantidade total de itens que atendem aos filtros aplicados",
+        "Itens ativos e inativos podem ser listados para gestão pelo gerente, permitindo selecionar um item para edição ou alteração de disponibilidade"
+      ],
+      "pageId": "queryMenuItems",
+      "commandName": "queryMenuItems",
+      "bffName": "cafeFlow.queryMenuItems.queryMenuItems",
+      "capability": {
+        "capabilityId": "queryMenuItems",
+        "title": "Listar itens do cardápio",
+        "actor": "gerente",
+        "priority": "now"
+      },
+      "statusFrontend": "toCreate",
+      "statusBackend": "toCreate"
+    },
+    "gate": {
+      "ok": true,
+      "artifact": {
+        "operationId": "queryMenuItems",
+        "title": "Listar itens do cardápio",
+        "actors": [
+          "gerente"
+        ],
+        "entity": "MenuItem",
+        "kind": "query",
+        "reads": [
+          "MenuItem"
+        ],
+        "writes": [],
+        "rulesApplied": [
+          "menuItemMustBeActiveToOrder"
+        ],
+        "story": {
+          "actor": "gerente",
+          "goal": "Visualizar os itens do cardápio para gerenciar cadastro, preço, status e composição",
+          "steps": [
+            "O gerente acessa a gestão do cardápio",
+            "O sistema lista os itens com nome, categoria, preço e status",
+            "O gerente filtra por status ou categoria conforme necessário",
+            "O gerente seleciona um item para editar, vincular ingredientes ou ativar/desativar"
+          ],
+          "outcome": "Lista de itens do cardápio exibida com dados atuais para gestão"
+        },
+        "accessPattern": {
+          "kind": "list",
+          "description": "Lista paginada dos itens do cardápio com filtros por status e categoria",
+          "entity": "MenuItem",
+          "keyField": "MenuItem.menuItemId",
+          "filters": [
+            "MenuItem.status",
+            "MenuItem.category"
+          ],
+          "sort": [
+            "MenuItem.name"
+          ],
+          "pagination": "optional",
+          "selection": "single",
+          "output": [
+            "MenuItem.menuItemId",
+            "MenuItem.name",
+            "MenuItem.category",
+            "MenuItem.price",
+            "MenuItem.status",
+            "MenuItem.description",
+            "MenuItem.createdAt",
+            "MenuItem.updatedAt"
+          ]
+        },
+        "outputShape": {
+          "kind": "paginated",
+          "fields": [
+            {
+              "name": "menuItems",
+              "type": "array",
+              "required": true,
+              "item": {
+                "fields": [
+                  {
+                    "name": "menuItemId",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.menuItemId"
+                  },
+                  {
+                    "name": "name",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.name"
+                  },
+                  {
+                    "name": "category",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.category"
+                  },
+                  {
+                    "name": "price",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "MenuItem.price"
+                  },
+                  {
+                    "name": "status",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.status"
+                  },
+                  {
+                    "name": "description",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "MenuItem.description"
+                  },
+                  {
+                    "name": "createdAt",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.createdAt"
+                  },
+                  {
+                    "name": "updatedAt",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.updatedAt"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "total",
+              "type": "number",
+              "required": true
+            }
+          ]
+        },
+        "inputs": [
+          {
+            "inputId": "status",
+            "fieldRef": "MenuItem.status",
+            "required": false,
+            "source": "userInput",
+            "description": "Filtro opcional pelo status do item (active ou inactive)"
+          },
+          {
+            "inputId": "category",
+            "fieldRef": "MenuItem.category",
+            "required": false,
+            "source": "userInput",
+            "description": "Filtro opcional pela categoria do item no cardápio"
+          },
+          {
+            "inputId": "page",
+            "type": "number",
+            "required": false,
+            "source": "userInput",
+            "description": "Número da página para paginação opcional"
+          },
+          {
+            "inputId": "pageSize",
+            "type": "number",
+            "required": false,
+            "source": "userInput",
+            "description": "Quantidade de itens por página"
+          }
+        ],
+        "contextResolution": [],
+        "acceptanceAssertions": [
+          "A operação retorna a lista paginada de itens do cardápio com menuItemId, name, category, price, status, description, createdAt e updatedAt",
+          "Quando filtrado por status active, somente itens com status active são retornados",
+          "Quando filtrado por status inactive, somente itens com status inactive são retornados",
+          "Quando filtrado por category, somente itens da categoria informada são retornados",
+          "O campo total reflete a quantidade total de itens que atendem aos filtros aplicados",
+          "Itens ativos e inativos podem ser listados para gestão pelo gerente, permitindo selecionar um item para edição ou alteração de disponibilidade"
+        ]
+      },
+      "errors": [],
+      "warnings": [],
+      "attempts": 1,
+      "needsHumanInput": false
+    }
+  }
+}

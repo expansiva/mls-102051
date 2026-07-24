@@ -1,0 +1,412 @@
+{
+  "savedAt": "2026-07-22T13:06:44.238Z",
+  "stepId": "e5-operation-openShift",
+  "agentName": "agentNsBehavior",
+  "attempt": 1,
+  "payload": {
+    "artifact": {
+      "operationId": "openShift",
+      "title": "Abrir turno diário",
+      "actors": [
+        "gerente"
+      ],
+      "entity": "Shift",
+      "kind": "create",
+      "reads": [
+        "Shift"
+      ],
+      "writes": [
+        "Shift"
+      ],
+      "rulesApplied": [
+        "oneOpenShiftPerUnitPerDay"
+      ],
+      "story": {
+        "actor": "gerente",
+        "goal": "Abrir o turno diário da unidade para permitir o registro de pedidos no POS",
+        "steps": [
+          "Confirma o contexto da unidade correta",
+          "Verifica se não há turno principal já aberto na unidade no dia",
+          "Informa observações operacionais opcionais de abertura",
+          "Confirma a abertura do turno do dia"
+        ],
+        "outcome": "Turno do dia ativo com status open, vinculado à unidade, disponível como base para registrar pedidos e gerar o relatório de fechamento"
+      },
+      "accessPattern": {
+        "kind": "commandInput",
+        "description": "Comando de abertura do turno diário com observações opcionais; unitId e operador vêm do contexto",
+        "entity": "Shift",
+        "keyField": "Shift.shiftId",
+        "pagination": "none",
+        "selection": "none",
+        "output": []
+      },
+      "outputShape": {
+        "kind": "object",
+        "fields": [
+          {
+            "name": "shiftId",
+            "type": "string",
+            "required": true,
+            "fieldRef": "Shift.shiftId"
+          },
+          {
+            "name": "unitId",
+            "type": "string",
+            "required": true,
+            "fieldRef": "Shift.unitId"
+          },
+          {
+            "name": "openedByUserId",
+            "type": "string",
+            "required": true,
+            "fieldRef": "Shift.openedByUserId"
+          },
+          {
+            "name": "openedAt",
+            "type": "string",
+            "required": true,
+            "fieldRef": "Shift.openedAt"
+          },
+          {
+            "name": "status",
+            "type": "string",
+            "required": true,
+            "fieldRef": "Shift.status"
+          },
+          {
+            "name": "notes",
+            "type": "string",
+            "required": false,
+            "fieldRef": "Shift.notes"
+          },
+          {
+            "name": "createdAt",
+            "type": "string",
+            "required": true,
+            "fieldRef": "Shift.createdAt"
+          },
+          {
+            "name": "updatedAt",
+            "type": "string",
+            "required": true,
+            "fieldRef": "Shift.updatedAt"
+          }
+        ]
+      },
+      "inputs": [
+        {
+          "inputId": "notes",
+          "fieldRef": "Shift.notes",
+          "required": false,
+          "source": "userInput",
+          "description": "Observações operacionais opcionais registradas na abertura do turno"
+        },
+        {
+          "inputId": "unitId",
+          "fieldRef": "Shift.unitId",
+          "required": true,
+          "source": "businessContext",
+          "description": "Unidade (loja) do contexto ativo em que o turno será aberto"
+        },
+        {
+          "inputId": "openedByUserId",
+          "fieldRef": "Shift.openedByUserId",
+          "required": true,
+          "source": "actorSession",
+          "description": "Identificador do gerente autenticado responsável pela abertura do turno"
+        },
+        {
+          "inputId": "shiftId",
+          "fieldRef": "Shift.shiftId",
+          "required": true,
+          "source": "systemDefault",
+          "description": "Identificador único gerado automaticamente para o novo turno"
+        },
+        {
+          "inputId": "openedAt",
+          "fieldRef": "Shift.openedAt",
+          "required": true,
+          "source": "systemDefault",
+          "description": "Data e hora atuais do sistema no momento da abertura do turno"
+        },
+        {
+          "inputId": "createdAt",
+          "fieldRef": "Shift.createdAt",
+          "required": true,
+          "source": "systemDefault",
+          "description": "Data e hora de criação do registro do turno"
+        },
+        {
+          "inputId": "updatedAt",
+          "fieldRef": "Shift.updatedAt",
+          "required": true,
+          "source": "systemDefault",
+          "description": "Data e hora da última atualização do registro do turno"
+        }
+      ],
+      "contextResolution": [
+        {
+          "inputId": "unitId",
+          "targetRef": "Shift.unitId",
+          "source": "businessContext",
+          "originRef": "businessContext.activeUnitId",
+          "description": "Resolve a unidade ativa do contexto de negócio do gerente autenticado"
+        },
+        {
+          "inputId": "openedByUserId",
+          "targetRef": "Shift.openedByUserId",
+          "source": "actorSession",
+          "originRef": "actorSession.actorId",
+          "description": "Resolve o identificador do usuário autenticado na sessão do ator gerente"
+        },
+        {
+          "inputId": "shiftId",
+          "targetRef": "Shift.shiftId",
+          "source": "systemDefault",
+          "originRef": "systemDefault.uuid",
+          "description": "Gera um UUID único para o novo registro de turno"
+        },
+        {
+          "inputId": "openedAt",
+          "targetRef": "Shift.openedAt",
+          "source": "systemDefault",
+          "originRef": "systemDefault.now",
+          "description": "Obtém a data e hora atual do servidor no momento da abertura"
+        },
+        {
+          "inputId": "createdAt",
+          "targetRef": "Shift.createdAt",
+          "source": "systemDefault",
+          "originRef": "systemDefault.now",
+          "description": "Preenche createdAt com a data/hora atual do servidor na criação"
+        },
+        {
+          "inputId": "updatedAt",
+          "targetRef": "Shift.updatedAt",
+          "source": "systemDefault",
+          "originRef": "systemDefault.now",
+          "description": "Preenche updatedAt com a data/hora atual do servidor na criação"
+        }
+      ],
+      "acceptanceAssertions": [
+        "Após a confirmação existe um Shift com status open associado à unidade ativa do contexto",
+        "O turno criado possui openedAt igual à data/hora da abertura e openedByUserId do gerente autenticado",
+        "Não existe outro turno com status open para a mesma unitId no mesmo dia (regra oneOpenShiftPerUnitPerDay)",
+        "O turno criado fica disponível como base operacional para registrar pedidos no POS",
+        "Se já houver turno aberto na unidade/data, a abertura é bloqueada até o encerramento prévio"
+      ],
+      "pageId": "shiftLifecycle",
+      "commandName": "openShift",
+      "bffName": "cafeFlow.shiftLifecycle.openShift",
+      "capability": {
+        "capabilityId": "shiftLifecycle",
+        "title": "Ciclo de vida do turno diário",
+        "actor": "gerente",
+        "priority": "now"
+      },
+      "statusFrontend": "toCreate",
+      "statusBackend": "toCreate"
+    },
+    "gate": {
+      "ok": true,
+      "artifact": {
+        "operationId": "openShift",
+        "title": "Abrir turno diário",
+        "actors": [
+          "gerente"
+        ],
+        "entity": "Shift",
+        "kind": "create",
+        "reads": [
+          "Shift"
+        ],
+        "writes": [
+          "Shift"
+        ],
+        "rulesApplied": [
+          "oneOpenShiftPerUnitPerDay"
+        ],
+        "story": {
+          "actor": "gerente",
+          "goal": "Abrir o turno diário da unidade para permitir o registro de pedidos no POS",
+          "steps": [
+            "Confirma o contexto da unidade correta",
+            "Verifica se não há turno principal já aberto na unidade no dia",
+            "Informa observações operacionais opcionais de abertura",
+            "Confirma a abertura do turno do dia"
+          ],
+          "outcome": "Turno do dia ativo com status open, vinculado à unidade, disponível como base para registrar pedidos e gerar o relatório de fechamento"
+        },
+        "accessPattern": {
+          "kind": "commandInput",
+          "description": "Comando de abertura do turno diário com observações opcionais; unitId e operador vêm do contexto",
+          "entity": "Shift",
+          "keyField": "Shift.shiftId",
+          "pagination": "none",
+          "selection": "none",
+          "output": []
+        },
+        "outputShape": {
+          "kind": "object",
+          "fields": [
+            {
+              "name": "shiftId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "Shift.shiftId"
+            },
+            {
+              "name": "unitId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "Shift.unitId"
+            },
+            {
+              "name": "openedByUserId",
+              "type": "string",
+              "required": true,
+              "fieldRef": "Shift.openedByUserId"
+            },
+            {
+              "name": "openedAt",
+              "type": "string",
+              "required": true,
+              "fieldRef": "Shift.openedAt"
+            },
+            {
+              "name": "status",
+              "type": "string",
+              "required": true,
+              "fieldRef": "Shift.status"
+            },
+            {
+              "name": "notes",
+              "type": "string",
+              "required": false,
+              "fieldRef": "Shift.notes"
+            },
+            {
+              "name": "createdAt",
+              "type": "string",
+              "required": true,
+              "fieldRef": "Shift.createdAt"
+            },
+            {
+              "name": "updatedAt",
+              "type": "string",
+              "required": true,
+              "fieldRef": "Shift.updatedAt"
+            }
+          ]
+        },
+        "inputs": [
+          {
+            "inputId": "notes",
+            "fieldRef": "Shift.notes",
+            "required": false,
+            "source": "userInput",
+            "description": "Observações operacionais opcionais registradas na abertura do turno"
+          },
+          {
+            "inputId": "unitId",
+            "fieldRef": "Shift.unitId",
+            "required": true,
+            "source": "businessContext",
+            "description": "Unidade (loja) do contexto ativo em que o turno será aberto"
+          },
+          {
+            "inputId": "openedByUserId",
+            "fieldRef": "Shift.openedByUserId",
+            "required": true,
+            "source": "actorSession",
+            "description": "Identificador do gerente autenticado responsável pela abertura do turno"
+          },
+          {
+            "inputId": "shiftId",
+            "fieldRef": "Shift.shiftId",
+            "required": true,
+            "source": "systemDefault",
+            "description": "Identificador único gerado automaticamente para o novo turno"
+          },
+          {
+            "inputId": "openedAt",
+            "fieldRef": "Shift.openedAt",
+            "required": true,
+            "source": "systemDefault",
+            "description": "Data e hora atuais do sistema no momento da abertura do turno"
+          },
+          {
+            "inputId": "createdAt",
+            "fieldRef": "Shift.createdAt",
+            "required": true,
+            "source": "systemDefault",
+            "description": "Data e hora de criação do registro do turno"
+          },
+          {
+            "inputId": "updatedAt",
+            "fieldRef": "Shift.updatedAt",
+            "required": true,
+            "source": "systemDefault",
+            "description": "Data e hora da última atualização do registro do turno"
+          }
+        ],
+        "contextResolution": [
+          {
+            "inputId": "unitId",
+            "targetRef": "Shift.unitId",
+            "source": "businessContext",
+            "originRef": "businessContext.activeUnitId",
+            "description": "Resolve a unidade ativa do contexto de negócio do gerente autenticado"
+          },
+          {
+            "inputId": "openedByUserId",
+            "targetRef": "Shift.openedByUserId",
+            "source": "actorSession",
+            "originRef": "actorSession.actorId",
+            "description": "Resolve o identificador do usuário autenticado na sessão do ator gerente"
+          },
+          {
+            "inputId": "shiftId",
+            "targetRef": "Shift.shiftId",
+            "source": "systemDefault",
+            "originRef": "systemDefault.uuid",
+            "description": "Gera um UUID único para o novo registro de turno"
+          },
+          {
+            "inputId": "openedAt",
+            "targetRef": "Shift.openedAt",
+            "source": "systemDefault",
+            "originRef": "systemDefault.now",
+            "description": "Obtém a data e hora atual do servidor no momento da abertura"
+          },
+          {
+            "inputId": "createdAt",
+            "targetRef": "Shift.createdAt",
+            "source": "systemDefault",
+            "originRef": "systemDefault.now",
+            "description": "Preenche createdAt com a data/hora atual do servidor na criação"
+          },
+          {
+            "inputId": "updatedAt",
+            "targetRef": "Shift.updatedAt",
+            "source": "systemDefault",
+            "originRef": "systemDefault.now",
+            "description": "Preenche updatedAt com a data/hora atual do servidor na criação"
+          }
+        ],
+        "acceptanceAssertions": [
+          "Após a confirmação existe um Shift com status open associado à unidade ativa do contexto",
+          "O turno criado possui openedAt igual à data/hora da abertura e openedByUserId do gerente autenticado",
+          "Não existe outro turno com status open para a mesma unitId no mesmo dia (regra oneOpenShiftPerUnitPerDay)",
+          "O turno criado fica disponível como base operacional para registrar pedidos no POS",
+          "Se já houver turno aberto na unidade/data, a abertura é bloqueada até o encerramento prévio"
+        ]
+      },
+      "errors": [],
+      "warnings": [],
+      "attempts": 1,
+      "needsHumanInput": false
+    }
+  }
+}

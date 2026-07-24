@@ -1,0 +1,176 @@
+/// <mls fileReference="_102051_/l4/cafeFlow/operations/viewShiftClosingReport.defs.ts" enhancement="_blank"/>
+
+export const operationViewShiftClosingReport = {
+  "operationId": "viewShiftClosingReport",
+  "title": "Ver relatório de fechamento de turno",
+  "actors": [
+    "gerente"
+  ],
+  "entity": "ShiftClosingReport",
+  "kind": "view",
+  "reads": [
+    "ShiftClosingReport"
+  ],
+  "writes": [],
+  "rulesApplied": [
+    "shiftClosingReportContents",
+    "shiftClosingRecordsBasicTotalsAndPayments"
+  ],
+  "story": {
+    "actor": "gerente",
+    "goal": "Revisar o relatório consolidado do turno encerrado com vendas, pagamentos básicos e sinais de estoque",
+    "steps": [
+      "Abrir o relatório de fechamento do turno selecionado",
+      "Conferir totais de vendas, pedidos e itens vendidos",
+      "Conferir valores em dinheiro e demais formas de pagamento básicas",
+      "Revisar destaques de itens mais vendidos e contagens de estoque baixo/ruptura",
+      "Ler observações registradas no fechamento"
+    ],
+    "outcome": "Gerente visualiza o relatório de fechamento com totais compreensíveis, destaques e sinais de estoque"
+  },
+  "accessPattern": {
+    "kind": "getById",
+    "description": "Obtém o relatório de fechamento de um turno encerrado pelo seu identificador",
+    "entity": "ShiftClosingReport",
+    "keyField": "ShiftClosingReport.shiftClosingReportId",
+    "pagination": "none",
+    "selection": "single",
+    "output": [
+      "ShiftClosingReport.shiftClosingReportId",
+      "ShiftClosingReport.dailyShiftId",
+      "ShiftClosingReport.shiftDate",
+      "ShiftClosingReport.totalSalesAmount",
+      "ShiftClosingReport.totalOrdersCount",
+      "ShiftClosingReport.totalItemsSold",
+      "ShiftClosingReport.cashPaymentsAmount",
+      "ShiftClosingReport.otherPaymentsAmount",
+      "ShiftClosingReport.topSellingItemsSummary",
+      "ShiftClosingReport.lowStockSignalsCount",
+      "ShiftClosingReport.stockoutSignalsCount",
+      "ShiftClosingReport.closingNotes",
+      "ShiftClosingReport.generatedAt"
+    ]
+  },
+  "outputShape": {
+    "kind": "object",
+    "fields": [
+      {
+        "name": "shiftClosingReportId",
+        "type": "string",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.shiftClosingReportId"
+      },
+      {
+        "name": "dailyShiftId",
+        "type": "string",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.dailyShiftId"
+      },
+      {
+        "name": "shiftDate",
+        "type": "string",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.shiftDate"
+      },
+      {
+        "name": "totalSalesAmount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.totalSalesAmount"
+      },
+      {
+        "name": "totalOrdersCount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.totalOrdersCount"
+      },
+      {
+        "name": "totalItemsSold",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.totalItemsSold"
+      },
+      {
+        "name": "cashPaymentsAmount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.cashPaymentsAmount"
+      },
+      {
+        "name": "otherPaymentsAmount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.otherPaymentsAmount"
+      },
+      {
+        "name": "topSellingItemsSummary",
+        "type": "string",
+        "required": false,
+        "fieldRef": "ShiftClosingReport.topSellingItemsSummary"
+      },
+      {
+        "name": "lowStockSignalsCount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.lowStockSignalsCount"
+      },
+      {
+        "name": "stockoutSignalsCount",
+        "type": "number",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.stockoutSignalsCount"
+      },
+      {
+        "name": "closingNotes",
+        "type": "string",
+        "required": false,
+        "fieldRef": "ShiftClosingReport.closingNotes"
+      },
+      {
+        "name": "generatedAt",
+        "type": "string",
+        "required": true,
+        "fieldRef": "ShiftClosingReport.generatedAt"
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "inputId": "shiftClosingReportId",
+      "fieldRef": "ShiftClosingReport.shiftClosingReportId",
+      "required": true,
+      "source": "routeParam",
+      "description": "Identificador do relatório de fechamento de turno a ser exibido"
+    }
+  ],
+  "contextResolution": [
+    {
+      "inputId": "shiftClosingReportId",
+      "targetRef": "ShiftClosingReport.shiftClosingReportId",
+      "source": "routeParam",
+      "originRef": "routeParam.shiftClosingReportId",
+      "description": "Identificador do relatório obtido do parâmetro de rota da tela de detalhe"
+    }
+  ],
+  "acceptanceAssertions": [
+    "Após a consulta o relatório de fechamento existe e é retornado com shiftClosingReportId e dailyShiftId correspondentes",
+    "O relatório exibe totalSalesAmount, totalOrdersCount e totalItemsSold do turno encerrado",
+    "O relatório exibe cashPaymentsAmount e otherPaymentsAmount como formas de pagamento básicas, sem conciliação avançada",
+    "O relatório inclui topSellingItemsSummary quando houver destaques de itens mais vendidos",
+    "O relatório informa lowStockSignalsCount e stockoutSignalsCount dos sinais de estoque baixo e ruptura do turno",
+    "O relatório exibe closingNotes e generatedAt registrados no fechamento"
+  ],
+  "pageId": "viewShiftClosingReport",
+  "commandName": "viewShiftClosingReport",
+  "bffName": "cafeFlow.viewShiftClosingReport.viewShiftClosingReport",
+  "capability": {
+    "capabilityId": "viewShiftClosingReport",
+    "title": "Ver relatório de fechamento de turno",
+    "actor": "gerente",
+    "priority": "now"
+  },
+  "statusFrontend": "toCreate",
+  "statusBackend": "toCreate"
+} as const;
+
+export default operationViewShiftClosingReport;

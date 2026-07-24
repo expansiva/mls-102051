@@ -1,0 +1,283 @@
+{
+  "savedAt": "2026-07-22T13:15:42.246Z",
+  "stepId": "e6-detail-menuManagement",
+  "agentName": "agentNsJourneyMap",
+  "attempt": 3,
+  "payload": {
+    "workspace": {
+      "workspaceId": "menuManagement",
+      "title": "Gestão do cardápio",
+      "actors": [
+        "gerente"
+      ],
+      "kind": "entityManagement",
+      "entity": "MenuItem",
+      "bffCalls": [
+        {
+          "bffId": "listMenuItems",
+          "kind": "query",
+          "uses": [
+            {
+              "operationId": "queryMenuItems"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "paginated",
+            "fields": [
+              {
+                "name": "menuItems",
+                "from": "queryMenuItems.$items",
+                "type": "array",
+                "item": {
+                  "fields": [
+                    {
+                      "name": "menuItemId",
+                      "from": "$items.menuItemId",
+                      "type": "string"
+                    },
+                    {
+                      "name": "name",
+                      "from": "$items.name",
+                      "type": "string"
+                    },
+                    {
+                      "name": "category",
+                      "from": "$items.category",
+                      "type": "string"
+                    },
+                    {
+                      "name": "price",
+                      "from": "$items.price",
+                      "type": "number"
+                    },
+                    {
+                      "name": "status",
+                      "from": "$items.status",
+                      "type": "string"
+                    },
+                    {
+                      "name": "description",
+                      "from": "$items.description",
+                      "type": "string"
+                    },
+                    {
+                      "name": "createdAt",
+                      "from": "$items.createdAt",
+                      "type": "string"
+                    },
+                    {
+                      "name": "updatedAt",
+                      "from": "$items.updatedAt",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "total",
+                "from": "queryMenuItems.total",
+                "type": "number"
+              }
+            ]
+          },
+          "route": "cafeFlow.menuManagement.listMenuItems"
+        },
+        {
+          "bffId": "createMenuItem",
+          "kind": "command",
+          "uses": [
+            {
+              "operationId": "createMenuItem"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "name": "menuItemId",
+                "from": "createMenuItem.menuItemId",
+                "type": "string"
+              },
+              {
+                "name": "name",
+                "from": "createMenuItem.name",
+                "type": "string"
+              },
+              {
+                "name": "category",
+                "from": "createMenuItem.category",
+                "type": "string"
+              },
+              {
+                "name": "price",
+                "from": "createMenuItem.price",
+                "type": "number"
+              },
+              {
+                "name": "status",
+                "from": "createMenuItem.status",
+                "type": "string"
+              },
+              {
+                "name": "description",
+                "from": "createMenuItem.description",
+                "type": "string"
+              },
+              {
+                "name": "createdAt",
+                "from": "createMenuItem.createdAt",
+                "type": "string"
+              },
+              {
+                "name": "updatedAt",
+                "from": "createMenuItem.updatedAt",
+                "type": "string"
+              }
+            ]
+          },
+          "route": "cafeFlow.menuManagement.createMenuItem"
+        },
+        {
+          "bffId": "updateMenuItem",
+          "kind": "command",
+          "uses": [
+            {
+              "operationId": "updateMenuItem"
+            }
+          ],
+          "input": [],
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "name": "menuItemId",
+                "from": "updateMenuItem.menuItemId",
+                "type": "string"
+              },
+              {
+                "name": "name",
+                "from": "updateMenuItem.name",
+                "type": "string"
+              },
+              {
+                "name": "category",
+                "from": "updateMenuItem.category",
+                "type": "string"
+              },
+              {
+                "name": "price",
+                "from": "updateMenuItem.price",
+                "type": "number"
+              },
+              {
+                "name": "status",
+                "from": "updateMenuItem.status",
+                "type": "string"
+              },
+              {
+                "name": "description",
+                "from": "updateMenuItem.description",
+                "type": "string"
+              },
+              {
+                "name": "createdAt",
+                "from": "updateMenuItem.createdAt",
+                "type": "string"
+              },
+              {
+                "name": "updatedAt",
+                "from": "updateMenuItem.updatedAt",
+                "type": "string"
+              }
+            ]
+          },
+          "route": "cafeFlow.menuManagement.updateMenuItem"
+        }
+      ],
+      "sections": [
+        {
+          "sectionId": "menuItemsList",
+          "intent": "O gerente visualiza e gerencia os itens do cardápio, filtrando por status ou categoria e podendo criar ou editar itens.",
+          "organisms": [
+            {
+              "role": "primarySurface",
+              "dataSource": "listMenuItems"
+            },
+            {
+              "role": "filterControl",
+              "attachTo": "listMenuItems"
+            },
+            {
+              "role": "contextualAction",
+              "action": "createMenuItem"
+            },
+            {
+              "role": "contextualAction",
+              "action": "updateMenuItem"
+            }
+          ]
+        }
+      ],
+      "operationIds": [
+        "queryMenuItems",
+        "createMenuItem",
+        "updateMenuItem"
+      ],
+      "purpose": "O gerente mantém o cardápio: lista, cria e edita itens, preços e vínculos com ingredientes."
+    },
+    "errors": [
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"menuItemId\" from \"$items.menuItemId\" does not reference an operation in uses",
+        "path": "menuManagement"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"name\" from \"$items.name\" does not reference an operation in uses",
+        "path": "menuManagement"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"category\" from \"$items.category\" does not reference an operation in uses",
+        "path": "menuManagement"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"price\" from \"$items.price\" does not reference an operation in uses",
+        "path": "menuManagement"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"status\" from \"$items.status\" does not reference an operation in uses",
+        "path": "menuManagement"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"description\" from \"$items.description\" does not reference an operation in uses",
+        "path": "menuManagement"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"createdAt\" from \"$items.createdAt\" does not reference an operation in uses",
+        "path": "menuManagement"
+      },
+      {
+        "severity": "error",
+        "code": "bff.output.from.unknownOp",
+        "message": "workspace menuManagement bffCall listMenuItems: output field \"updatedAt\" from \"$items.updatedAt\" does not reference an operation in uses",
+        "path": "menuManagement"
+      }
+    ]
+  },
+  "error": "bff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"menuItemId\" from \"$items.menuItemId\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"name\" from \"$items.name\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"category\" from \"$items.category\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"price\" from \"$items.price\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"status\" from \"$items.status\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"description\" from \"$items.description\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"createdAt\" from \"$items.createdAt\" does not reference an operation in uses\nbff.output.from.unknownOp: workspace menuManagement bffCall listMenuItems: output field \"updatedAt\" from \"$items.updatedAt\" does not reference an operation in uses",
+  "promptChars": 7070
+}

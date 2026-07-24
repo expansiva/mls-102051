@@ -1,0 +1,61 @@
+{
+  "savedAt": "2026-07-23T17:13:59.291Z",
+  "phase": "materialize-phase-pages-verify",
+  "lastRoundPlanId": "materialize-phase-pages-verify",
+  "attempt": 1,
+  "allClear": true,
+  "passedCount": 12,
+  "passed": [
+    {
+      "planId": "materialize-dashboardworkspace-l2-page",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-kitchenworkspace-l2-page",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-menumanagement-l2-page",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-posworkspace-l2-page",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-shiftworkspace-l2-page",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-stockmanagement-l2-page",
+      "typecheck": "passed"
+    },
+    {
+      "planId": "materialize-dashboardworkspace-page21-l2-page",
+      "typecheck": "not-applicable"
+    },
+    {
+      "planId": "materialize-kitchenworkspace-page21-l2-page",
+      "typecheck": "not-applicable"
+    },
+    {
+      "planId": "materialize-menumanagement-page21-l2-page",
+      "typecheck": "not-applicable"
+    },
+    {
+      "planId": "materialize-posworkspace-page21-l2-page",
+      "typecheck": "not-applicable"
+    },
+    {
+      "planId": "materialize-shiftworkspace-page21-l2-page",
+      "typecheck": "not-applicable"
+    },
+    {
+      "planId": "materialize-stockmanagement-page21-l2-page",
+      "typecheck": "not-applicable"
+    }
+  ],
+  "brokenCount": 0,
+  "broken": [],
+  "agent": "agentCfeMaterializePhase"
+}

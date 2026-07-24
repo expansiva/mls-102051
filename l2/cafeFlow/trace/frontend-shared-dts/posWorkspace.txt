@@ -1,0 +1,245 @@
+import { CollabLitElement } from '/_102029_/l2/collabLitElement.js';
+import type { QueryOpenOrdersOutput, QueryMenuItemsOutput, CmdCreateOrderOutput, CmdUpdateOrderStatusOutput, CmdRecordBasicPaymentOutput } from '/_102051_/l2/cafeFlow/web/contracts/posWorkspace.js';
+export type { QueryOpenOrdersInput, QueryOpenOrdersOutput, QueryMenuItemsInput, QueryMenuItemsOutput, CmdCreateOrderInput, CmdCreateOrderOutput, CmdUpdateOrderStatusInput, CmdUpdateOrderStatusOutput, CmdRecordBasicPaymentInput, CmdRecordBasicPaymentOutput, } from '/_102051_/l2/cafeFlow/web/contracts/posWorkspace.js';
+declare const message_pt: {
+    "section.posWorkspace.openOrdersSection.title": string;
+    "organism.posWorkspace.queryOpenOrders.title": string;
+    "intent.posWorkspace.queryOpenOrders.list.title": string;
+    "intent.posWorkspace.queryOpenOrders.list.empty": string;
+    "intent.posWorkspace.queryOpenOrders.list.column.orders.label": string;
+    "intent.posWorkspace.queryOpenOrders.list.column.total.label": string;
+    "intent.posWorkspace.queryOpenOrders.list.filter.dailyShiftId.label": string;
+    "intent.posWorkspace.queryOpenOrders.list.filter.status.label": string;
+    "intent.posWorkspace.queryOpenOrders.list.filter.orderType.label": string;
+    "intent.posWorkspace.queryOpenOrders.list.filter.tableNumber.label": string;
+    "intent.posWorkspace.queryOpenOrders.list.filter.page.label": string;
+    "intent.posWorkspace.queryOpenOrders.list.filter.pageSize.label": string;
+    "organism.posWorkspace.cmdUpdateOrderStatus.title": string;
+    "intent.posWorkspace.cmdUpdateOrderStatus.form.title": string;
+    "intent.posWorkspace.cmdUpdateOrderStatus.form.action.cmdUpdateOrderStatus": string;
+    "intent.posWorkspace.cmdUpdateOrderStatus.form.field.status.label": string;
+    "intent.posWorkspace.cmdUpdateOrderStatus.form.field.cancellationReason.label": string;
+    "section.posWorkspace.createOrderSection.title": string;
+    "organism.posWorkspace.queryMenuItems.title": string;
+    "intent.posWorkspace.queryMenuItems.list.title": string;
+    "intent.posWorkspace.queryMenuItems.list.empty": string;
+    "intent.posWorkspace.queryMenuItems.list.column.menuItemId.label": string;
+    "intent.posWorkspace.queryMenuItems.list.column.menuCategoryId.label": string;
+    "intent.posWorkspace.queryMenuItems.list.column.name.label": string;
+    "intent.posWorkspace.queryMenuItems.list.column.description.label": string;
+    "intent.posWorkspace.queryMenuItems.list.column.price.label": string;
+    "intent.posWorkspace.queryMenuItems.list.column.status.label": string;
+    "intent.posWorkspace.queryMenuItems.list.column.imageUrl.label": string;
+    "intent.posWorkspace.queryMenuItems.list.column.displayOrder.label": string;
+    "intent.posWorkspace.queryMenuItems.list.filter.menuCategoryId.label": string;
+    "organism.posWorkspace.cmdCreateOrder.title": string;
+    "intent.posWorkspace.cmdCreateOrder.form.title": string;
+    "intent.posWorkspace.cmdCreateOrder.form.action.cmdCreateOrder": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.orderType.label": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.tableNumber.label": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.customerName.label": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.notes.label": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.menuItemId.label": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.quantity.label": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.observations.label": string;
+    "intent.posWorkspace.cmdCreateOrder.form.field.dailyShiftId.label": string;
+    "section.posWorkspace.paymentSection.title": string;
+    "organism.posWorkspace.cmdRecordBasicPayment.title": string;
+    "intent.posWorkspace.cmdRecordBasicPayment.form.title": string;
+    "intent.posWorkspace.cmdRecordBasicPayment.form.action.cmdRecordBasicPayment": string;
+    "intent.posWorkspace.cmdRecordBasicPayment.form.field.totalAmount.label": string;
+    "intent.posWorkspace.cmdRecordBasicPayment.form.field.paymentMethod.label": string;
+    "intent.posWorkspace.cmdRecordBasicPayment.form.field.notes.label": string;
+    "section.posWorkspace.sec-open-orders.title": string;
+    "section.posWorkspace.sec-create-order.title": string;
+    "section.posWorkspace.sec-payment.title": string;
+};
+type MessageType = typeof message_pt;
+export declare class CafeFlowPosWorkspaceBase extends CollabLitElement {
+    /** state ui.posWorkspace.status — pageStatus */
+    status: string;
+    /** state ui.posWorkspace.action.queryOpenOrders.status — actionStatus, values: idle|loading|success|error */
+    queryOpenOrdersState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.posWorkspace.input.queryOpenOrders.dailyShiftId — input */
+    queryOpenOrdersDailyShiftId: string;
+    /** state ui.posWorkspace.input.queryOpenOrders.status — input */
+    queryOpenOrdersStatus: string;
+    /** state ui.posWorkspace.input.queryOpenOrders.orderType — input */
+    queryOpenOrdersOrderType: string;
+    /** state ui.posWorkspace.input.queryOpenOrders.tableNumber — input */
+    queryOpenOrdersTableNumber: string;
+    /** state ui.posWorkspace.input.queryOpenOrders.page — input */
+    queryOpenOrdersPage: string;
+    /** state ui.posWorkspace.input.queryOpenOrders.pageSize — input */
+    queryOpenOrdersPageSize: string;
+    /** state ui.posWorkspace.data.queryOpenOrders — queryResult, outputShape: paginated */
+    queryOpenOrdersData: QueryOpenOrdersOutput;
+    /** state ui.posWorkspace.action.queryMenuItems.status — actionStatus, values: idle|loading|success|error */
+    queryMenuItemsState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.posWorkspace.input.queryMenuItems.menuCategoryId — input */
+    queryMenuItemsMenuCategoryId: string;
+    /** state ui.posWorkspace.data.queryMenuItems — queryResult, outputShape: array */
+    queryMenuItemsData: QueryMenuItemsOutput[];
+    /** state ui.posWorkspace.action.cmdCreateOrder.status — actionStatus, values: idle|loading|success|error */
+    cmdCreateOrderState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.posWorkspace.input.cmdCreateOrder.orderType — input */
+    cmdCreateOrderOrderType: string;
+    /** state ui.posWorkspace.input.cmdCreateOrder.tableNumber — input */
+    cmdCreateOrderTableNumber: string;
+    /** state ui.posWorkspace.input.cmdCreateOrder.customerName — input */
+    cmdCreateOrderCustomerName: string;
+    /** state ui.posWorkspace.input.cmdCreateOrder.notes — input */
+    cmdCreateOrderNotes: string;
+    /** state ui.posWorkspace.input.cmdCreateOrder.menuItemId — input */
+    cmdCreateOrderMenuItemId: string;
+    /** state ui.posWorkspace.input.cmdCreateOrder.quantity — input */
+    cmdCreateOrderQuantity: string;
+    /** state ui.posWorkspace.input.cmdCreateOrder.observations — input */
+    cmdCreateOrderObservations: string;
+    /** state ui.posWorkspace.input.cmdCreateOrder.dailyShiftId — input */
+    cmdCreateOrderDailyShiftId: string;
+    /** state ui.posWorkspace.output.cmdCreateOrder — commandOutput */
+    cmdCreateOrderOutput: CmdCreateOrderOutput | null;
+    /** state ui.posWorkspace.action.cmdCreateOrder.error — actionError */
+    cmdCreateOrderError: string;
+    /** state ui.posWorkspace.action.cmdUpdateOrderStatus.status — actionStatus, values: idle|loading|success|error */
+    cmdUpdateOrderStatusState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.posWorkspace.input.cmdUpdateOrderStatus.orderId — input */
+    cmdUpdateOrderStatusOrderId: string;
+    /** state ui.posWorkspace.input.cmdUpdateOrderStatus.status — input */
+    cmdUpdateOrderStatusStatus: string;
+    /** state ui.posWorkspace.input.cmdUpdateOrderStatus.cancellationReason — input */
+    cmdUpdateOrderStatusCancellationReason: string;
+    /** state ui.posWorkspace.output.cmdUpdateOrderStatus — commandOutput */
+    cmdUpdateOrderStatusOutput: CmdUpdateOrderStatusOutput | null;
+    /** state ui.posWorkspace.action.cmdUpdateOrderStatus.error — actionError */
+    cmdUpdateOrderStatusError: string;
+    /** state ui.posWorkspace.action.cmdRecordBasicPayment.status — actionStatus, values: idle|loading|success|error */
+    cmdRecordBasicPaymentState: 'idle' | 'loading' | 'success' | 'error';
+    /** state ui.posWorkspace.input.cmdRecordBasicPayment.orderId — input */
+    cmdRecordBasicPaymentOrderId: string;
+    /** state ui.posWorkspace.input.cmdRecordBasicPayment.totalAmount — input */
+    cmdRecordBasicPaymentTotalAmount: string;
+    /** state ui.posWorkspace.input.cmdRecordBasicPayment.paymentMethod — input */
+    cmdRecordBasicPaymentPaymentMethod: string;
+    /** state ui.posWorkspace.input.cmdRecordBasicPayment.notes — input */
+    cmdRecordBasicPaymentNotes: string;
+    /** state ui.posWorkspace.output.cmdRecordBasicPayment — commandOutput */
+    cmdRecordBasicPaymentOutput: CmdRecordBasicPaymentOutput | null;
+    /** state ui.posWorkspace.action.cmdRecordBasicPayment.error — actionError */
+    cmdRecordBasicPaymentError: string;
+    /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
+    protected get msg(): MessageType;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    /** handleIcaStateChange — collabState notify contract */
+    handleIcaStateChange(key: string, value: unknown): void;
+    /** action queryOpenOrders (query) — route cafeFlow.posWorkspace.queryOpenOrders; inputs: dailyShiftId, status, orderType, tableNumber, page, pageSize; writes ui.posWorkspace.data.queryOpenOrders; status ui.posWorkspace.action.queryOpenOrders.status */
+    loadQueryOpenOrders(): Promise<void>;
+    /** handler for action queryOpenOrders — bind UI events here */
+    handleQueryOpenOrdersClick(_event?: Event): void;
+    /** action queryMenuItems (query) — route cafeFlow.posWorkspace.queryMenuItems; inputs: menuCategoryId; writes ui.posWorkspace.data.queryMenuItems; status ui.posWorkspace.action.queryMenuItems.status */
+    loadQueryMenuItems(): Promise<void>;
+    /** handler for action queryMenuItems — bind UI events here */
+    handleQueryMenuItemsClick(_event?: Event): void;
+    /** action cmdCreateOrder (command) — route cafeFlow.posWorkspace.cmdCreateOrder; inputs: orderType, tableNumber, customerName, notes, menuItemId, quantity, observations, dailyShiftId; writes ui.posWorkspace.output.cmdCreateOrder; status ui.posWorkspace.action.cmdCreateOrder.status; feedback keys action.cmdCreateOrder.success / action.cmdCreateOrder.error */
+    cmdCreateOrder(): Promise<void>;
+    /** handler for action cmdCreateOrder — bind UI events here */
+    handleCmdCreateOrderClick(_event?: Event): void;
+    /** action cmdUpdateOrderStatus (command) — route cafeFlow.posWorkspace.cmdUpdateOrderStatus; inputs: orderId, status, cancellationReason; writes ui.posWorkspace.output.cmdUpdateOrderStatus; status ui.posWorkspace.action.cmdUpdateOrderStatus.status; feedback keys action.cmdUpdateOrderStatus.success / action.cmdUpdateOrderStatus.error */
+    cmdUpdateOrderStatus(): Promise<void>;
+    /** handler for action cmdUpdateOrderStatus — bind UI events here */
+    handleCmdUpdateOrderStatusClick(_event?: Event): void;
+    /** action cmdRecordBasicPayment (command) — route cafeFlow.posWorkspace.cmdRecordBasicPayment; inputs: orderId, totalAmount, paymentMethod, notes; writes ui.posWorkspace.output.cmdRecordBasicPayment; status ui.posWorkspace.action.cmdRecordBasicPayment.status; feedback keys action.cmdRecordBasicPayment.success / action.cmdRecordBasicPayment.error */
+    cmdRecordBasicPayment(): Promise<void>;
+    /** handler for action cmdRecordBasicPayment — bind UI events here */
+    handleCmdRecordBasicPaymentClick(_event?: Event): void;
+    /** setter for state ui.posWorkspace.input.queryOpenOrders.dailyShiftId */
+    setQueryOpenOrdersDailyShiftId(value: string): void;
+    /** handler for action set.queryOpenOrdersDailyShiftId — bind UI events here */
+    handleQueryOpenOrdersDailyShiftIdChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.queryOpenOrders.status */
+    setQueryOpenOrdersStatus(value: string): void;
+    /** handler for action set.queryOpenOrdersStatus — bind UI events here */
+    handleQueryOpenOrdersStatusChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.queryOpenOrders.orderType */
+    setQueryOpenOrdersOrderType(value: string): void;
+    /** handler for action set.queryOpenOrdersOrderType — bind UI events here */
+    handleQueryOpenOrdersOrderTypeChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.queryOpenOrders.tableNumber */
+    setQueryOpenOrdersTableNumber(value: string): void;
+    /** handler for action set.queryOpenOrdersTableNumber — bind UI events here */
+    handleQueryOpenOrdersTableNumberChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.queryOpenOrders.page */
+    setQueryOpenOrdersPage(value: string): void;
+    /** handler for action set.queryOpenOrdersPage — bind UI events here */
+    handleQueryOpenOrdersPageChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.queryOpenOrders.pageSize */
+    setQueryOpenOrdersPageSize(value: string): void;
+    /** handler for action set.queryOpenOrdersPageSize — bind UI events here */
+    handleQueryOpenOrdersPageSizeChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.queryMenuItems.menuCategoryId */
+    setQueryMenuItemsMenuCategoryId(value: string): void;
+    /** handler for action set.queryMenuItemsMenuCategoryId — bind UI events here */
+    handleQueryMenuItemsMenuCategoryIdChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.orderType */
+    setCmdCreateOrderOrderType(value: string): void;
+    /** handler for action set.cmdCreateOrderOrderType — bind UI events here */
+    handleCmdCreateOrderOrderTypeChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.tableNumber */
+    setCmdCreateOrderTableNumber(value: string): void;
+    /** handler for action set.cmdCreateOrderTableNumber — bind UI events here */
+    handleCmdCreateOrderTableNumberChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.customerName */
+    setCmdCreateOrderCustomerName(value: string): void;
+    /** handler for action set.cmdCreateOrderCustomerName — bind UI events here */
+    handleCmdCreateOrderCustomerNameChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.notes */
+    setCmdCreateOrderNotes(value: string): void;
+    /** handler for action set.cmdCreateOrderNotes — bind UI events here */
+    handleCmdCreateOrderNotesChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.menuItemId */
+    setCmdCreateOrderMenuItemId(value: string): void;
+    /** handler for action set.cmdCreateOrderMenuItemId — bind UI events here */
+    handleCmdCreateOrderMenuItemIdChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.quantity */
+    setCmdCreateOrderQuantity(value: string): void;
+    /** handler for action set.cmdCreateOrderQuantity — bind UI events here */
+    handleCmdCreateOrderQuantityChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.observations */
+    setCmdCreateOrderObservations(value: string): void;
+    /** handler for action set.cmdCreateOrderObservations — bind UI events here */
+    handleCmdCreateOrderObservationsChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdCreateOrder.dailyShiftId */
+    setCmdCreateOrderDailyShiftId(value: string): void;
+    /** handler for action set.cmdCreateOrderDailyShiftId — bind UI events here */
+    handleCmdCreateOrderDailyShiftIdChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdUpdateOrderStatus.orderId */
+    setCmdUpdateOrderStatusOrderId(value: string): void;
+    /** handler for action set.cmdUpdateOrderStatusOrderId — bind UI events here */
+    handleCmdUpdateOrderStatusOrderIdChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdUpdateOrderStatus.status */
+    setCmdUpdateOrderStatusStatus(value: string): void;
+    /** handler for action set.cmdUpdateOrderStatusStatus — bind UI events here */
+    handleCmdUpdateOrderStatusStatusChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdUpdateOrderStatus.cancellationReason */
+    setCmdUpdateOrderStatusCancellationReason(value: string): void;
+    /** handler for action set.cmdUpdateOrderStatusCancellationReason — bind UI events here */
+    handleCmdUpdateOrderStatusCancellationReasonChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdRecordBasicPayment.orderId */
+    setCmdRecordBasicPaymentOrderId(value: string): void;
+    /** handler for action set.cmdRecordBasicPaymentOrderId — bind UI events here */
+    handleCmdRecordBasicPaymentOrderIdChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdRecordBasicPayment.totalAmount */
+    setCmdRecordBasicPaymentTotalAmount(value: string): void;
+    /** handler for action set.cmdRecordBasicPaymentTotalAmount — bind UI events here */
+    handleCmdRecordBasicPaymentTotalAmountChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdRecordBasicPayment.paymentMethod */
+    setCmdRecordBasicPaymentPaymentMethod(value: string): void;
+    /** handler for action set.cmdRecordBasicPaymentPaymentMethod — bind UI events here */
+    handleCmdRecordBasicPaymentPaymentMethodChange(event: Event): void;
+    /** setter for state ui.posWorkspace.input.cmdRecordBasicPayment.notes */
+    setCmdRecordBasicPaymentNotes(value: string): void;
+    /** handler for action set.cmdRecordBasicPaymentNotes — bind UI events here */
+    handleCmdRecordBasicPaymentNotesChange(event: Event): void;
+}
