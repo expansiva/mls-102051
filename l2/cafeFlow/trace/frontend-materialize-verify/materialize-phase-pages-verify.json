@@ -1,21 +1,54 @@
 {
-  "savedAt": "2026-07-23T02:53:44.082Z",
+  "savedAt": "2026-07-26T20:34:54.673Z",
   "planId": "materialize-phase-pages-verify",
   "attempt": 1,
-  "brokenCount": 4,
+  "brokenCount": 12,
   "broken": [
+    {
+      "planId": "materialize-dashboardworkspace-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/dashboardWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/dashboardWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/dashboardWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/dashboardWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": [
+        "dashboardWorkspace: technical id is an editable text field: intent.dashboardWorkspace.getDashboard.list.dailyShiftId",
+        "dashboardWorkspace: technical id is an editable text field: intent.dashboardWorkspace.getDashboard.list2.dailyShiftId",
+        "dashboardWorkspace: technical id is an editable text field: intent.dashboardWorkspace.getDashboard.list3.dailyShiftId"
+      ]
+    },
     {
       "planId": "materialize-kitchenworkspace-l2-page",
       "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.defs.ts",
       "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts",
       "typecheck": "passed",
       "errors": [
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.success\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.success' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.error\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.error' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'."
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
       ],
       "warnings": [
         "kitchenWorkspace: technical id is an editable text field: intent.kitchenWorkspace.fetchKitchenQueue.list.dailyShiftId",
         "kitchenWorkspace: mutation feedback i18n missing: changeOrderStatus"
+      ]
+    },
+    {
+      "planId": "materialize-menumanagement-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/menuManagement.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/menuManagement.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/menuManagement.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/menuManagement.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": [
+        "menuManagement: technical id is an editable text field: intent.menuManagement.listMenuItems.list.menuCategoryId",
+        "menuManagement: technical id is an editable text field: intent.menuManagement.updateMenuItemCmd.form.menuCategoryId",
+        "menuManagement: technical id is an editable text field: intent.menuManagement.createMenuItemCmd.form.menuCategoryId",
+        "menuManagement: mutation feedback i18n missing: createMenuItemCmd",
+        "menuManagement: mutation feedback i18n missing: updateMenuItemCmd",
+        "page binds the image field 'imageUrl' but renders no <img> tag: bind it as an image (src=item.imageUrl with an alt and a nothing/null empty branch) instead of a placeholder box or raw URL text"
       ]
     },
     {
@@ -24,11 +57,8 @@
       "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts",
       "typecheck": "passed",
       "errors": [
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1."
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
       ],
       "warnings": [
         "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryOpenOrders.list.dailyShiftId",
@@ -37,7 +67,58 @@
         "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.dailyShiftId",
         "posWorkspace: mutation feedback i18n missing: cmdCreateOrder",
         "posWorkspace: mutation feedback i18n missing: cmdUpdateOrderStatus",
-        "posWorkspace: mutation feedback i18n missing: cmdRecordBasicPayment"
+        "posWorkspace: mutation feedback i18n missing: cmdRecordBasicPayment",
+        "page binds the image field 'imageUrl' but renders no <img> tag: bind it as an image (src=item.imageUrl with an alt and a nothing/null empty branch) instead of a placeholder box or raw URL text"
+      ]
+    },
+    {
+      "planId": "materialize-shiftworkspace-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/shiftWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/shiftWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/shiftWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/shiftWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": [
+        "shiftWorkspace: technical id is an editable text field: intent.shiftWorkspace.openDailyShiftCmd.form.openedByUserId",
+        "shiftWorkspace: technical id is an editable text field: intent.shiftWorkspace.closeDailyShiftCmd.form.dailyShiftId",
+        "shiftWorkspace: technical id is an editable text field: intent.shiftWorkspace.closeDailyShiftCmd.form.closedByUserId",
+        "shiftWorkspace: mutation feedback i18n missing: openDailyShiftCmd",
+        "shiftWorkspace: mutation feedback i18n missing: closeDailyShiftCmd"
+      ]
+    },
+    {
+      "planId": "materialize-stockmanagement-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/stockManagement.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page11/stockManagement.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/stockManagement.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page11/stockManagement.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "module-level function 'nothingOrEmpty' is not allowed in a page: the only class method is render(), pure helpers go in a `const` INSIDE render(), and an empty branch uses the Lit sentinel `nothing` (imported from 'lit') or `null`"
+      ],
+      "warnings": [
+        "stockManagement: technical id is an editable text field: intent.stockManagement.registerStockAdjustment.form.stockItemId",
+        "stockManagement: mutation feedback i18n missing: addStockItem",
+        "stockManagement: mutation feedback i18n missing: editStockItem",
+        "stockManagement: mutation feedback i18n missing: removeStockItem",
+        "stockManagement: mutation feedback i18n missing: registerStockAdjustment"
+      ]
+    },
+    {
+      "planId": "materialize-dashboardworkspace-page21-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page21/dashboardWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/dashboardWorkspace.ts",
+      "typecheck": "not-applicable",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/dashboardWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/dashboardWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": [
+        "dashboardWorkspace: technical id is an editable text field: intent.dashboardWorkspace.getDashboard.list.dailyShiftId",
+        "dashboardWorkspace: technical id is an editable text field: intent.dashboardWorkspace.getDashboard.list2.dailyShiftId",
+        "dashboardWorkspace: technical id is an editable text field: intent.dashboardWorkspace.getDashboard.list3.dailyShiftId"
       ]
     },
     {
@@ -46,12 +127,30 @@
       "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts",
       "typecheck": "not-applicable",
       "errors": [
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.success\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.success' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts - TS7053 - Element implicitly has an 'any' type because expression of type '\"action.changeOrderStatus.error\"' can't be used to index type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'. Property 'action.changeOrderStatus.error' does not exist on type '{ \"section.kitchenWorkspace.kitchenQueueSection.title\": string; \"organism.kitchenWorkspace.fetchKitchenQueue.title\": string; \"intent.kitchenWorkspace.fetchKitchenQueue.list.title\": string; ... 17 more ...; \"section.kitchenWorkspace.sec-kitchen-queue.title\": string; }'."
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
       ],
       "warnings": [
         "kitchenWorkspace: technical id is an editable text field: intent.kitchenWorkspace.fetchKitchenQueue.list.dailyShiftId",
         "kitchenWorkspace: mutation feedback i18n missing: changeOrderStatus"
+      ]
+    },
+    {
+      "planId": "materialize-menumanagement-page21-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page21/menuManagement.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/menuManagement.ts",
+      "typecheck": "not-applicable",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/menuManagement.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/menuManagement.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": [
+        "menuManagement: technical id is an editable text field: intent.menuManagement.listMenuItems.list.menuCategoryId",
+        "menuManagement: technical id is an editable text field: intent.menuManagement.updateMenuItemCmd.form.menuCategoryId",
+        "menuManagement: technical id is an editable text field: intent.menuManagement.createMenuItemCmd.form.menuCategoryId",
+        "menuManagement: mutation feedback i18n missing: createMenuItemCmd",
+        "menuManagement: mutation feedback i18n missing: updateMenuItemCmd",
+        "page binds the image field 'imageUrl' but renders no <img> tag: bind it as an image (src=item.imageUrl with an alt and a nothing/null empty branch) instead of a placeholder box or raw URL text"
       ]
     },
     {
@@ -60,11 +159,8 @@
       "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts",
       "typecheck": "not-applicable",
       "errors": [
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1.",
-        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2554 - Expected 0 arguments, but got 1."
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/posWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
       ],
       "warnings": [
         "posWorkspace: technical id is an editable text field: intent.posWorkspace.queryOpenOrders.list.dailyShiftId",
@@ -73,7 +169,43 @@
         "posWorkspace: technical id is an editable text field: intent.posWorkspace.cmdCreateOrder.form.dailyShiftId",
         "posWorkspace: mutation feedback i18n missing: cmdCreateOrder",
         "posWorkspace: mutation feedback i18n missing: cmdUpdateOrderStatus",
-        "posWorkspace: mutation feedback i18n missing: cmdRecordBasicPayment"
+        "posWorkspace: mutation feedback i18n missing: cmdRecordBasicPayment",
+        "page binds the image field 'imageUrl' but renders no <img> tag: bind it as an image (src=item.imageUrl with an alt and a nothing/null empty branch) instead of a placeholder box or raw URL text"
+      ]
+    },
+    {
+      "planId": "materialize-shiftworkspace-page21-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page21/shiftWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/shiftWorkspace.ts",
+      "typecheck": "not-applicable",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/shiftWorkspace.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/shiftWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "module-level helper 'nothing' is passed to a template without being called, so Lit renders the function source as text: use the Lit sentinel `nothing` (add it to the 'lit' import) or `null` for the empty branch and delete the helper"
+      ],
+      "warnings": [
+        "shiftWorkspace: technical id is an editable text field: intent.shiftWorkspace.openDailyShiftCmd.form.openedByUserId",
+        "shiftWorkspace: technical id is an editable text field: intent.shiftWorkspace.closeDailyShiftCmd.form.dailyShiftId",
+        "shiftWorkspace: technical id is an editable text field: intent.shiftWorkspace.closeDailyShiftCmd.form.closedByUserId",
+        "shiftWorkspace: mutation feedback i18n missing: openDailyShiftCmd",
+        "shiftWorkspace: mutation feedback i18n missing: closeDailyShiftCmd"
+      ]
+    },
+    {
+      "planId": "materialize-stockmanagement-page21-l2-page",
+      "defPath": "_102051_/l2/cafeFlow/web/desktop/page21/stockManagement.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/desktop/page21/stockManagement.ts",
+      "typecheck": "not-applicable",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/stockManagement.ts - TS2792 - Cannot find module 'lit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/desktop/page21/stockManagement.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": [
+        "stockManagement: technical id is an editable text field: intent.stockManagement.registerStockAdjustment.form.stockItemId",
+        "stockManagement: mutation feedback i18n missing: addStockItem",
+        "stockManagement: mutation feedback i18n missing: editStockItem",
+        "stockManagement: mutation feedback i18n missing: removeStockItem",
+        "stockManagement: mutation feedback i18n missing: registerStockAdjustment"
       ]
     }
   ],

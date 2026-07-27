@@ -39,6 +39,9 @@ export const stockManagementListStockItemsHandler: BffHandler = async ({ request
 
   const result = await browseStockItems(ctx, input);
 
+  const page = Math.max(1, params.page ?? 1);
+  const pageSize = Math.max(1, params.pageSize ?? (result.total || 1));
+
   const stockItems = (result.stockItems ?? []).map((row) => ({
     stockItemId: row.stockItemId,
     name: row.name,
@@ -50,12 +53,7 @@ export const stockManagementListStockItemsHandler: BffHandler = async ({ request
     updatedAt: row.updatedAt,
   }));
 
-  return ok({
-    stockItems,
-    total: result.total,
-    page: params.page,
-    pageSize: params.pageSize,
-  });
+  return ok({ stockItems, total: result.total, page, pageSize });
 };
 
 export const stockManagementAddStockItemHandler: BffHandler = async ({ request, ctx }) => {
@@ -152,9 +150,7 @@ export const stockManagementRemoveStockItemHandler: BffHandler = async ({ reques
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.stockManagement.removeStockItem');
   if (denial) return denial;
 
-  const params = (request.params ?? {}) as {
-    stockItemId?: string;
-  };
+  const params = (request.params ?? {}) as { stockItemId?: string };
 
   if (!params.stockItemId) {
     throw new AppError('VALIDATION_ERROR', 'stockItemId is required', 400, { field: 'stockItemId' });

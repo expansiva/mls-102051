@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:21:31.391Z",
+  "savedAt": "2026-07-25T23:28:36.983Z",
   "agentName": "agentCbUsecase",
   "stepId": 24,
   "planning": null,
@@ -11,226 +11,237 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "createStockAdjustment",
+          "usecaseId": "trackOrders",
           "ports": [
-            "DailyShift"
+            "Order",
+            "DailyShift",
+            "StockConsumption"
           ],
           "functions": [
             {
-              "functionName": "createStockAdjustment",
-              "inputTypeName": "CreateStockAdjustmentInput",
-              "outputTypeName": "CreateStockAdjustmentOutput",
+              "functionName": "trackOrders",
+              "inputTypeName": "TrackOrdersInput",
+              "outputTypeName": "TrackOrdersOutput",
               "input": [
                 {
-                  "name": "stockItemId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.stockItemId"
-                },
-                {
-                  "name": "quantity",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.quantity"
-                },
-                {
-                  "name": "direction",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.direction"
-                },
-                {
-                  "name": "reason",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.reason"
-                },
-                {
-                  "name": "notes",
+                  "name": "status",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.notes"
+                  "description": "Filtro opcional por status do pedido (ex.: ready para localizar o que já pode ser servido)",
+                  "fieldRef": "Order.status"
+                },
+                {
+                  "name": "orderType",
+                  "type": "string",
+                  "required": false,
+                  "description": "Filtro opcional por origem do pedido: mesa (table) ou takeout",
+                  "fieldRef": "Order.orderType"
+                },
+                {
+                  "name": "tableNumber",
+                  "type": "string",
+                  "required": false,
+                  "description": "Filtro opcional pelo número ou identificador da mesa",
+                  "fieldRef": "Order.tableNumber"
+                },
+                {
+                  "name": "page",
+                  "type": "number",
+                  "required": false,
+                  "description": "Número da página para paginação da lista de pedidos"
+                },
+                {
+                  "name": "pageSize",
+                  "type": "number",
+                  "required": false,
+                  "description": "Quantidade de pedidos por página"
                 }
               ],
               "output": [
                 {
-                  "name": "stockAdjustmentId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "name": "orders",
+                  "type": "array",
+                  "required": true
                 },
                 {
-                  "name": "stockItemId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "quantity",
+                  "name": "total",
                   "type": "number",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "direction",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "reason",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "managerUserId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "shiftId",
-                  "type": "string",
-                  "required": false,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "resultingBalance",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "notes",
-                  "type": "string",
-                  "required": false,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "status",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "createdAt",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "required": true
                 }
               ],
               "ports": [
+                "Order",
                 "DailyShift"
               ],
               "rulesApplied": [
-                "managerManualStockAdjustmentAllowed"
+                "ordersRequireOpenDailyShift",
+                "orderRequiresTableOrTakeout",
+                "onlyReadyOrdersCanBeServed",
+                "completedOrdersLeaveKitchenQueue"
               ],
-              "transactional": true,
+              "transactional": false,
               "steps": [
-                "Resolve managerUserId from ctx.sessionContext.actorId (actorSession)",
-                "Generate stockAdjustmentId via ctx.idGenerator and createdAt via ctx.clock.now()",
-                "Resolve optional active DailyShift: query DailyShift port for status 'open'; use dailyShiftId as shiftId when found, else leave shiftId unset",
-                "Load StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); fail if not found",
-                "Validate direction in [in, out, correction] and reason in [count, loss, expiration, divergence, other]; quantity must be > 0 (rule managerManualStockAdjustmentAllowed)",
-                "Compute resultingBalance from StockItem.currentBalance and direction/quantity (in: +quantity, out: -quantity, correction: set to quantity)",
-                "Reject if resultingBalance would be negative",
-                "Inside ctx.data transaction: create StockAdjustment with status 'posted' via StockAdjustment port; update StockItem.currentBalance to resultingBalance and updatedAt via ctx.mdm.entity.update",
-                "Return the created StockAdjustment fields matching outputShape"
+                "Resolve the active lifecycle DailyShift via DailyShift port: list/find where status equals 'open'; take its dailyShiftId. If none is open, apply ordersRequireOpenDailyShift and return empty orders with total 0 (or the documented validation error).",
+                "Load Orders through the Order port filtered by dailyShiftId equal to the open shift id.",
+                "Apply completedOrdersLeaveKitchenQueue inline: exclude orders whose status is 'served' or 'cancelled' from the default open-orders list.",
+                "Apply optional user filters when provided: status (Order.status), orderType (Order.orderType), tableNumber (Order.tableNumber).",
+                "Sort remaining orders by Order.registeredAt ascending.",
+                "Apply optional pagination (page, pageSize) and compute total as the count of orders matching filters before page slice.",
+                "Map each Order aggregate to the output shape: order fields plus embedded OrderItem collection as items (orderItemId, menuItemName, quantity, observations, status).",
+                "Return { orders, total }."
               ],
               "outputShape": {
-                "kind": "object",
+                "kind": "paginated",
                 "fields": [
                   {
-                    "name": "stockAdjustmentId",
-                    "type": "string",
+                    "name": "orders",
+                    "type": "array",
                     "required": true,
-                    "fieldRef": "StockAdjustment.stockAdjustmentId"
+                    "item": {
+                      "fields": [
+                        {
+                          "name": "orderId",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "Order.orderId"
+                        },
+                        {
+                          "name": "dailyShiftId",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "Order.dailyShiftId"
+                        },
+                        {
+                          "name": "orderType",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "Order.orderType"
+                        },
+                        {
+                          "name": "tableNumber",
+                          "type": "string",
+                          "required": false,
+                          "fieldRef": "Order.tableNumber"
+                        },
+                        {
+                          "name": "customerName",
+                          "type": "string",
+                          "required": false,
+                          "fieldRef": "Order.customerName"
+                        },
+                        {
+                          "name": "totalAmount",
+                          "type": "number",
+                          "required": true,
+                          "fieldRef": "Order.totalAmount"
+                        },
+                        {
+                          "name": "notes",
+                          "type": "string",
+                          "required": false,
+                          "fieldRef": "Order.notes"
+                        },
+                        {
+                          "name": "status",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "Order.status"
+                        },
+                        {
+                          "name": "registeredAt",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "Order.registeredAt"
+                        },
+                        {
+                          "name": "confirmedAt",
+                          "type": "string",
+                          "required": false,
+                          "fieldRef": "Order.confirmedAt"
+                        },
+                        {
+                          "name": "inPreparationAt",
+                          "type": "string",
+                          "required": false,
+                          "fieldRef": "Order.inPreparationAt"
+                        },
+                        {
+                          "name": "readyAt",
+                          "type": "string",
+                          "required": false,
+                          "fieldRef": "Order.readyAt"
+                        },
+                        {
+                          "name": "items",
+                          "type": "array",
+                          "required": true,
+                          "item": {
+                            "fields": [
+                              {
+                                "name": "orderItemId",
+                                "type": "string",
+                                "required": true,
+                                "fieldRef": "OrderItem.orderItemId"
+                              },
+                              {
+                                "name": "menuItemName",
+                                "type": "string",
+                                "required": true,
+                                "fieldRef": "OrderItem.menuItemName"
+                              },
+                              {
+                                "name": "quantity",
+                                "type": "number",
+                                "required": true,
+                                "fieldRef": "OrderItem.quantity"
+                              },
+                              {
+                                "name": "observations",
+                                "type": "string",
+                                "required": false,
+                                "fieldRef": "OrderItem.observations"
+                              },
+                              {
+                                "name": "status",
+                                "type": "string",
+                                "required": true,
+                                "fieldRef": "OrderItem.status"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
                   },
                   {
-                    "name": "stockItemId",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.stockItemId"
-                  },
-                  {
-                    "name": "quantity",
+                    "name": "total",
                     "type": "number",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.quantity"
-                  },
-                  {
-                    "name": "direction",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.direction"
-                  },
-                  {
-                    "name": "reason",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.reason"
-                  },
-                  {
-                    "name": "managerUserId",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.managerUserId"
-                  },
-                  {
-                    "name": "shiftId",
-                    "type": "string",
-                    "required": false,
-                    "fieldRef": "StockAdjustment.shiftId"
-                  },
-                  {
-                    "name": "resultingBalance",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.resultingBalance"
-                  },
-                  {
-                    "name": "notes",
-                    "type": "string",
-                    "required": false,
-                    "fieldRef": "StockAdjustment.notes"
-                  },
-                  {
-                    "name": "status",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.status"
-                  },
-                  {
-                    "name": "createdAt",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.createdAt"
+                    "required": true
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "managerManualStockAdjustmentAllowed"
+            "ordersRequireOpenDailyShift",
+            "orderRequiresTableOrTakeout",
+            "onlyReadyOrdersCanBeServed",
+            "completedOrdersLeaveKitchenQueue"
           ],
-          "mdmRefs": [
-            "StockItem"
-          ]
+          "mdmRefs": []
         },
         "questions": [],
         "trace": [
-          "Added StockAdjustment to usecase and function ports alongside DailyShift; StockItem remains MDM via ctx.mdm"
+          "trackOrders: list query over Order via Order+DailyShift ports",
+          "dailyShiftId resolved from activeLifecycleInstance (open DailyShift), not public input",
+          "public inputs: status, orderType, tableNumber, page, pageSize",
+          "output pinned to outputShape: orders[] + total",
+          "query is non-transactional; no eventWrites on read path"
         ]
       }
     },
     "status": "completed",
-    "stepId": 6,
+    "stepId": 10,
     "interaction": null,
     "nextSteps": null
   }

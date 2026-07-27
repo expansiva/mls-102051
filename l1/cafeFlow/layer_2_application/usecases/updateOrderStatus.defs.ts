@@ -115,16 +115,18 @@ export const updateOrderStatusUsecase = {
         "transactional": true,
         "steps": [
           "Resolve updatedAt from ctx.clock.now() (systemDefault); do not accept it from client",
-          "Load Order by orderId via Order port; fail if not found",
+          "Load Order by input.orderId via Order port (resolveRepository); fail if not found",
           "Validate requested status is one of: confirmed | inPreparation | ready | served | cancelled",
-          "Apply kitchenStatusProgressesInOrder inline: allow only registered→confirmed, confirmed→inPreparation, inPreparation→ready, ready→served, and any non-terminal→cancelled; reject any other transition with rule id kitchenStatusProgressesInOrder",
-          "Apply onlyReadyOrdersCanBeServed inline: if target status is served, current status must be ready; otherwise reject with rule id onlyReadyOrdersCanBeServed",
-          "Set status-specific timestamp from ctx.clock.now(): confirmed→confirmedAt, inPreparation→inPreparationAt, ready→readyAt, served→servedAt, cancelled→cancelledAt; set cancellationReason when cancelling (optional)",
-          "Apply orderEntersKitchenQueueAfterAttendantConfirmation: on transition to confirmed, order becomes visible in active kitchen queue",
-          "Apply completedOrdersLeaveKitchenQueue: on transition to served or cancelled, order leaves active kitchen queue and must not re-enter",
-          "When target status is served, apply autoStockDeductionOnServe inside the same transaction: read OrderItems embedded on the Order; collect distinct menuItemIds; resolve MenuItemIngredient rows for those menu items (recipe links); aggregate required quantity per stockItemId as quantityPerPortion * OrderItem.quantity; bulk-load StockItems via ctx.mdm.collection.getMany; for each stockItem reduce currentBalance by the aggregated qty and ctx.mdm.entity.update; for each deduction create a StockConsumption (new id via ctx.idGenerator, orderId, stockItemId, quantity, occurredAt=now, status=posted, createdAt=now) and append via StockConsumption port (audit eventWrite, append-only)",
-          "Set order.updatedAt = resolved now; save Order via Order port in the same ctx.data transaction as StockConsumption appends and MDM stock updates",
-          "Return orderId, status, confirmedAt, inPreparationAt, readyAt, servedAt, cancelledAt, cancellationReason, updatedAt"
+          "Apply kitchenStatusProgressesInOrder inline: allowed forward transitions are registered->confirmed, confirmed->inPreparation, inPreparation->ready; reject any other kitchen progression with validation error including rule id kitchenStatusProgressesInOrder",
+          "Apply orderEntersKitchenQueueAfterAttendantConfirmation inline: transition to confirmed only from registered (attendant confirmation); set status=confirmed and confirmedAt=now; order becomes visible in active kitchen queue",
+          "Apply onlyReadyOrdersCanBeServed inline: transition to served only when current status is ready; otherwise reject with rule id onlyReadyOrdersCanBeServed",
+          "On ready: set status=ready and readyAt=now",
+          "On inPreparation: set status=inPreparation and inPreparationAt=now",
+          "On cancelled: set status=cancelled, cancelledAt=now, optional cancellationReason from input; order leaves active kitchen queue (completedOrdersLeaveKitchenQueue)",
+          "On served: set status=served and servedAt=now; apply completedOrdersLeaveKitchenQueue (order leaves active kitchen queue and must not return)",
+          "Apply autoStockDeductionOnServe when transitioning to served: read embedded OrderItems from the Order aggregate; collect distinct menuItemIds; load MenuItemIngredient rows linked to those menu items (recipe quantities); aggregate required qty per stockItemId as quantityPerPortion * OrderItem.quantity; bulk-read StockItems via ctx.mdm.collection.getMany({ mdmIds }); for each stock item deduct currentBalance by consumed qty and ctx.mdm.entity.update; for each consumption build StockConsumption { stockConsumptionId: ctx.idGenerator.next(), orderId, stockItemId, quantity, occurredAt: now, status: 'posted', createdAt: now } and append via StockConsumption port inside the same transaction (eventWrites audit, never update/delete)",
+          "Set order.updatedAt = now and save Order via Order port inside ctx.data transaction wrapper together with StockConsumption appends and MDM stock updates",
+          "Return outputShape fields: orderId, status, confirmedAt, inPreparationAt, readyAt, servedAt, cancelledAt, cancellationReason, updatedAt"
         ],
         "outputShape": {
           "kind": "object",

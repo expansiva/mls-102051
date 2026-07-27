@@ -14,7 +14,7 @@ export interface DateRange {
 export interface AiPromotionSuggestionFilter {
   operationalDashboardId?: string;
   menuItemId?: string;
-  menuCategoryId?: string | null;
+  menuCategoryId?: string;
   status?: AiPromotionSuggestionStatus;
 }
 

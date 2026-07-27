@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:21:13.570Z",
+  "savedAt": "2026-07-24T20:03:14.898Z",
   "agentName": "agentCbJudge",
   "stepId": 22,
   "planning": {
@@ -20,19 +20,63 @@
         "result": {
           "findings": [
             {
+              "ownerId": "closeDailyShift",
+              "type": "estrutural",
+              "severity": "error",
+              "message": "ports includes invented port StockConsumption; L4 reads/writes only DailyShift, Order/OrderItem/OrderPayment, StockItem (MDM) and ShiftClosingReport — StockConsumption is not read or written and must not be declared.",
+              "suggestion": "Remove StockConsumption from usecase ports; keep DailyShift, Order, ShiftClosingReport."
+            },
+            {
               "ownerId": "createStockAdjustment",
               "type": "estrutural",
               "severity": "error",
-              "message": "ports: missing required port StockAdjustment for L4 writes [StockAdjustment]; usecase only declares DailyShift while the operation creates/persists a StockAdjustment aggregate",
-              "suggestion": "Add StockAdjustment to usecase and function ports (keep DailyShift for optional open-shift resolution; StockItem remains MDM via ctx.mdm, not a port)"
+              "message": "ports missing StockAdjustment while L4 writes StockAdjustment (aggregate root in valid ports). Only DailyShift is declared; StockAdjustment cannot be persisted without its port.",
+              "suggestion": "Add StockAdjustment to usecase and function ports alongside DailyShift; persist the adjustment via StockAdjustment port."
+            },
+            {
+              "ownerId": "generateAiPromotionSuggestions",
+              "type": "estrutural",
+              "severity": "error",
+              "message": "ports includes invented port StockConsumption; L4 reads AiPromotionSuggestion, OperationalDashboard, MenuItem, OrderItem, Order, StockItem — not StockConsumption.",
+              "suggestion": "Remove StockConsumption from usecase ports; keep AiPromotionSuggestion, OperationalDashboard, Order."
+            },
+            {
+              "ownerId": "generateAiSalesSummary",
+              "type": "estrutural",
+              "severity": "error",
+              "message": "ports includes invented port StockConsumption; L4 reads AiSalesSummary, OperationalDashboard, DailyShift, Order, OrderItem — not StockConsumption.",
+              "suggestion": "Remove StockConsumption from usecase ports; keep AiSalesSummary, OperationalDashboard, DailyShift, Order."
+            },
+            {
+              "ownerId": "trackOrders",
+              "type": "estrutural",
+              "severity": "error",
+              "message": "ports includes invented port StockConsumption; L4 reads Order, OrderItem, DailyShift only — StockConsumption is unused.",
+              "suggestion": "Remove StockConsumption from usecase ports; keep Order, DailyShift."
+            },
+            {
+              "ownerId": "viewKitchenQueue",
+              "type": "estrutural",
+              "severity": "error",
+              "message": "ports includes invented port StockConsumption; L4 reads Order, OrderItem, DailyShift only — StockConsumption is unused.",
+              "suggestion": "Remove StockConsumption from usecase ports; keep Order, DailyShift."
+            },
+            {
+              "ownerId": "viewOperationalDashboard",
+              "type": "estrutural",
+              "severity": "error",
+              "message": "ports includes invented port StockConsumption; L4 reads OperationalDashboard, DailyShift, Order, OrderItem, MenuItem, StockItem — not StockConsumption.",
+              "suggestion": "Remove StockConsumption from usecase ports; keep OperationalDashboard, DailyShift, Order."
             }
           ]
         },
         "questions": [],
         "trace": [
-          "judged 20 L4/usecase pairs on ports, rulesApplied, inputs/accessPattern, acceptanceAssertions",
-          "createStockAdjustment: L4 writes StockAdjustment but generated ports omit StockAdjustment",
-          "remaining pairs coherent: MDM-only ops have empty ports; context/system/actor inputs not exposed as manual; rules and assertions covered"
+          "Judged 20 L4 vs usecase pairs on ports, rulesApplied, inputs/accessPattern, acceptanceAssertions.",
+          "createStockAdjustment: missing required StockAdjustment write port.",
+          "Several query/view/close usecases declare unused StockConsumption port not in L4 reads/writes.",
+          "eventWrites StockConsumption on createOrder/updateOrderStatus/recordBasicPayment left unflagged per design.",
+          "MDM entities correctly have no ports; context-resolved inputs correctly omitted from user input."
         ]
       }
     },

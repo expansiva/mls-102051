@@ -4,7 +4,6 @@ import type {
   DailyShiftFilter,
   DateRange,
   IDailyShiftRepository,
-  LocalDate,
 } from '/_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.js';
 import type { DailyShift } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/dailyShift.js';
 
@@ -58,7 +57,7 @@ function parseDetails(row: DailyShiftRow): DailyShiftDetails {
     return JSON.parse(row.details ?? '{}') as DailyShiftDetails;
   } catch {
     return {
-      shiftDate: '',
+      shiftDate: row.created_at.slice(0, 10),
       openedAt: row.created_at,
       closedAt: null,
       totalOrders: null,
@@ -104,34 +103,39 @@ export function createDailyShiftRepositoryAdapter(ctx: RequestContext): IDailySh
 
     async list(filter: DailyShiftFilter) {
       const where: Partial<DailyShiftRow> = {};
-      if (filter?.status) where.status = filter.status;
+      if (filter.dailyShiftId) where.daily_shift_id = filter.dailyShiftId;
+      if (filter.status) where.status = filter.status;
+      if (filter.openedByUserId) where.opened_by_user_id = filter.openedByUserId;
       const rows = await (await getTable()).findMany({
         where,
         orderBy: { field: 'created_at', direction: 'desc' },
       });
-      let results = rows.map(toDomain);
-      if (filter?.shiftDate) {
-        results = results.filter((shift) => shift.shiftDate === filter.shiftDate);
+      let result = rows.map(toDomain);
+      if (filter.shiftDate) {
+        result = result.filter((s) => s.shiftDate === filter.shiftDate);
       }
-      return results;
+      return result;
     },
 
     async save(aggregate) {
       const repo = await getTable();
       const existing = await repo.findOne({ where: { daily_shift_id: aggregate.dailyShiftId } });
       if (existing) {
-        await repo.update({ where: { daily_shift_id: aggregate.dailyShiftId }, patch: toRow(aggregate) });
+        await repo.update({
+          where: { daily_shift_id: aggregate.dailyShiftId },
+          patch: toRow(aggregate),
+        });
       } else {
         await repo.insert({ record: toRow(aggregate) });
       }
     },
 
-    async findOpenByDate(date: LocalDate) {
+    async findOpenByDate(date) {
       const rows = await (await getTable()).findMany({
         where: { status: 'open' },
         orderBy: { field: 'created_at', direction: 'desc' },
       });
-      const match = rows.map(toDomain).find((shift) => shift.shiftDate === date);
+      const match = rows.map(toDomain).find((s) => s.shiftDate === date);
       return match ?? null;
     },
 
@@ -141,7 +145,7 @@ export function createDailyShiftRepositoryAdapter(ctx: RequestContext): IDailySh
       });
       return rows
         .map(toDomain)
-        .filter((shift) => shift.shiftDate >= period.from && shift.shiftDate <= period.to);
+        .filter((s) => s.shiftDate >= period.from && s.shiftDate <= period.to);
     },
   };
 }

@@ -129,16 +129,14 @@ export const generateAiPromotionSuggestionsUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "resolveRepository AiPromotionSuggestion, OperationalDashboard, Order ports",
-          "load OperationalDashboard by input.operationalDashboardId; if not found, fail validation",
-          "list Orders via Order port for sales window covering last 7 days relative to dashboard.referenceDate (and today slice)",
-          "aggregate order line quantities by menuItemId into salesLast7Days and salesToday maps (skip cancelled orders/items)",
-          "collect distinct menuItemIds from aggregates; bulk-read MenuItem via ctx.mdm.collection.getMany / hydrateMany (never get-in-loop)",
-          "collect stock-related ids from menu/stock links when present; bulk-read StockItem via ctx.mdm.collection.getMany for currentBalance as currentStockLevel",
-          "list existing AiPromotionSuggestion via AiPromotionSuggestion port filtered by operationalDashboardId (and optionally status)",
-          "if none (or stale vs lastComputedAt), build decision-support suggestion projections per underperforming/high-stock menu items: reason, confidenceScore, suggestedDiscountPercent, status='pending', generatedAt=ctx.clock, optional expiresAt — do NOT trigger campaigns or mutate promotions (rule aiPromotionSuggestionsAreDecisionSupport)",
-          "sort suggestions by confidenceScore descending",
-          "return list shaped as outputShape fields only (aiPromotionSuggestionId, operationalDashboardId, menuItemId, menuItemName, menuCategoryId, reason, salesLast7Days, salesToday, currentStockLevel, confidenceScore, suggestedDiscountPercent, status, generatedAt, expiresAt)"
+          "validate required operationalDashboardId from selected OperationalDashboard",
+          "resolve OperationalDashboard port and load dashboard by operationalDashboardId; fail if not found",
+          "resolve Order port and list orders (with embedded order items) covering the last 7 days relative to dashboard.referenceDate / ctx.clock to aggregate salesLast7Days and salesToday per menuItemId",
+          "collect distinct menuItemIds from sales aggregation; bulk-read MenuItem via ctx.mdm.collection.getMany({ mdmIds }) (never get inside a loop); read related StockItem balances via ctx.mdm.collection when linked",
+          "resolve AiPromotionSuggestion port and list existing suggestions filtered by operationalDashboardId (and status when present), sorted by confidenceScore descending",
+          "if no fresh pending suggestions exist for the dashboard, build decision-support suggestion projections in memory from low/slow movers (salesLast7Days, salesToday, currentStockLevel, menuItemName, menuCategoryId), assigning pending status, confidenceScore and optional suggestedDiscountPercent — do NOT auto-launch campaigns (rule aiPromotionSuggestionsAreDecisionSupport)",
+          "map each suggestion to the canonical output shape (aiPromotionSuggestionId, operationalDashboardId, menuItemId, menuItemName, menuCategoryId, reason, salesLast7Days, salesToday, currentStockLevel, confidenceScore, suggestedDiscountPercent, status, generatedAt, expiresAt)",
+          "return the list sorted by confidenceScore descending; suggestions remain decision-support only and are scoped to the selected operationalDashboardId"
         ],
         "outputShape": {
           "kind": "list",

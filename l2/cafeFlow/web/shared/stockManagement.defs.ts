@@ -135,7 +135,7 @@ export const definition = {
   },
   "layoutRef": {
     "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/stockManagement.defs.ts",
-    "layoutId": "cfe-20260723170708.1000"
+    "layoutId": "pos_workspace"
   },
   "states": [
     {
@@ -879,9 +879,7 @@ export const definition = {
     ]
   },
   "i18n": {
-    "section.stockManagement.sec-stockItemList.title": "Stock Item List",
-    "organism.stockManagement.inline-row-command10.title": "Inline row command",
-    "intent.stockManagement.inline-row-command10.content.title": "Inline row command",
+    "section.stockManagement.stockItemList.title": "Stock Item List",
     "organism.stockManagement.listStockItems.title": "Listar itens de estoque",
     "intent.stockManagement.listStockItems.list.title": "Listar itens de estoque",
     "intent.stockManagement.listStockItems.list.empty": "Nenhum registro encontrado",
@@ -909,7 +907,7 @@ export const definition = {
     "intent.stockManagement.registerStockAdjustment.form.field.direction.label": "Direction",
     "intent.stockManagement.registerStockAdjustment.form.field.reason.label": "Reason",
     "intent.stockManagement.registerStockAdjustment.form.field.notes.label": "Notes",
-    "section.stockManagement.sec-createStockItem.title": "Add New Stock Item",
+    "section.stockManagement.createStockItemSection.title": "Add New Stock Item",
     "organism.stockManagement.addStockItem.title": "Criar item de estoque",
     "intent.stockManagement.addStockItem.form.title": "Criar item de estoque",
     "intent.stockManagement.addStockItem.form.action.addStockItem": "Criar item de estoque",
@@ -918,9 +916,8 @@ export const definition = {
     "intent.stockManagement.addStockItem.form.field.currentBalance.label": "Current Balance",
     "intent.stockManagement.addStockItem.form.field.minimumLevel.label": "Minimum Level",
     "intent.stockManagement.addStockItem.form.field.description.label": "Description",
-    "section.stockManagement.sec-stock-overview.title": "Visão geral do estoque",
-    "section.stockManagement.sec-stock-master-detail.title": "Controle de insumos",
-    "section.stockManagement.sec-add-stock-item.title": "Cadastrar novo insumo"
+    "section.stockManagement.sec-stock-master.title": "Controle de Estoque",
+    "section.stockManagement.sec-create-panel.title": "Novo Insumo"
   },
   "automation": {
     "statePrefix": "ui.stockManagement",

@@ -51,7 +51,7 @@ export const aiPromotionSuggestionRepositoryPort = {
         "name": "findPendingReview",
         "returns": "AiPromotionSuggestion[]",
         "params": [],
-        "description": "Find suggestions awaiting human review"
+        "description": "Find suggestions awaiting operator review"
       }
     ]
   }

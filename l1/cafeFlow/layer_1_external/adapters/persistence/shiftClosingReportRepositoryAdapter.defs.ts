@@ -15,12 +15,12 @@ export const shiftClosingReportRepositoryAdapter = {
     "entityId": "ShiftClosingReport",
     "className": "ShiftClosingReportRepositoryAdapter",
     "portRef": "IShiftClosingReportRepository",
-    "tableRef": "shift_closing_report",
+    "tableRef": "cafe_flow_shift_closing_reports",
     "mdmReads": [],
     "notes": [
       "columns: shift_closing_report_id, daily_shift_id, created_at",
       "details JSONB: shiftDate, totalSalesAmount, totalOrdersCount, totalItemsSold, cashPaymentsAmount, otherPaymentsAmount, topSellingItemsSummary, lowStockSignalsCount, stockoutSignalsCount, closingNotes, generatedAt, updatedAt",
-      "map domain ShiftClosingReport <-> row via ctx.data.moduleData; no mdmRefs"
+      "map domain ShiftClosingReport <-> row via ctx.data.moduleData only"
     ]
   }
 } as const;

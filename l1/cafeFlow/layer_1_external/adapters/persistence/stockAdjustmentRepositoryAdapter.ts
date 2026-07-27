@@ -95,7 +95,9 @@ export function createStockAdjustmentRepositoryAdapter(
     },
 
     async listByPeriod(period: DateRange) {
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         orderBy: { field: 'created_at', direction: 'desc' },
       });
       return rows
@@ -104,7 +106,9 @@ export function createStockAdjustmentRepositoryAdapter(
     },
 
     async listByProductId(productId: ProductId) {
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         where: { stock_item_id: productId },
         orderBy: { field: 'created_at', direction: 'desc' },
       });

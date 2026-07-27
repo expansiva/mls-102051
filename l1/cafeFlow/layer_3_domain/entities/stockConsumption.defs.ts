@@ -13,7 +13,7 @@ export const stockConsumptionDomainEntity = {
   },
   "data": {
     "entityId": "StockConsumption",
-    "title": "StockConsumption",
+    "title": "Baixa de Estoque",
     "fields": [
       {
         "fieldId": "stockConsumptionId",
@@ -75,11 +75,11 @@ export const stockConsumptionDomainEntity = {
       }
     ],
     "valueObjects": [],
-    "invariants": [],
     "statusEnum": [
       "posted",
       "voided"
-    ]
+    ],
+    "invariants": []
   }
 } as const;
 

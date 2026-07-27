@@ -13,7 +13,7 @@ export const orderDomainEntity = {
   },
   "data": {
     "entityId": "Order",
-    "title": "Order",
+    "title": "Pedido",
     "fields": [
       {
         "fieldId": "orderId",
@@ -331,29 +331,6 @@ export const orderDomainEntity = {
         ]
       }
     ],
-    "invariants": [
-      "Um pedido deve possuir ao menos um OrderItem associado.",
-      "totalAmount deve ser igual à soma dos subtotal de todos os OrderItem do pedido.",
-      "Quando orderType = 'table', tableNumber deve estar preenchido.",
-      "Quando orderType = 'takeout', customerName deve estar preenchido.",
-      "Transições de status devem seguir o ciclo: registered → confirmed → inPreparation → ready → served, ou desvio para cancelled a partir de estados não terminais.",
-      "servedAt e cancelledAt são mutuamente exclusivos (não podem estar ambos preenchidos).",
-      "confirmedAt deve estar preenchido quando status >= 'confirmed'.",
-      "inPreparationAt deve estar preenchido quando status >= 'inPreparation'.",
-      "readyAt deve estar preenchido quando status >= 'ready'.",
-      "servedAt deve estar preenchido quando status = 'served'.",
-      "cancelledAt deve estar preenchido quando status = 'cancelled'.",
-      "cancellationReason deve estar preenchido quando status = 'cancelled'.",
-      "confirmedAt, quando presente, deve ser maior ou igual a registeredAt.",
-      "inPreparationAt, quando presente, deve ser maior ou igual a confirmedAt.",
-      "readyAt, quando presente, deve ser maior ou igual a inPreparationAt.",
-      "servedAt, quando presente, deve ser maior ou igual a readyAt.",
-      "updatedAt deve ser maior ou igual a createdAt.",
-      "dailyShiftId referenciado deve corresponder a um DailyShift existente e em estado 'open' no momento do registro.",
-      "Cada OrderItem deve referenciar um menuItemId ativo no momento do lançamento.",
-      "subtotal de cada OrderItem deve ser igual a quantity × unitPrice.",
-      "quantity de cada OrderItem deve ser maior que zero."
-    ],
     "statusEnum": [
       "registered",
       "confirmed",
@@ -361,6 +338,22 @@ export const orderDomainEntity = {
       "ready",
       "served",
       "cancelled"
+    ],
+    "invariants": [
+      "status lifecycle (forward-only): registered → confirmed → inPreparation → ready → served; cancelled may occur from registered|confirmed|inPreparation|ready; served and cancelled are terminal",
+      "confirmedAt required iff status is confirmed or later (not cancelled from registered); inPreparationAt required iff status is inPreparation or later (non-cancelled path); readyAt required iff status is ready|served; servedAt required iff status is served; cancelledAt and cancellationReason required iff status is cancelled",
+      "temporal order on non-cancelled path: registeredAt ≤ confirmedAt ≤ inPreparationAt ≤ readyAt ≤ servedAt; on cancel path: registeredAt ≤ cancelledAt (and ≤ any timestamps already set before cancel)",
+      "createdAt ≤ updatedAt; createdAt ≤ registeredAt; updatedAt ≥ each set lifecycle timestamp",
+      "orderType=table ⇒ tableNumber required and non-blank; orderType=takeout ⇒ customerName required and non-blank",
+      "totalAmount ≥ 0 and totalAmount = sum(items.subtotal) at launch; Order must have at least one OrderItem",
+      "OrderItem.quantity > 0; unitPrice ≥ 0; subtotal = quantity × unitPrice and subtotal ≥ 0; menuItemName and unitPrice are frozen at launch",
+      "OrderItem status lifecycle: pending → sentToKitchen → inPreparation → ready; cancelled may occur from sentToKitchen|inPreparation|ready; ready and cancelled are terminal for the line",
+      "OrderItem timestamps: sentToKitchenAt required iff status is sentToKitchen or later (non-cancelled); startedPreparationAt required iff inPreparation|ready; readyAt required iff ready; cancelledAt and cancellationReason required iff cancelled; pending ≤ sentToKitchenAt ≤ startedPreparationAt ≤ readyAt (or ≤ cancelledAt on cancel path)",
+      "Order-level kitchen progression must stay coherent with items: order confirmed before any item sentToKitchen; order inPreparation only when at least one item is inPreparation|ready; order ready only when all non-cancelled items are ready; order served only after ready and all non-cancelled items ready; cancelling order cancels all non-terminal items",
+      "OrderPayment is 1:1 with Order; payment.totalAmount = order.totalAmount and ≥ 0",
+      "OrderPayment status lifecycle: open → closed | voided; closed and voided are terminal",
+      "paidAt required when payment is registered/closed path; closedAt required iff status=closed; voidedAt and voidReason required iff status=voided; createdAt ≤ paidAt ≤ closedAt (closed path) or createdAt ≤ voidedAt (void path)",
+      "payment may close only for a served (non-cancelled) order; voided payment cannot transition to closed"
     ]
   }
 } as const;

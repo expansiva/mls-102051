@@ -62,23 +62,24 @@ export declare class CafeFlowDashboardWorkspaceBase extends CollabLitElement {
     /** state status — pageStatus */
     status: string;
     /** state getDashboardState — actionStatus, values: idle|loading|success|error */
-    getDashboardState: 'idle' | 'loading' | 'success' | 'error';
+    getDashboardState: "idle" | "loading" | "success" | "error";
     /** state getDashboardDailyShiftId — input */
     getDashboardDailyShiftId: string;
     /** state getDashboardData — queryResult, outputShape: object */
     getDashboardData: GetDashboardOutput | null;
     /** state getAiSalesSummaryState — actionStatus, values: idle|loading|success|error */
-    getAiSalesSummaryState: 'idle' | 'loading' | 'success' | 'error';
+    getAiSalesSummaryState: "idle" | "loading" | "success" | "error";
     /** state getAiSalesSummaryOperationalDashboardId — input */
     getAiSalesSummaryOperationalDashboardId: string;
     /** state getAiSalesSummaryData — queryResult, outputShape: object */
     getAiSalesSummaryData: GetAiSalesSummaryOutput | null;
     /** state getAiPromotionSuggestionsState — actionStatus, values: idle|loading|success|error */
-    getAiPromotionSuggestionsState: 'idle' | 'loading' | 'success' | 'error';
+    getAiPromotionSuggestionsState: "idle" | "loading" | "success" | "error";
     /** state getAiPromotionSuggestionsOperationalDashboardId — input */
     getAiPromotionSuggestionsOperationalDashboardId: string;
     /** state getAiPromotionSuggestionsData — queryResult, outputShape: array */
     getAiPromotionSuggestionsData: GetAiPromotionSuggestionsOutput[];
+    private readonly _subscribedKeys;
     /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
     protected get msg(): MessageType;
     connectedCallback(): void;

@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:17:48.282Z",
+  "savedAt": "2026-07-24T19:58:33.175Z",
   "agentName": "agentCbRepositoryPort",
   "stepId": 7,
   "planning": {
@@ -29,7 +29,7 @@
                   "params": [
                     "id: DailyShiftId"
                   ],
-                  "description": "Load a daily shift by its identity"
+                  "description": "Retrieve a DailyShift aggregate by its identity"
                 },
                 {
                   "name": "list",
@@ -37,7 +37,7 @@
                   "params": [
                     "filter: DailyShiftFilter"
                   ],
-                  "description": "List daily shifts matching domain filter"
+                  "description": "List DailyShift aggregates matching domain filter"
                 },
                 {
                   "name": "save",
@@ -45,7 +45,7 @@
                   "params": [
                     "aggregate: DailyShift"
                   ],
-                  "description": "Persist daily shift aggregate"
+                  "description": "Persist DailyShift aggregate (insert or update)"
                 },
                 {
                   "name": "findOpenByDate",
@@ -53,15 +53,16 @@
                   "params": [
                     "date: LocalDate"
                   ],
-                  "description": "Find the open shift for a calendar date"
+                  "description": "Find open DailyShift for a calendar date"
                 },
                 {
                   "name": "findByPeriod",
                   "returns": "DailyShift[]",
                   "params": [
-                    "period: DateRange"
+                    "from: LocalDate",
+                    "to: LocalDate"
                   ],
-                  "description": "Find shifts within a date range"
+                  "description": "Find DailyShifts within a date period"
                 }
               ]
             },
@@ -75,7 +76,7 @@
                   "params": [
                     "id: OrderId"
                   ],
-                  "description": "Load an order by its identity"
+                  "description": "Retrieve an Order aggregate by its identity"
                 },
                 {
                   "name": "list",
@@ -83,7 +84,7 @@
                   "params": [
                     "filter: OrderFilter"
                   ],
-                  "description": "List orders matching domain filter"
+                  "description": "List Order aggregates matching domain filter"
                 },
                 {
                   "name": "save",
@@ -91,7 +92,7 @@
                   "params": [
                     "aggregate: Order"
                   ],
-                  "description": "Persist order aggregate including items and payments"
+                  "description": "Persist Order aggregate including OrderItem and OrderPayment"
                 },
                 {
                   "name": "findByDailyShiftId",
@@ -99,23 +100,24 @@
                   "params": [
                     "dailyShiftId: DailyShiftId"
                   ],
-                  "description": "Find orders belonging to a daily shift"
+                  "description": "Find orders belonging to a DailyShift"
                 },
                 {
-                  "name": "findOpenByTable",
-                  "returns": "Order | null",
-                  "params": [
-                    "tableId: TableId"
-                  ],
-                  "description": "Find the open order for a table"
-                },
-                {
-                  "name": "findByStatus",
+                  "name": "findOpenByTableOrCustomer",
                   "returns": "Order[]",
                   "params": [
-                    "status: OrderStatus"
+                    "criteria: OrderOpenCriteria"
                   ],
-                  "description": "Find orders by lifecycle status"
+                  "description": "Find open orders by table or customer criteria"
+                },
+                {
+                  "name": "findByPeriod",
+                  "returns": "Order[]",
+                  "params": [
+                    "from: DateTime",
+                    "to: DateTime"
+                  ],
+                  "description": "Find orders within a time period"
                 }
               ]
             },
@@ -129,7 +131,7 @@
                   "params": [
                     "id: ShiftClosingReportId"
                   ],
-                  "description": "Load a shift closing report by identity"
+                  "description": "Retrieve a ShiftClosingReport aggregate by its identity"
                 },
                 {
                   "name": "list",
@@ -137,7 +139,7 @@
                   "params": [
                     "filter: ShiftClosingReportFilter"
                   ],
-                  "description": "List shift closing reports matching domain filter"
+                  "description": "List ShiftClosingReport aggregates matching domain filter"
                 },
                 {
                   "name": "save",
@@ -145,7 +147,7 @@
                   "params": [
                     "aggregate: ShiftClosingReport"
                   ],
-                  "description": "Persist shift closing report aggregate"
+                  "description": "Persist ShiftClosingReport aggregate"
                 },
                 {
                   "name": "findByDailyShiftId",
@@ -153,15 +155,16 @@
                   "params": [
                     "dailyShiftId: DailyShiftId"
                   ],
-                  "description": "Find closing report for a daily shift"
+                  "description": "Find closing report for a given DailyShift"
                 },
                 {
                   "name": "findByPeriod",
                   "returns": "ShiftClosingReport[]",
                   "params": [
-                    "period: DateRange"
+                    "from: LocalDate",
+                    "to: LocalDate"
                   ],
-                  "description": "Find closing reports within a date range"
+                  "description": "Find closing reports within a date period"
                 }
               ]
             },
@@ -175,7 +178,7 @@
                   "params": [
                     "id: AiPromotionSuggestionId"
                   ],
-                  "description": "Load an AI promotion suggestion by identity"
+                  "description": "Retrieve an AiPromotionSuggestion aggregate by its identity"
                 },
                 {
                   "name": "list",
@@ -183,7 +186,7 @@
                   "params": [
                     "filter: AiPromotionSuggestionFilter"
                   ],
-                  "description": "List AI promotion suggestions matching domain filter"
+                  "description": "List AiPromotionSuggestion aggregates matching domain filter"
                 },
                 {
                   "name": "save",
@@ -191,21 +194,22 @@
                   "params": [
                     "aggregate: AiPromotionSuggestion"
                   ],
-                  "description": "Persist AI promotion suggestion aggregate"
+                  "description": "Persist AiPromotionSuggestion aggregate"
                 },
                 {
-                  "name": "findActiveByPeriod",
-                  "returns": "AiPromotionSuggestion[]",
-                  "params": [
-                    "period: DateRange"
-                  ],
-                  "description": "Find active suggestions for a period"
-                },
-                {
-                  "name": "findPendingReview",
+                  "name": "findActive",
                   "returns": "AiPromotionSuggestion[]",
                   "params": [],
-                  "description": "Find suggestions awaiting human review"
+                  "description": "Find currently active promotion suggestions"
+                },
+                {
+                  "name": "findByPeriod",
+                  "returns": "AiPromotionSuggestion[]",
+                  "params": [
+                    "from: DateTime",
+                    "to: DateTime"
+                  ],
+                  "description": "Find suggestions generated within a period"
                 }
               ]
             },
@@ -219,7 +223,7 @@
                   "params": [
                     "id: AiSalesSummaryId"
                   ],
-                  "description": "Load an AI sales summary by identity"
+                  "description": "Retrieve an AiSalesSummary aggregate by its identity"
                 },
                 {
                   "name": "list",
@@ -227,7 +231,7 @@
                   "params": [
                     "filter: AiSalesSummaryFilter"
                   ],
-                  "description": "List AI sales summaries matching domain filter"
+                  "description": "List AiSalesSummary aggregates matching domain filter"
                 },
                 {
                   "name": "save",
@@ -235,21 +239,22 @@
                   "params": [
                     "aggregate: AiSalesSummary"
                   ],
-                  "description": "Persist AI sales summary aggregate"
+                  "description": "Persist AiSalesSummary aggregate"
                 },
                 {
                   "name": "findByPeriod",
                   "returns": "AiSalesSummary | null",
                   "params": [
-                    "period: DateRange"
+                    "from: LocalDate",
+                    "to: LocalDate"
                   ],
-                  "description": "Find sales summary for a period"
+                  "description": "Find sales summary for a date period"
                 },
                 {
                   "name": "findLatest",
                   "returns": "AiSalesSummary | null",
                   "params": [],
-                  "description": "Find the most recent sales summary"
+                  "description": "Find the most recent AiSalesSummary"
                 }
               ]
             },
@@ -263,7 +268,7 @@
                   "params": [
                     "id: OperationalDashboardId"
                   ],
-                  "description": "Load an operational dashboard by identity"
+                  "description": "Retrieve an OperationalDashboard aggregate by its identity"
                 },
                 {
                   "name": "list",
@@ -271,7 +276,7 @@
                   "params": [
                     "filter: OperationalDashboardFilter"
                   ],
-                  "description": "List operational dashboards matching domain filter"
+                  "description": "List OperationalDashboard aggregates matching domain filter"
                 },
                 {
                   "name": "save",
@@ -279,7 +284,7 @@
                   "params": [
                     "aggregate: OperationalDashboard"
                   ],
-                  "description": "Persist operational dashboard aggregate"
+                  "description": "Persist OperationalDashboard aggregate"
                 },
                 {
                   "name": "findCurrent",
@@ -293,7 +298,7 @@
                   "params": [
                     "dailyShiftId: DailyShiftId"
                   ],
-                  "description": "Find dashboard snapshot for a daily shift"
+                  "description": "Find dashboard snapshot for a DailyShift"
                 }
               ]
             },
@@ -307,15 +312,16 @@
                   "params": [
                     "record: StockAdjustment"
                   ],
-                  "description": "Append a stock adjustment event (append-only)"
+                  "description": "Append-only write of a StockAdjustment event"
                 },
                 {
                   "name": "listByPeriod",
                   "returns": "StockAdjustment[]",
                   "params": [
-                    "period: DateRange"
+                    "from: DateTime",
+                    "to: DateTime"
                   ],
-                  "description": "List stock adjustments within a period"
+                  "description": "List stock adjustments within a time period"
                 },
                 {
                   "name": "listByProductId",
@@ -331,7 +337,7 @@
                   "params": [
                     "id: StockAdjustmentId"
                   ],
-                  "description": "Load a stock adjustment event by identity"
+                  "description": "Retrieve a StockAdjustment event by identity"
                 }
               ]
             },
@@ -345,7 +351,7 @@
                   "params": [
                     "record: StockConsumption"
                   ],
-                  "description": "Append a stock consumption event (append-only)"
+                  "description": "Append-only write of a StockConsumption event"
                 },
                 {
                   "name": "listByOwnerId",
@@ -353,15 +359,16 @@
                   "params": [
                     "ownerId: OrderId"
                   ],
-                  "description": "List stock consumptions for owning order"
+                  "description": "List stock consumptions for owning Order"
                 },
                 {
                   "name": "listByPeriod",
                   "returns": "StockConsumption[]",
                   "params": [
-                    "period: DateRange"
+                    "from: DateTime",
+                    "to: DateTime"
                   ],
-                  "description": "List stock consumptions within a period"
+                  "description": "List stock consumptions within a time period"
                 },
                 {
                   "name": "listByProductId",
@@ -377,7 +384,7 @@
                   "params": [
                     "id: StockConsumptionId"
                   ],
-                  "description": "Load a stock consumption event by identity"
+                  "description": "Retrieve a StockConsumption event by identity"
                 }
               ]
             }
@@ -385,9 +392,9 @@
         },
         "questions": [],
         "trace": [
-          "Produced IDailyShiftRepository, IOrderRepository, IShiftClosingReportRepository, IAiPromotionSuggestionRepository, IAiSalesSummaryRepository, IOperationalDashboardRepository with getById/list/save/domain finders",
-          "Produced append-only IStockAdjustmentRepository and IStockConsumptionRepository with append + read finders (listByOwnerId for Order-owned StockConsumption)",
-          "All ports typed in domain terms only"
+          "Built I{Entity}Repository ports for 6 aggregates with getById/list/save/domain finders",
+          "Built append-only event ports for StockAdjustment and StockConsumption with append + read finders",
+          "Typed entirely in domain terms (ids, filters, aggregates/events); no SQL/rows"
         ]
       }
     },

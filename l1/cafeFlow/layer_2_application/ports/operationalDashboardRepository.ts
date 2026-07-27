@@ -5,7 +5,7 @@ export type OperationalDashboardId = string;
 export type DailyShiftId = string;
 
 export interface OperationalDashboardFilter {
-  dailyShiftId?: DailyShiftId;
+  dailyShiftId?: string;
   referenceDate?: string;
 }
 

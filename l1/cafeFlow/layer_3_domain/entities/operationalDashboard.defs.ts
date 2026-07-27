@@ -13,7 +13,7 @@ export const operationalDashboardDomainEntity = {
   },
   "data": {
     "entityId": "OperationalDashboard",
-    "title": "OperationalDashboard",
+    "title": "Dashboard Operacional",
     "fields": [
       {
         "fieldId": "operationalDashboardId",
@@ -113,22 +113,26 @@ export const operationalDashboardDomainEntity = {
       }
     ],
     "valueObjects": [],
+    "statusEnum": [],
     "invariants": [
-      "todaySalesTotal deve ser maior ou igual a zero.",
-      "todayOrdersCount deve ser maior ou igual a zero.",
-      "todayItemsSold deve ser maior ou igual a zero.",
-      "topSellingItemsCount deve ser maior ou igual a zero.",
-      "lowStockItemsCount deve ser maior ou igual a zero.",
-      "outOfStockItemsCount deve ser maior ou igual a zero.",
-      "topMenuItemQuantity, quando presente, deve ser maior ou igual a zero.",
-      "hasLowStockAlert deve ser verdadeiro se e somente se lowStockItemsCount > 0 ou outOfStockItemsCount > 0.",
-      "Quando topMenuItemId está preenchido, topMenuItemQuantity também deve estar preenchido.",
-      "Quando topMenuItemId é nulo, topMenuItemQuantity deve ser nulo.",
-      "lastComputedAt deve ser maior ou igual a createdAt.",
-      "updatedAt deve ser maior ou igual a createdAt.",
-      "dailyShiftId referenciado deve corresponder a um DailyShift existente."
-    ],
-    "statusEnum": []
+      "todaySalesTotal >= 0",
+      "todayOrdersCount >= 0",
+      "todayItemsSold >= 0",
+      "topSellingItemsCount >= 0",
+      "lowStockItemsCount >= 0",
+      "outOfStockItemsCount >= 0",
+      "todayItemsSold >= todayOrdersCount (cada pedido concluído tem ao menos um item)",
+      "se todayOrdersCount == 0 então todaySalesTotal == 0, todayItemsSold == 0, topMenuItemId ausente e topMenuItemQuantity ausente",
+      "topMenuItemId e topMenuItemQuantity são ambos presentes ou ambos ausentes",
+      "quando topMenuItemId presente: topMenuItemQuantity > 0, topMenuItemQuantity <= todayItemsSold e topSellingItemsCount >= 1",
+      "quando todayItemsSold == 0: topMenuItemId e topMenuItemQuantity ausentes e topSellingItemsCount == 0",
+      "hasLowStockAlert <=> (lowStockItemsCount > 0 || outOfStockItemsCount > 0)",
+      "quando hasLowStockAlert == true: lowStockItemIds presente e não vazio; quando false: lowStockItemIds ausente ou vazio",
+      "createdAt <= updatedAt",
+      "createdAt <= lastComputedAt",
+      "lastComputedAt >= início do dia de referenceDate",
+      "dailyShiftId e referenceDate devem referir o mesmo turno/dia operacional"
+    ]
   }
 } as const;
 

@@ -32,39 +32,40 @@ export async function createMenuItem(
 ): Promise<CreateMenuItemOutput> {
   const now = ctx.clock.nowIso();
 
-  if (!input.menuCategoryId?.trim() || !(input.price > 0)) {
+  // rule: menuItemNeedsCategoryAndPrice
+  if (!input.menuCategoryId || input.menuCategoryId.trim() === '') {
     throw new AppError(
       'VALIDATION_ERROR',
-      'menuItemNeedsCategoryAndPrice: o item de cardápio precisa de categoria e preço maior que zero.',
+      'menuItemNeedsCategoryAndPrice: menuCategoryId is required.',
+      400,
+      { ruleId: 'menuItemNeedsCategoryAndPrice' },
+    );
+  }
+  if (input.price == null || !Number.isFinite(input.price) || input.price <= 0) {
+    throw new AppError(
+      'VALIDATION_ERROR',
+      'menuItemNeedsCategoryAndPrice: price must be a finite number greater than 0.',
       400,
       { ruleId: 'menuItemNeedsCategoryAndPrice' },
     );
   }
 
-  try {
-    await ctx.mdm.entity.get({ mdmId: input.menuCategoryId });
-  } catch (err) {
-    if (err instanceof AppError && err.code === 'NOT_FOUND') {
-      throw new AppError(
-        'VALIDATION_ERROR',
-        'menuItemNeedsCategoryAndPrice: menuCategoryId must reference an existing MenuCategory.',
-        400,
-        { ruleId: 'menuItemNeedsCategoryAndPrice', menuCategoryId: input.menuCategoryId },
-      );
-    }
-    throw err;
-  }
-
-  // rule: onlyActiveMenuItemsCanBeOrdered — active items are orderable; paused are not available for new POS launches
-  const status = input.status ?? 'active';
-  if (status !== 'active' && status !== 'paused') {
+  // rule: onlyActiveMenuItemsCanBeOrdered — paused items are not orderable at POS
+  let status: string;
+  if (input.status == null || String(input.status).trim() === '') {
+    status = 'active';
+  } else if (input.status === 'active' || input.status === 'paused') {
+    status = input.status;
+  } else {
     throw new AppError(
       'VALIDATION_ERROR',
-      'onlyActiveMenuItemsCanBeOrdered: status must be active or paused.',
+      "onlyActiveMenuItemsCanBeOrdered: status must be 'active' or 'paused'.",
       400,
       { ruleId: 'onlyActiveMenuItemsCanBeOrdered' },
     );
   }
+
+  await ctx.mdm.entity.get({ mdmId: input.menuCategoryId });
 
   const created = await ctx.mdm.entity.create({
     details: {
@@ -87,35 +88,45 @@ export async function createMenuItem(
     },
   });
 
-  const moduleDetails = (created.details as unknown as {
-    cafeFlow?: {
-      menuCategoryId?: string;
-      description?: string | null;
-      price?: number;
-      status?: string;
-      imageUrl?: string | null;
-      displayOrder?: number | null;
-      requiresStockLink?: boolean;
-      createdAt?: string;
-      updatedAt?: string;
-    };
-  }).cafeFlow;
+  const moduleDetails = (
+    created.details as unknown as {
+      cafeFlow?: {
+        menuCategoryId?: string;
+        description?: string | null;
+        price?: number;
+        status?: string;
+        imageUrl?: string | null;
+        displayOrder?: number | null;
+        requiresStockLink?: boolean;
+        createdAt?: string;
+        updatedAt?: string;
+      };
+    }
+  ).cafeFlow;
 
-  const description = moduleDetails?.description ?? input.description ?? undefined;
-  const imageUrl = moduleDetails?.imageUrl ?? input.imageUrl ?? undefined;
-  const displayOrder = moduleDetails?.displayOrder ?? input.displayOrder ?? undefined;
-
-  return {
+  const output: CreateMenuItemOutput = {
     menuItemId: created.mdmId,
     menuCategoryId: moduleDetails?.menuCategoryId ?? input.menuCategoryId,
     name: created.details.name ?? input.name,
-    ...(description !== undefined && description !== null ? { description } : {}),
     price: moduleDetails?.price ?? input.price,
     status: moduleDetails?.status ?? status,
-    ...(imageUrl !== undefined && imageUrl !== null ? { imageUrl } : {}),
-    ...(displayOrder !== undefined && displayOrder !== null ? { displayOrder } : {}),
     requiresStockLink: moduleDetails?.requiresStockLink ?? input.requiresStockLink,
     createdAt: moduleDetails?.createdAt ?? created.index.createdAt ?? now,
     updatedAt: moduleDetails?.updatedAt ?? created.index.updatedAt ?? now,
   };
+
+  const description = moduleDetails?.description ?? input.description;
+  if (description != null && description !== '') {
+    output.description = description;
+  }
+  const imageUrl = moduleDetails?.imageUrl ?? input.imageUrl;
+  if (imageUrl != null && imageUrl !== '') {
+    output.imageUrl = imageUrl;
+  }
+  const displayOrder = moduleDetails?.displayOrder ?? input.displayOrder;
+  if (displayOrder != null) {
+    output.displayOrder = displayOrder;
+  }
+
+  return output;
 }

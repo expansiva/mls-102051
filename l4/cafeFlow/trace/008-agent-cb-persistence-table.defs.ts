@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:18:29.312Z",
+  "savedAt": "2026-07-24T19:59:21.838Z",
   "agentName": "agentCbPersistenceTable",
   "stepId": 8,
   "planning": {
@@ -26,27 +26,32 @@
                 {
                   "name": "daily_shift_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "status",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "opened_by_user_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "closed_by_user_id",
                   "type": "uuid",
-                  "nullable": true
+                  "nullable": true,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 }
               ],
               "primaryKey": [
@@ -95,27 +100,32 @@
                 {
                   "name": "order_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "daily_shift_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "order_type",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "status",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 }
               ],
               "primaryKey": [
@@ -167,17 +177,20 @@
                 {
                   "name": "shift_closing_report_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "daily_shift_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 }
               ],
               "primaryKey": [
@@ -212,37 +225,44 @@
                 {
                   "name": "ai_promotion_suggestion_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "operational_dashboard_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "menu_item_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "menu_category_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "status",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "reviewed_by_user_id",
                   "type": "uuid",
-                  "nullable": true
+                  "nullable": true,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 }
               ],
               "primaryKey": [
@@ -305,22 +325,26 @@
                 {
                   "name": "ai_sales_summary_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "operational_dashboard_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "model_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 }
               ],
               "primaryKey": [
@@ -362,22 +386,26 @@
                 {
                   "name": "operational_dashboard_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "daily_shift_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "top_menu_item_id",
                   "type": "uuid",
-                  "nullable": true
+                  "nullable": true,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 }
               ],
               "primaryKey": [
@@ -419,52 +447,62 @@
                 {
                   "name": "stock_adjustment_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "stock_item_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "direction",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "reason",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "manager_user_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "shift_id",
                   "type": "uuid",
-                  "nullable": true
+                  "nullable": true,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "status",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 },
                 {
                   "name": "voided_by_user_id",
                   "type": "uuid",
-                  "nullable": true
+                  "nullable": true,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "compensating_adjustment_id",
                   "type": "uuid",
-                  "nullable": true
+                  "nullable": true,
+                  "description": "pk/fk"
                 }
               ],
               "primaryKey": [
@@ -551,27 +589,32 @@
                 {
                   "name": "stock_consumption_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "order_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "stock_item_id",
                   "type": "uuid",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "pk/fk"
                 },
                 {
                   "name": "status",
-                  "type": "text",
-                  "nullable": false
+                  "type": "string",
+                  "nullable": false,
+                  "description": "status"
                 },
                 {
                   "name": "created_at",
                   "type": "timestamptz",
-                  "nullable": false
+                  "nullable": false,
+                  "description": "ordering"
                 }
               ],
               "primaryKey": [
@@ -621,8 +664,8 @@
         "questions": [],
         "trace": [
           "Derived 6 entity tables + 2 append-only event tables",
-          "Indexed fields only as columns; details JSONB enabled for all",
-          "snake_case table/column names; PK + FK/status/ordering indexes"
+          "snake_case names; indexed fields as columns; details JSONB enabled",
+          "childCollections on Order; appendOnly/purpose/retentionDays on events"
         ]
       }
     },

@@ -1,6 +1,6 @@
 /// <mls fileReference="_102051_/l2/cafeFlow/web/desktop/page21/menuManagement.ts" enhancement="_102020_/l2/enhancementAura"/>
 
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { CafeFlowMenuManagementBase } from '/_102051_/l2/cafeFlow/web/shared/menuManagement.js';
 import type { ListMenuItemsOutput } from '/_102051_/l2/cafeFlow/web/shared/menuManagement.js';
@@ -10,181 +10,191 @@ type MenuItemRow = {
   menuCategoryId?: string;
   name?: string;
   description?: string;
-  price?: string | number;
+  price?: number | string;
   status?: string;
-  pauseReason?: string;
-  imageUrl?: string;
-  displayOrder?: string | number;
+  pauseReason?: string | null;
+  imageUrl?: string | null;
+  displayOrder?: number | string;
   requiresStockLink?: boolean | string;
 };
 
 @customElement('cafe-flow--web--desktop--page21--menu-management-102051')
 export class CafeFlowDesktopPage21MenuManagementPage extends CafeFlowMenuManagementBase {
   render() {
-    const listData: ListMenuItemsOutput | null | undefined = this.listMenuItemsData;
-    const rawItems = listData && (listData as { menuItems?: unknown }).menuItems;
-    const menuItems: MenuItemRow[] = Array.isArray(rawItems) ? (rawItems as MenuItemRow[]) : [];
+    const listData = this.listMenuItemsData as ListMenuItemsOutput | null | undefined;
+    const menuItemsRaw = listData && Array.isArray((listData as { menuItems?: unknown }).menuItems)
+      ? (listData as { menuItems: MenuItemRow[] }).menuItems
+      : [];
+    const menuItems: MenuItemRow[] = menuItemsRaw;
     const totalRaw = listData && (listData as { total?: unknown }).total;
     const total = typeof totalRaw === 'number' ? totalRaw : Number(totalRaw ?? 0) || 0;
     const listLoading = this.listMenuItemsState === 'loading';
-    const selectedId = this.updateMenuItemCmdMenuItemId || '';
-    const selectedItem =
-      menuItems.find((item: MenuItemRow) => String(item.menuItemId ?? '') === selectedId) ?? null;
+    const createLoading = this.createMenuItemCmdState === 'loading';
+    const updateLoading = this.updateMenuItemCmdState === 'loading';
+    const selectedId = this.updateMenuItemCmdMenuItemId;
+    const hasSelection = Boolean(selectedId && selectedId.trim());
+    const selectedItem = hasSelection
+      ? menuItems.find((item) => String(item.menuItemId ?? '') === selectedId) ?? null
+      : null;
     const currentStatus = (this.updateMenuItemCmdStatus || selectedItem?.status || '').toLowerCase();
+
+    const formatPrice = (value: number | string | undefined): string => {
+      if (value === undefined || value === null || value === '') return '—';
+      const num = typeof value === 'number' ? value : Number(value);
+      if (Number.isFinite(num)) {
+        return num.toLocaleString(undefined, { style: 'currency', currency: 'BRL' });
+      }
+      return String(value);
+    };
+
+    const statusBadgeClass = (status: string | undefined): string => {
+      const s = (status ?? '').toLowerCase();
+      if (s === 'active' || s === 'ativo') {
+        return 'bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)]';
+      }
+      if (s === 'paused' || s === 'pausado') {
+        return 'bg-[var(--ds-color-status-warning-bg,#fef9c3)] text-[var(--ds-color-status-warning-text,#854d0e)]';
+      }
+      return 'bg-[var(--ds-color-status-neutral-bg,#f1f5f9)] text-[var(--ds-color-status-neutral-text,#334155)]';
+    };
 
     const selectMenuItem = (item: MenuItemRow): void => {
       this.setUpdateMenuItemCmdMenuItemId(String(item.menuItemId ?? ''));
       this.setUpdateMenuItemCmdMenuCategoryId(String(item.menuCategoryId ?? ''));
       this.setUpdateMenuItemCmdName(String(item.name ?? ''));
       this.setUpdateMenuItemCmdDescription(String(item.description ?? ''));
-      this.setUpdateMenuItemCmdPrice(String(item.price ?? ''));
+      this.setUpdateMenuItemCmdPrice(item.price === undefined || item.price === null ? '' : String(item.price));
       this.setUpdateMenuItemCmdStatus(String(item.status ?? ''));
       this.setUpdateMenuItemCmdPauseReason(String(item.pauseReason ?? ''));
       this.setUpdateMenuItemCmdImageUrl(String(item.imageUrl ?? ''));
-      this.setUpdateMenuItemCmdDisplayOrder(String(item.displayOrder ?? ''));
-      const stock =
-        item.requiresStockLink === true ||
-        item.requiresStockLink === 'true' ||
-        item.requiresStockLink === '1'
-          ? 'true'
-          : 'false';
-      this.setUpdateMenuItemCmdRequiresStockLink(stock);
+      this.setUpdateMenuItemCmdDisplayOrder(
+        item.displayOrder === undefined || item.displayOrder === null ? '' : String(item.displayOrder),
+      );
+      const stock = item.requiresStockLink;
+      this.setUpdateMenuItemCmdRequiresStockLink(
+        stock === true || stock === 'true' ? 'true' : stock === false || stock === 'false' ? 'false' : String(stock ?? ''),
+      );
+    };
+
+    const clearSelectionForCreate = (): void => {
+      this.setUpdateMenuItemCmdMenuItemId('');
     };
 
     const applyStatusTransition = (nextStatus: string): void => {
       this.setUpdateMenuItemCmdStatus(nextStatus);
-      if (nextStatus !== 'paused' && nextStatus !== 'PAUSED') {
+      if (nextStatus === 'active' || nextStatus === 'ativo') {
         this.setUpdateMenuItemCmdPauseReason('');
       }
-      this.handleUpdateMenuItemCmdClick();
-    };
-
-    const statusBadgeClass = (status: string): string => {
-      const s = (status || '').toLowerCase();
-      if (s === 'active' || s === 'ativo') {
-        return 'bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)]';
-      }
-      if (s === 'paused' || s === 'pausado') {
-        return 'bg-[var(--ds-color-status-warning-bg,#fef3c7)] text-[var(--ds-color-status-warning-text,#92400e)]';
-      }
-      return 'bg-[var(--ds-color-status-neutral-bg,#f1f5f9)] text-[var(--ds-color-status-neutral-text,#334155)]';
+      void this.handleUpdateMenuItemCmdClick();
     };
 
     return html`
-      <div class="min-h-full p-6 space-y-6 bg-[var(--ds-color-page-bg,#f8fafc)] text-[var(--ds-color-text-default,#0f172a)]">
+      <div class="min-h-full bg-[var(--ds-color-page-bg,#f8fafc)] text-[var(--ds-color-text-default,#0f172a)] p-6 space-y-6">
         <header class="flex flex-wrap items-center justify-between gap-4">
-          <h1 class="text-2xl font-semibold text-[var(--ds-color-text-strong,#020617)]">
-            ${this.msg['section.menuManagement.sec-menu-item-workbench.title']}
-          </h1>
-          <div class="text-sm text-[var(--ds-color-text-muted,#64748b)]">
-            ${this.msg['intent.menuManagement.listMenuItems.list.column.total.label']}: ${total}
+          <div>
+            <h1 class="text-2xl font-semibold text-[var(--ds-color-text-strong,#020617)]">
+              ${this.msg['section.menuManagement.sec-menu-item-list.title']}
+            </h1>
+            <p class="text-sm text-[var(--ds-color-text-muted,#64748b)] mt-1">
+              ${this.msg['organism.menuManagement.listMenuItems.title']}
+            </p>
           </div>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-[var(--ds-color-button-primary-bg,#2563eb)] text-[var(--ds-color-button-primary-text,#ffffff)] hover:bg-[var(--ds-color-button-primary-bg-hover,#1d4ed8)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-color-focus-ring,#93c5fd)]"
+            @click=${clearSelectionForCreate}
+          >
+            ${this.msg['organism.menuManagement.createMenuItemCmd.title']}
+          </button>
         </header>
 
-        <!-- Filters / summary-first -->
-        <section
-          class="rounded-lg border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-surface-bg,#ffffff)] p-4 shadow-sm"
-          aria-label=${this.msg['organism.menuManagement.summary-first10.title']}
-        >
-          <div class="mb-3 text-sm font-medium text-[var(--ds-color-text-strong,#020617)]">
-            ${this.msg['intent.menuManagement.summary-first10.content.title']}
-          </div>
-          <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.listMenuItems.list.filter.status.label']}
-              </span>
-              <input
+        <section class="rounded-lg border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-surface-bg,#ffffff)] p-4 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-end gap-3">
+            <label class="flex flex-col gap-1 text-sm min-w-[8rem]">
+              <span class="text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.listMenuItems.list.filter.status.label']}</span>
+              <select
                 class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.listMenuItemsStatus ?? ''}
-                @change=${(event: Event) => this.handleListMenuItemsStatusChange(event)}
+                .value=${this.listMenuItemsStatus}
+                @change=${this.handleListMenuItemsStatusChange}
+              >
+                <option value="">—</option>
+                <option value="active">active</option>
+                <option value="paused">paused</option>
+              </select>
+            </label>
+            <label class="flex flex-col gap-1 text-sm min-w-[10rem]">
+              <span class="text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.listMenuItems.list.filter.menuCategoryId.label']}</span>
+              <input
+                type="text"
+                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                .value=${this.listMenuItemsMenuCategoryId}
+                @input=${this.handleListMenuItemsMenuCategoryIdChange}
               />
             </label>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.listMenuItems.list.filter.menuCategoryId.label']}
-              </span>
+            <label class="flex flex-col gap-1 text-sm min-w-[12rem] flex-1">
+              <span class="text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.listMenuItems.list.filter.name.label']}</span>
               <input
+                type="text"
                 class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.listMenuItemsMenuCategoryId ?? ''}
-                @change=${(event: Event) => this.handleListMenuItemsMenuCategoryIdChange(event)}
+                .value=${this.listMenuItemsName}
+                @input=${this.handleListMenuItemsNameChange}
               />
             </label>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.listMenuItems.list.filter.name.label']}
-              </span>
-              <input
-                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.listMenuItemsName ?? ''}
-                @change=${(event: Event) => this.handleListMenuItemsNameChange(event)}
-              />
-            </label>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.listMenuItems.list.filter.page.label']}
-              </span>
+            <label class="flex flex-col gap-1 text-sm w-24">
+              <span class="text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.listMenuItems.list.filter.page.label']}</span>
               <input
                 type="number"
                 min="1"
                 class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.listMenuItemsPage ?? ''}
-                @change=${(event: Event) => this.handleListMenuItemsPageChange(event)}
+                .value=${this.listMenuItemsPage}
+                @input=${this.handleListMenuItemsPageChange}
               />
             </label>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.listMenuItems.list.filter.pageSize.label']}
-              </span>
+            <label class="flex flex-col gap-1 text-sm w-28">
+              <span class="text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.listMenuItems.list.filter.pageSize.label']}</span>
               <input
                 type="number"
                 min="1"
                 class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.listMenuItemsPageSize ?? ''}
-                @change=${(event: Event) => this.handleListMenuItemsPageSizeChange(event)}
+                .value=${this.listMenuItemsPageSize}
+                @input=${this.handleListMenuItemsPageSizeChange}
               />
             </label>
-          </div>
-          <div class="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
-              class="rounded-md px-4 py-2 text-sm font-medium bg-[var(--ds-color-button-primary-bg,#2563eb)] text-[var(--ds-color-button-primary-text,#ffffff)] disabled:opacity-60"
+              class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-[var(--ds-color-button-secondary-bg,#f8fafc)] text-[var(--ds-color-button-secondary-text,#0f172a)] border border-[var(--ds-color-button-secondary-border,#e2e8f0)] disabled:opacity-60"
               ?disabled=${listLoading}
-              @click=${(event: Event) => this.handleListMenuItemsClick(event)}
+              @click=${this.handleListMenuItemsClick}
             >
-              ${listLoading
-                ? '…'
-                : this.msg['organism.menuManagement.listMenuItems.title']}
+              ${listLoading ? '…' : this.msg['intent.menuManagement.listMenuItems.list.title']}
             </button>
+          </div>
+
+          <div class="flex flex-wrap gap-3 text-sm">
+            <div class="rounded-md border border-[var(--ds-color-border-subtle,#e2e8f0)] bg-[var(--ds-color-surface-alt-bg,#f8fafc)] px-3 py-2">
+              <span class="text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.listMenuItems.list.column.total.label']}:</span>
+              <span class="ml-1 font-semibold text-[var(--ds-color-text-strong,#020617)]">${total}</span>
+            </div>
           </div>
         </section>
 
-        <!-- Master-detail: list + contextual edit panel -->
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
-          <section
-            class="lg:col-span-3 rounded-lg border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-surface-bg,#ffffff)] shadow-sm overflow-hidden"
-            aria-label=${this.msg['organism.menuManagement.listMenuItems.title']}
-          >
-            <div
-              class="flex items-center justify-between border-b border-[var(--ds-color-border-subtle,#e2e8f0)] px-4 py-3 bg-[var(--ds-color-surface-alt-bg,#f8fafc)]"
-            >
-              <h2 class="text-base font-semibold text-[var(--ds-color-text-strong,#020617)]">
-                ${this.msg['intent.menuManagement.listMenuItems.list.title']}
-              </h2>
-              <span class="text-xs text-[var(--ds-color-text-muted,#64748b)]">${total}</span>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <section class="lg:col-span-2 rounded-lg border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-surface-bg,#ffffff)] shadow-sm overflow-hidden">
+            <div class="px-4 py-3 border-b border-[var(--ds-color-border-subtle,#e2e8f0)]">
+              <h2 class="text-base font-medium">${this.msg['intent.menuManagement.listMenuItems.list.title']}</h2>
             </div>
 
             ${listLoading
               ? html`
-                  <div class="p-4 space-y-3" aria-busy="true">
-                    <div class="h-10 rounded-md bg-[var(--ds-color-surface-alt-bg,#f1f5f9)] animate-pulse"></div>
-                    <div class="h-10 rounded-md bg-[var(--ds-color-surface-alt-bg,#f1f5f9)] animate-pulse"></div>
-                    <div class="h-10 rounded-md bg-[var(--ds-color-surface-alt-bg,#f1f5f9)] animate-pulse"></div>
+                  <div class="p-6 space-y-3 animate-pulse">
+                    <div class="h-10 rounded bg-[var(--ds-color-surface-alt-bg,#f1f5f9)]"></div>
+                    <div class="h-10 rounded bg-[var(--ds-color-surface-alt-bg,#f1f5f9)]"></div>
+                    <div class="h-10 rounded bg-[var(--ds-color-surface-alt-bg,#f1f5f9)]"></div>
                   </div>
                 `
               : menuItems.length === 0
                 ? html`
-                    <div class="p-8 text-center text-sm text-[var(--ds-color-text-muted,#64748b)]">
+                    <div class="p-8 text-center text-[var(--ds-color-text-muted,#64748b)]">
                       ${this.msg['intent.menuManagement.listMenuItems.list.empty']}
                     </div>
                   `
@@ -193,49 +203,44 @@ export class CafeFlowDesktopPage21MenuManagementPage extends CafeFlowMenuManagem
                       <table class="min-w-full text-sm">
                         <thead class="bg-[var(--ds-color-surface-alt-bg,#f8fafc)] text-left text-[var(--ds-color-text-muted,#64748b)]">
                           <tr>
-                            <th class="px-4 py-2 font-medium">
-                              ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.name.label']}
-                            </th>
-                            <th class="px-4 py-2 font-medium">
-                              ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.menuCategoryId.label']}
-                            </th>
-                            <th class="px-4 py-2 font-medium">
-                              ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.price.label']}
-                            </th>
-                            <th class="px-4 py-2 font-medium">
-                              ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.status.label']}
-                            </th>
-                            <th class="px-4 py-2 font-medium">
-                              ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.displayOrder.label']}
-                            </th>
+                            <th class="px-3 py-2 font-medium w-14"></th>
+                            <th class="px-3 py-2 font-medium">${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.name.label']}</th>
+                            <th class="px-3 py-2 font-medium">${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.menuCategoryId.label']}</th>
+                            <th class="px-3 py-2 font-medium">${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.price.label']}</th>
+                            <th class="px-3 py-2 font-medium">${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.status.label']}</th>
+                            <th class="px-3 py-2 font-medium">${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.displayOrder.label']}</th>
                           </tr>
                         </thead>
                         <tbody>
                           ${menuItems.map((item: MenuItemRow) => {
-                            const id = String(item.menuItemId ?? '');
-                            const isSelected = id !== '' && id === selectedId;
+                            const rowId = String(item.menuItemId ?? '');
+                            const isSelected = hasSelection && rowId === selectedId;
                             return html`
                               <tr
-                                class="cursor-pointer border-t border-[var(--ds-color-border-subtle,#e2e8f0)] ${isSelected
+                                class="border-t border-[var(--ds-color-border-subtle,#e2e8f0)] cursor-pointer ${isSelected
                                   ? 'bg-[var(--ds-color-selected-bg,#eff6ff)] text-[var(--ds-color-selected-text,#1e3a8a)]'
                                   : 'hover:bg-[var(--ds-color-surface-alt-bg,#f8fafc)]'}"
-                                @click=${(_event: Event) => selectMenuItem(item)}
+                                @click=${() => selectMenuItem(item)}
                               >
-                                <td class="px-4 py-3 font-medium">${item.name ?? ''}</td>
-                                <td class="px-4 py-3 text-[var(--ds-color-text-muted,#64748b)]">
-                                  ${item.menuCategoryId ?? ''}
+                                <td class="px-3 py-2">
+                                  ${item.imageUrl
+                                    ? html`<img
+                                        src=${item.imageUrl}
+                                        alt=${item.name ?? ''}
+                                        loading="lazy"
+                                        class="h-10 w-10 rounded object-cover border border-[var(--ds-color-border-subtle,#e2e8f0)]"
+                                      />`
+                                    : nothing}
                                 </td>
-                                <td class="px-4 py-3">${item.price ?? ''}</td>
-                                <td class="px-4 py-3">
-                                  <span
-                                    class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(
-                                      String(item.status ?? ''),
-                                    )}"
-                                  >
-                                    ${item.status ?? ''}
+                                <td class="px-3 py-2 font-medium">${item.name ?? '—'}</td>
+                                <td class="px-3 py-2 text-[var(--ds-color-text-muted,#64748b)]">${item.menuCategoryId ?? '—'}</td>
+                                <td class="px-3 py-2">${formatPrice(item.price)}</td>
+                                <td class="px-3 py-2">
+                                  <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(item.status)}">
+                                    ${item.status ?? '—'}
                                   </span>
                                 </td>
-                                <td class="px-4 py-3">${item.displayOrder ?? ''}</td>
+                                <td class="px-3 py-2">${item.displayOrder ?? '—'}</td>
                               </tr>
                             `;
                           })}
@@ -245,373 +250,280 @@ export class CafeFlowDesktopPage21MenuManagementPage extends CafeFlowMenuManagem
                   `}
           </section>
 
-          <!-- Detail / update panel (contextual-transition-actions) -->
-          <section
-            class="lg:col-span-2 rounded-lg border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-surface-bg,#ffffff)] shadow-sm p-4 space-y-4"
-            aria-label=${this.msg['organism.menuManagement.updateMenuItemCmd.title']}
-          >
-            <h2 class="text-base font-semibold text-[var(--ds-color-text-strong,#020617)]">
-              ${this.msg['intent.menuManagement.updateMenuItemCmd.form.title']}
-            </h2>
-
-            ${!selectedId
+          <aside class="rounded-lg border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-surface-bg,#ffffff)] shadow-sm p-4 space-y-4">
+            ${hasSelection
               ? html`
-                  <p class="text-sm text-[var(--ds-color-text-muted,#64748b)]">
-                    ${this.msg['intent.menuManagement.listMenuItems.list.empty']}
-                  </p>
-                `
-              : html`
+                  <div class="space-y-1">
+                    <h2 class="text-base font-medium">${this.msg['organism.menuManagement.updateMenuItemCmd.title']}</h2>
+                    <p class="text-sm text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.updateMenuItemCmd.form.title']}</p>
+                  </div>
+
+                  ${selectedItem?.imageUrl
+                    ? html`<img
+                        src=${selectedItem.imageUrl}
+                        alt=${selectedItem.name ?? ''}
+                        loading="lazy"
+                        class="h-28 w-full max-w-xs rounded-lg object-cover border border-[var(--ds-color-border-subtle,#e2e8f0)]"
+                      />`
+                    : nothing}
+
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-xs text-[var(--ds-color-text-muted,#64748b)]">
-                      ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.status.label']}
-                    </span>
-                    <span
-                      class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(
-                        this.updateMenuItemCmdStatus || currentStatus,
-                      )}"
-                    >
-                      ${this.updateMenuItemCmdStatus || currentStatus || '—'}
+                    <span class="text-sm text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.status.label']}:</span>
+                    <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(currentStatus)}">
+                      ${this.updateMenuItemCmdStatus || selectedItem?.status || '—'}
                     </span>
                   </div>
 
                   <div class="flex flex-wrap gap-2">
-                    ${currentStatus === 'active' || currentStatus === 'ativo'
-                      ? html`
-                          <button
-                            type="button"
-                            class="rounded-md px-3 py-2 text-sm font-medium bg-[var(--ds-color-status-warning-bg,#fef3c7)] text-[var(--ds-color-status-warning-text,#92400e)] disabled:opacity-60"
-                            ?disabled=${this.updateMenuItemCmdState === 'loading'}
-                            @click=${(_event: Event) => applyStatusTransition('paused')}
-                          >
-                            paused
-                          </button>
-                        `
-                      : ''}
                     ${currentStatus === 'paused' || currentStatus === 'pausado'
                       ? html`
                           <button
                             type="button"
-                            class="rounded-md px-3 py-2 text-sm font-medium bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)] disabled:opacity-60"
-                            ?disabled=${this.updateMenuItemCmdState === 'loading'}
-                            @click=${(_event: Event) => applyStatusTransition('active')}
+                            class="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)] disabled:opacity-60"
+                            ?disabled=${updateLoading}
+                            @click=${() => applyStatusTransition('active')}
                           >
-                            active
+                            ${updateLoading ? '…' : 'Ativar'}
                           </button>
                         `
-                      : ''}
-                    ${currentStatus !== 'active' &&
-                    currentStatus !== 'ativo' &&
-                    currentStatus !== 'paused' &&
-                    currentStatus !== 'pausado'
+                      : nothing}
+                    ${currentStatus === 'active' || currentStatus === 'ativo' || (currentStatus && currentStatus !== 'paused' && currentStatus !== 'pausado')
                       ? html`
                           <button
                             type="button"
-                            class="rounded-md px-3 py-2 text-sm font-medium bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)] disabled:opacity-60"
-                            ?disabled=${this.updateMenuItemCmdState === 'loading'}
-                            @click=${(_event: Event) => applyStatusTransition('active')}
+                            class="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium bg-[var(--ds-color-status-warning-bg,#fef9c3)] text-[var(--ds-color-status-warning-text,#854d0e)] disabled:opacity-60"
+                            ?disabled=${updateLoading}
+                            @click=${() => applyStatusTransition('paused')}
                           >
-                            active
-                          </button>
-                          <button
-                            type="button"
-                            class="rounded-md px-3 py-2 text-sm font-medium bg-[var(--ds-color-status-warning-bg,#fef3c7)] text-[var(--ds-color-status-warning-text,#92400e)] disabled:opacity-60"
-                            ?disabled=${this.updateMenuItemCmdState === 'loading'}
-                            @click=${(_event: Event) => applyStatusTransition('paused')}
-                          >
-                            paused
+                            ${updateLoading ? '…' : 'Pausar'}
                           </button>
                         `
-                      : ''}
+                      : nothing}
                   </div>
 
-                  <div class="grid grid-cols-1 gap-3">
+                  <div class="space-y-3">
                     <label class="flex flex-col gap-1 text-sm">
-                      <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                        ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.menuCategoryId.label']}
-                      </span>
+                      <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.menuCategoryId.label']}</span>
                       <input
+                        type="text"
                         class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                        .value=${this.updateMenuItemCmdMenuCategoryId ?? ''}
-                        @change=${(event: Event) => this.handleUpdateMenuItemCmdMenuCategoryIdChange(event)}
+                        .value=${this.updateMenuItemCmdMenuCategoryId}
+                        @input=${this.handleUpdateMenuItemCmdMenuCategoryIdChange}
                       />
                     </label>
                     <label class="flex flex-col gap-1 text-sm">
-                      <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                        ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.name.label']}
-                      </span>
+                      <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.name.label']}</span>
                       <input
+                        type="text"
                         class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                        .value=${this.updateMenuItemCmdName ?? ''}
-                        @change=${(event: Event) => this.handleUpdateMenuItemCmdNameChange(event)}
+                        .value=${this.updateMenuItemCmdName}
+                        @input=${this.handleUpdateMenuItemCmdNameChange}
                       />
                     </label>
                     <label class="flex flex-col gap-1 text-sm">
-                      <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                        ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.description.label']}
-                      </span>
+                      <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.description.label']}</span>
                       <textarea
-                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2 min-h-[4rem]"
-                        .value=${this.updateMenuItemCmdDescription ?? ''}
-                        @change=${(event: Event) => this.handleUpdateMenuItemCmdDescriptionChange(event)}
+                        rows="3"
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.updateMenuItemCmdDescription}
+                        @input=${this.handleUpdateMenuItemCmdDescriptionChange}
                       ></textarea>
                     </label>
                     <label class="flex flex-col gap-1 text-sm">
-                      <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                        ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.price.label']}
-                      </span>
+                      <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.price.label']}</span>
                       <input
                         type="number"
                         step="0.01"
                         class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                        .value=${this.updateMenuItemCmdPrice ?? ''}
-                        @change=${(event: Event) => this.handleUpdateMenuItemCmdPriceChange(event)}
+                        .value=${this.updateMenuItemCmdPrice}
+                        @input=${this.handleUpdateMenuItemCmdPriceChange}
                       />
                     </label>
-                    ${currentStatus === 'paused' ||
-                    currentStatus === 'pausado' ||
-                    (this.updateMenuItemCmdStatus || '').toLowerCase() === 'paused'
+                    ${(currentStatus === 'paused' || currentStatus === 'pausado' || this.updateMenuItemCmdStatus === 'paused')
                       ? html`
                           <label class="flex flex-col gap-1 text-sm">
-                            <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                              ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.pauseReason.label']}
-                            </span>
+                            <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.pauseReason.label']}</span>
                             <input
+                              type="text"
                               class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                              .value=${this.updateMenuItemCmdPauseReason ?? ''}
-                              @change=${(event: Event) => this.handleUpdateMenuItemCmdPauseReasonChange(event)}
+                              .value=${this.updateMenuItemCmdPauseReason}
+                              @input=${this.handleUpdateMenuItemCmdPauseReasonChange}
                             />
                           </label>
                         `
-                      : ''}
+                      : nothing}
                     <label class="flex flex-col gap-1 text-sm">
-                      <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                        ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.imageUrl.label']}
-                      </span>
+                      <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.imageUrl.label']}</span>
                       <input
+                        type="text"
                         class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                        .value=${this.updateMenuItemCmdImageUrl ?? ''}
-                        @change=${(event: Event) => this.handleUpdateMenuItemCmdImageUrlChange(event)}
+                        .value=${this.updateMenuItemCmdImageUrl}
+                        @input=${this.handleUpdateMenuItemCmdImageUrlChange}
                       />
                     </label>
                     <label class="flex flex-col gap-1 text-sm">
-                      <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                        ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.displayOrder.label']}
-                      </span>
+                      <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.displayOrder.label']}</span>
                       <input
                         type="number"
                         class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                        .value=${this.updateMenuItemCmdDisplayOrder ?? ''}
-                        @change=${(event: Event) => this.handleUpdateMenuItemCmdDisplayOrderChange(event)}
+                        .value=${this.updateMenuItemCmdDisplayOrder}
+                        @input=${this.handleUpdateMenuItemCmdDisplayOrderChange}
                       />
                     </label>
-                    <label class="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        .checked=${this.updateMenuItemCmdRequiresStockLink === 'true' ||
-                        this.updateMenuItemCmdRequiresStockLink === '1'}
-                        @change=${(event: Event) => {
-                          const checked = (event.target as HTMLInputElement | null)?.checked === true;
-                          this.setUpdateMenuItemCmdRequiresStockLink(checked ? 'true' : 'false');
-                        }}
-                      />
-                      <span>
-                        ${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.requiresStockLink.label']}
-                      </span>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.updateMenuItemCmd.form.field.requiresStockLink.label']}</span>
+                      <select
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.updateMenuItemCmdRequiresStockLink}
+                        @change=${this.handleUpdateMenuItemCmdRequiresStockLinkChange}
+                      >
+                        <option value="">—</option>
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                      </select>
                     </label>
                   </div>
 
-                  <div class="flex flex-wrap items-center gap-2 pt-2">
-                    <button
-                      type="button"
-                      class="rounded-md px-4 py-2 text-sm font-medium bg-[var(--ds-color-button-primary-bg,#2563eb)] text-[var(--ds-color-button-primary-text,#ffffff)] disabled:opacity-60"
-                      ?disabled=${this.updateMenuItemCmdState === 'loading'}
-                      @click=${(event: Event) => this.handleUpdateMenuItemCmdClick(event)}
-                    >
-                      ${this.updateMenuItemCmdState === 'loading'
-                        ? '…'
-                        : this.msg['intent.menuManagement.updateMenuItemCmd.form.action.updateMenuItemCmd']}
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    class="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-[var(--ds-color-button-primary-bg,#2563eb)] text-[var(--ds-color-button-primary-text,#ffffff)] disabled:opacity-60"
+                    ?disabled=${updateLoading}
+                    @click=${this.handleUpdateMenuItemCmdClick}
+                  >
+                    ${updateLoading ? '…' : this.msg['intent.menuManagement.updateMenuItemCmd.form.action.updateMenuItemCmd']}
+                  </button>
 
                   ${this.updateMenuItemCmdState === 'success'
                     ? html`
-                        <div
-                          class="rounded-md px-3 py-2 text-sm bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)]"
-                          role="status"
-                        >
+                        <div class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)] px-3 py-2 text-sm" role="status">
                           <!-- TODO: action.updateMenuItemCmd.success -->
                           OK
                         </div>
                       `
-                    : ''}
+                    : nothing}
                   ${this.updateMenuItemCmdState === 'error'
                     ? html`
-                        <div
-                          class="rounded-md px-3 py-2 text-sm bg-[var(--ds-color-status-error-bg,#fee2e2)] text-[var(--ds-color-status-error-text,#991b1b)]"
-                          role="alert"
-                        >
-                          ${this.updateMenuItemCmdError || '<!-- TODO: action.updateMenuItemCmd.error --> Error'}
+                        <div class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-status-error-bg,#fee2e2)] text-[var(--ds-color-status-error-text,#991b1b)] px-3 py-2 text-sm" role="alert">
+                          ${this.updateMenuItemCmdError || 'Error'}
                         </div>
                       `
-                    : ''}
+                    : nothing}
+                `
+              : html`
+                  <div class="space-y-1">
+                    <h2 class="text-base font-medium">${this.msg['section.menuManagement.sec-create-menu-item.title']}</h2>
+                    <p class="text-sm text-[var(--ds-color-text-muted,#64748b)]">${this.msg['intent.menuManagement.createMenuItemCmd.form.title']}</p>
+                  </div>
+
+                  <div class="space-y-3">
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label']}</span>
+                      <input
+                        type="text"
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdMenuCategoryId}
+                        @input=${this.handleCreateMenuItemCmdMenuCategoryIdChange}
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.name.label']}</span>
+                      <input
+                        type="text"
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdName}
+                        @input=${this.handleCreateMenuItemCmdNameChange}
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.description.label']}</span>
+                      <textarea
+                        rows="3"
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdDescription}
+                        @input=${this.handleCreateMenuItemCmdDescriptionChange}
+                      ></textarea>
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.price.label']}</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdPrice}
+                        @input=${this.handleCreateMenuItemCmdPriceChange}
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.status.label']}</span>
+                      <select
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdStatus}
+                        @change=${this.handleCreateMenuItemCmdStatusChange}
+                      >
+                        <option value="">—</option>
+                        <option value="active">active</option>
+                        <option value="paused">paused</option>
+                      </select>
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label']}</span>
+                      <input
+                        type="text"
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdImageUrl}
+                        @input=${this.handleCreateMenuItemCmdImageUrlChange}
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label']}</span>
+                      <input
+                        type="number"
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdDisplayOrder}
+                        @input=${this.handleCreateMenuItemCmdDisplayOrderChange}
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm">
+                      <span>${this.msg['intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label']}</span>
+                      <select
+                        class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
+                        .value=${this.createMenuItemCmdRequiresStockLink}
+                        @change=${this.handleCreateMenuItemCmdRequiresStockLinkChange}
+                      >
+                        <option value="">—</option>
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-[var(--ds-color-button-primary-bg,#2563eb)] text-[var(--ds-color-button-primary-text,#ffffff)] disabled:opacity-60"
+                    ?disabled=${createLoading}
+                    @click=${this.handleCreateMenuItemCmdClick}
+                  >
+                    ${createLoading ? '…' : this.msg['intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd']}
+                  </button>
+
+                  ${this.createMenuItemCmdState === 'success'
+                    ? html`
+                        <div class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)] px-3 py-2 text-sm" role="status">
+                          <!-- TODO: action.createMenuItemCmd.success -->
+                          OK
+                        </div>
+                      `
+                    : nothing}
+                  ${this.createMenuItemCmdState === 'error'
+                    ? html`
+                        <div class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-status-error-bg,#fee2e2)] text-[var(--ds-color-status-error-text,#991b1b)] px-3 py-2 text-sm" role="alert">
+                          ${this.createMenuItemCmdError || 'Error'}
+                        </div>
+                      `
+                    : nothing}
                 `}
-          </section>
+          </aside>
         </div>
-
-        <!-- Create form (toolbar / secondary panel) -->
-        <section
-          class="rounded-lg border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-surface-bg,#ffffff)] shadow-sm p-4 space-y-4"
-          aria-label=${this.msg['section.menuManagement.sec-create-menu-item.title']}
-        >
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <h2 class="text-base font-semibold text-[var(--ds-color-text-strong,#020617)]">
-              ${this.msg['organism.menuManagement.createMenuItemCmd.title']}
-            </h2>
-          </div>
-          <p class="text-sm text-[var(--ds-color-text-muted,#64748b)]">
-            ${this.msg['intent.menuManagement.createMenuItemCmd.form.title']}
-          </p>
-
-          <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label']}
-              </span>
-              <input
-                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.createMenuItemCmdMenuCategoryId ?? ''}
-                @change=${(event: Event) => this.handleCreateMenuItemCmdMenuCategoryIdChange(event)}
-              />
-            </label>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.name.label']}
-              </span>
-              <input
-                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.createMenuItemCmdName ?? ''}
-                @change=${(event: Event) => this.handleCreateMenuItemCmdNameChange(event)}
-              />
-            </label>
-            <label class="flex flex-col gap-1 text-sm md:col-span-2">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.description.label']}
-              </span>
-              <input
-                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.createMenuItemCmdDescription ?? ''}
-                @change=${(event: Event) => this.handleCreateMenuItemCmdDescriptionChange(event)}
-              />
-            </label>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.price.label']}
-              </span>
-              <input
-                type="number"
-                step="0.01"
-                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.createMenuItemCmdPrice ?? ''}
-                @change=${(event: Event) => this.handleCreateMenuItemCmdPriceChange(event)}
-              />
-            </label>
-            <div class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.status.label']}
-              </span>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  class="rounded-md px-3 py-2 text-sm border border-[var(--ds-color-border-default,#e2e8f0)] ${this.createMenuItemCmdStatus === 'active'
-                    ? 'bg-[var(--ds-color-selected-bg,#eff6ff)] border-[var(--ds-color-selected-border,#2563eb)] text-[var(--ds-color-selected-text,#1e3a8a)]'
-                    : 'bg-[var(--ds-color-button-secondary-bg,#ffffff)] text-[var(--ds-color-button-secondary-text,#0f172a)]'}"
-                  @click=${(_event: Event) => this.setCreateMenuItemCmdStatus('active')}
-                >
-                  active
-                </button>
-                <button
-                  type="button"
-                  class="rounded-md px-3 py-2 text-sm border border-[var(--ds-color-border-default,#e2e8f0)] ${this.createMenuItemCmdStatus === 'paused'
-                    ? 'bg-[var(--ds-color-selected-bg,#eff6ff)] border-[var(--ds-color-selected-border,#2563eb)] text-[var(--ds-color-selected-text,#1e3a8a)]'
-                    : 'bg-[var(--ds-color-button-secondary-bg,#ffffff)] text-[var(--ds-color-button-secondary-text,#0f172a)]'}"
-                  @click=${(_event: Event) => this.setCreateMenuItemCmdStatus('paused')}
-                >
-                  paused
-                </button>
-              </div>
-            </div>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label']}
-              </span>
-              <input
-                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.createMenuItemCmdImageUrl ?? ''}
-                @change=${(event: Event) => this.handleCreateMenuItemCmdImageUrlChange(event)}
-              />
-            </label>
-            <label class="flex flex-col gap-1 text-sm">
-              <span class="text-[var(--ds-color-text-muted,#64748b)]">
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label']}
-              </span>
-              <input
-                type="number"
-                class="rounded-md border border-[var(--ds-color-border-default,#e2e8f0)] bg-[var(--ds-color-input-bg,#ffffff)] px-3 py-2"
-                .value=${this.createMenuItemCmdDisplayOrder ?? ''}
-                @change=${(event: Event) => this.handleCreateMenuItemCmdDisplayOrderChange(event)}
-              />
-            </label>
-            <label class="flex items-center gap-2 text-sm self-end pb-2">
-              <input
-                type="checkbox"
-                .checked=${this.createMenuItemCmdRequiresStockLink === 'true' ||
-                this.createMenuItemCmdRequiresStockLink === '1'}
-                @change=${(event: Event) => {
-                  const checked = (event.target as HTMLInputElement | null)?.checked === true;
-                  this.setCreateMenuItemCmdRequiresStockLink(checked ? 'true' : 'false');
-                }}
-              />
-              <span>
-                ${this.msg['intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label']}
-              </span>
-            </label>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              class="rounded-md px-4 py-2 text-sm font-medium bg-[var(--ds-color-button-primary-bg,#2563eb)] text-[var(--ds-color-button-primary-text,#ffffff)] disabled:opacity-60"
-              ?disabled=${this.createMenuItemCmdState === 'loading'}
-              @click=${(event: Event) => this.handleCreateMenuItemCmdClick(event)}
-            >
-              ${this.createMenuItemCmdState === 'loading'
-                ? '…'
-                : this.msg['intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd']}
-            </button>
-          </div>
-
-          ${this.createMenuItemCmdState === 'success'
-            ? html`
-                <div
-                  class="rounded-md px-3 py-2 text-sm bg-[var(--ds-color-status-success-bg,#dcfce7)] text-[var(--ds-color-status-success-text,#166534)]"
-                  role="status"
-                >
-                  <!-- TODO: action.createMenuItemCmd.success -->
-                  OK
-                </div>
-              `
-            : ''}
-          ${this.createMenuItemCmdState === 'error'
-            ? html`
-                <div
-                  class="rounded-md px-3 py-2 text-sm bg-[var(--ds-color-status-error-bg,#fee2e2)] text-[var(--ds-color-status-error-text,#991b1b)]"
-                  role="alert"
-                >
-                  ${this.createMenuItemCmdError || '<!-- TODO: action.createMenuItemCmd.error --> Error'}
-                </div>
-              `
-            : ''}
-        </section>
       </div>
     `;
   }

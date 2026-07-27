@@ -15,12 +15,12 @@ export const aiSalesSummaryRepositoryAdapter = {
     "entityId": "AiSalesSummary",
     "className": "AiSalesSummaryRepositoryAdapter",
     "portRef": "IAiSalesSummaryRepository",
-    "tableRef": "ai_sales_summary",
+    "tableRef": "cafe_flow_ai_sales_summaries",
     "mdmReads": [],
     "notes": [
       "columns: ai_sales_summary_id, operational_dashboard_id, model_id, created_at",
       "details JSONB: summaryDate, periodStart, periodEnd, summaryText, promptTokens, completionTokens, generatedAt, updatedAt",
-      "map domain AiSalesSummary <-> row via ctx.data.moduleData; no mdmRefs"
+      "map domain AiSalesSummary <-> row via ctx.data.moduleData only"
     ]
   }
 } as const;

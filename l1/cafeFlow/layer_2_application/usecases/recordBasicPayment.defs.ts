@@ -114,15 +114,17 @@ export const recordBasicPaymentUsecase = {
         ],
         "transactional": true,
         "steps": [
-          "Resolve orderId from selectedEntity input; generate orderPaymentId via ctx.idGenerator and paidAt/createdAt/updatedAt via ctx.clock; set status to 'open' (systemDefault)",
-          "Validate paymentMethod is one of cash|pix|creditCard|debitCard|mixed; validate totalAmount > 0; on violation raise validation error with rule id shiftClosingRecordsBasicTotalsAndPayments",
-          "Begin transaction via ctx.data",
-          "Load parent Order by orderId through Order port (resolveRepository); fail if not found",
-          "Ensure one-to-one: reject if Order already has an embedded OrderPayment that is not voided (rule shiftClosingRecordsBasicTotalsAndPayments)",
-          "Create OrderPayment { orderPaymentId, orderId, totalAmount, paymentMethod, status: 'open', paidAt, notes, createdAt, updatedAt } and embed it on the Order aggregate payment collection",
-          "Save parent Order through Order port",
-          "Build persisted StockConsumption audit event for the payment recording on Order and append it through StockConsumption port inside the same transaction (append-only)",
-          "Commit transaction and return the created OrderPayment fields per outputShape"
+          "resolve orderRepository and stockConsumptionRepository via resolveRepository",
+          "validate paymentMethod is one of cash|pix|creditCard|debitCard|mixed; on failure raise validation error with rule id shiftClosingRecordsBasicTotalsAndPayments",
+          "validate totalAmount is a positive money value; on failure raise validation error with rule id shiftClosingRecordsBasicTotalsAndPayments",
+          "generate orderPaymentId via ctx.idGenerator and timestamps paidAt/createdAt/updatedAt via ctx.clock",
+          "set status to open (systemDefault)",
+          "inside ctx.data.transaction: load Order by orderId through Order port; fail if not found",
+          "ensure Order has no existing non-voided OrderPayment (one-to-one); if one exists raise validation error with rule id shiftClosingRecordsBasicTotalsAndPayments",
+          "append embedded OrderPayment {orderPaymentId, orderId, totalAmount, paymentMethod, status: open, paidAt, notes, createdAt, updatedAt} on the Order aggregate",
+          "save parent Order through Order port",
+          "build and append persisted StockConsumption audit event through StockConsumption port inside the same transaction (purpose audit, owner Order)",
+          "return the created OrderPayment fields per outputShape"
         ],
         "outputShape": {
           "kind": "object",

@@ -8,7 +8,7 @@
     "buildCI": "node ../scripts/buildCI/buildCI.mjs 102051"
   },
   "dependencies": {
-      "mls-102020": "git+https://github.com/expansiva/mls-102020.git",
-      "mls-102027": "git+https://github.com/expansiva/mls-102027.git"            
+    "mls-102033": "git+https://github.com/expansiva/mls-102033.git",
+    "mls-102034": "git+https://github.com/expansiva/mls-102034.git"
   }
 }

@@ -34,7 +34,10 @@ export const stockAdjustmentTableDef: TableDefinition = {
     { name: 'idx_stock_adjustment_status', columns: ['status'] },
     { name: 'idx_stock_adjustment_created_at', columns: ['created_at'] },
     { name: 'idx_stock_adjustment_voided_by_user_id', columns: ['voided_by_user_id'] },
-    { name: 'idx_stock_adjustment_compensating_adjustment_id', columns: ['compensating_adjustment_id'] },
+    {
+      name: 'idx_stock_adjustment_compensating_adjustment_id',
+      columns: ['compensating_adjustment_id'],
+    },
   ],
   retentionDays: 1825,
   version: 1,

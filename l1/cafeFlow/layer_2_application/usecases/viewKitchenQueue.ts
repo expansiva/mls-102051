@@ -15,7 +15,7 @@ export interface ViewKitchenQueueOrderItem {
   status: string;
 }
 
-export interface ViewKitchenQueueEntry {
+export interface ViewKitchenQueueOrder {
   orderId: string;
   orderType: string;
   tableNumber?: string | null;
@@ -27,28 +27,30 @@ export interface ViewKitchenQueueEntry {
   items: ViewKitchenQueueOrderItem[];
 }
 
-/** Canonical list wire shape (outputShape.kind = list). */
-export type ViewKitchenQueueOutput = ViewKitchenQueueEntry[];
+/** Wire shape: list of kitchen-queue orders (outputShape.kind = list). */
+export type ViewKitchenQueueOutput = ViewKitchenQueueOrder[];
 
-function projectKitchenQueueEntry(order: Order): ViewKitchenQueueEntry {
-  // rule: orderRequiresTableOrTakeout — reflected by orderType/tableNumber already on the aggregate
+function projectKitchenQueueOrder(order: Order): ViewKitchenQueueOrder {
   // rule: orderItemsArePrepReference
+  const items: ViewKitchenQueueOrderItem[] = (order.items ?? []).map((item) => ({
+    orderItemId: item.orderItemId,
+    menuItemName: item.menuItemName,
+    quantity: item.quantity,
+    observations: item.observations ?? null,
+    status: item.status,
+  }));
+
+  // rule: orderRequiresTableOrTakeout
   return {
     orderId: order.orderId,
     orderType: order.orderType,
-    tableNumber: order.tableNumber,
-    customerName: order.customerName,
-    notes: order.notes,
+    tableNumber: order.tableNumber ?? null,
+    customerName: order.customerName ?? null,
+    notes: order.notes ?? null,
     status: order.status,
-    confirmedAt: order.confirmedAt,
-    inPreparationAt: order.inPreparationAt,
-    items: order.items.map((item) => ({
-      orderItemId: item.orderItemId,
-      menuItemName: item.menuItemName,
-      quantity: item.quantity,
-      observations: item.observations,
-      status: item.status,
-    })),
+    confirmedAt: order.confirmedAt ?? null,
+    inPreparationAt: order.inPreparationAt ?? null,
+    items,
   };
 }
 
@@ -56,22 +58,20 @@ export async function viewKitchenQueue(
   ctx: RequestContext,
   _input: ViewKitchenQueueInput,
 ): Promise<ViewKitchenQueueOutput> {
-  const dailyShifts = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
   const ordersRepo = resolveRepository<IOrderRepository>(ctx, 'Order');
+  const dailyShiftsRepo = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
 
-  // activeLifecycleInstance: single open DailyShift (not a public input)
-  const openShifts = await dailyShifts.list({ status: 'open' });
+  // rule: ordersRequireOpenDailyShift
+  const openShifts = await dailyShiftsRepo.list({ status: 'open' });
   const openShift = openShifts[0] ?? null;
-
-  // rule: ordersRequireOpenDailyShift — empty kitchen queue when no open shift
   if (!openShift) {
     return [];
   }
 
   const shiftOrders = await ordersRepo.findByDailyShiftId(openShift.dailyShiftId);
 
-  // rule: orderEntersKitchenQueueAfterAttendantConfirmation — exclude registered
-  // rule: completedOrdersLeaveKitchenQueue — exclude ready, served, cancelled
+  // rule: orderEntersKitchenQueueAfterAttendantConfirmation
+  // rule: completedOrdersLeaveKitchenQueue
   const kitchenOrders = shiftOrders.filter(
     (order) => order.status === 'confirmed' || order.status === 'inPreparation',
   );
@@ -82,5 +82,5 @@ export async function viewKitchenQueue(
     return aAt < bAt ? -1 : aAt > bAt ? 1 : 0;
   });
 
-  return kitchenOrders.map(projectKitchenQueueEntry);
+  return kitchenOrders.map(projectKitchenQueueOrder);
 }

@@ -15,12 +15,12 @@ export const operationalDashboardRepositoryAdapter = {
     "entityId": "OperationalDashboard",
     "className": "OperationalDashboardRepositoryAdapter",
     "portRef": "IOperationalDashboardRepository",
-    "tableRef": "operational_dashboard",
+    "tableRef": "cafe_flow_operational_dashboards",
     "mdmReads": [],
     "notes": [
       "columns: operational_dashboard_id, daily_shift_id, top_menu_item_id, created_at",
       "details JSONB: referenceDate, todaySalesTotal, todayOrdersCount, todayItemsSold, topMenuItemQuantity, topSellingItemsCount, lowStockItemsCount, outOfStockItemsCount, lowStockItemIds, hasLowStockAlert, lastComputedAt, updatedAt",
-      "map domain OperationalDashboard <-> row via ctx.data.moduleData; no mdmRefs"
+      "map domain OperationalDashboard <-> row via ctx.data.moduleData only"
     ]
   }
 } as const;

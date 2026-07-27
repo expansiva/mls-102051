@@ -41,6 +41,10 @@ export const posWorkspaceQueryOpenOrdersHandler: BffHandler = async ({ request, 
 
   const result = await trackOrders(ctx, input);
 
+  const page = params.page != null && params.page > 0 ? Math.floor(params.page) : 1;
+  const pageSize =
+    params.pageSize != null && params.pageSize > 0 ? Math.floor(params.pageSize) : 20;
+
   const orders = (result.orders ?? []).map((row) => ({
     orderId: row.orderId,
     dailyShiftId: row.dailyShiftId,
@@ -56,12 +60,7 @@ export const posWorkspaceQueryOpenOrdersHandler: BffHandler = async ({ request, 
     readyAt: row.readyAt,
   }));
 
-  return ok({
-    orders,
-    total: result.total,
-    page: params.page,
-    pageSize: params.pageSize,
-  });
+  return ok({ orders, total: result.total, page, pageSize });
 };
 
 export const posWorkspaceQueryMenuItemsHandler: BffHandler = async ({ request, ctx }) => {
@@ -76,7 +75,7 @@ export const posWorkspaceQueryMenuItemsHandler: BffHandler = async ({ request, c
 
   const result = await browseMenuForPos(ctx, input);
 
-  const items = (result.items ?? []).map((row) => ({
+  const items = (result.menuItems ?? []).map((row) => ({
     menuItemId: row.menuItemId,
     menuCategoryId: row.menuCategoryId,
     name: row.name,
@@ -99,46 +98,30 @@ export const posWorkspaceCmdCreateOrderHandler: BffHandler = async ({ request, c
     tableNumber?: string;
     customerName?: string;
     notes?: string;
-    items?: Array<{ menuItemId?: string; quantity?: number; observations?: string }>;
     menuItemId?: string;
     quantity?: number;
     observations?: string;
+    items?: Array<{ menuItemId?: string; quantity?: number; observations?: string }>;
   };
 
   if (!params.orderType) {
     throw new AppError('VALIDATION_ERROR', 'orderType is required', 400, { field: 'orderType' });
   }
 
-  // Accept either an items[] array or a single menuItemId/quantity pair from the boundary.
-  let items: CreateOrderInput['items'];
-  if (Array.isArray(params.items) && params.items.length > 0) {
-    for (const line of params.items) {
-      if (!line.menuItemId) {
-        throw new AppError('VALIDATION_ERROR', 'menuItemId is required', 400, { field: 'menuItemId' });
-      }
-      if (line.quantity === undefined || line.quantity === null) {
-        throw new AppError('VALIDATION_ERROR', 'quantity is required', 400, { field: 'quantity' });
-      }
-    }
-    items = params.items.map((line) => ({
-      menuItemId: line.menuItemId as string,
-      quantity: line.quantity as number,
-      observations: line.observations,
-    }));
-  } else {
-    if (!params.menuItemId) {
+  // Line items are described in l4 as flat menuItemId/quantity/observations (not an `items` field).
+  // Accept either a collection payload or a single line from the boundary fields.
+  const rawLines: Array<{ menuItemId?: string; quantity?: number; observations?: string }> =
+    Array.isArray(params.items) && params.items.length > 0
+      ? params.items
+      : [{ menuItemId: params.menuItemId, quantity: params.quantity, observations: params.observations }];
+
+  for (const line of rawLines) {
+    if (!line.menuItemId) {
       throw new AppError('VALIDATION_ERROR', 'menuItemId is required', 400, { field: 'menuItemId' });
     }
-    if (params.quantity === undefined || params.quantity === null) {
+    if (line.quantity == null) {
       throw new AppError('VALIDATION_ERROR', 'quantity is required', 400, { field: 'quantity' });
     }
-    items = [
-      {
-        menuItemId: params.menuItemId,
-        quantity: params.quantity,
-        observations: params.observations,
-      },
-    ];
   }
 
   const input: CreateOrderInput = {
@@ -146,7 +129,11 @@ export const posWorkspaceCmdCreateOrderHandler: BffHandler = async ({ request, c
     tableNumber: params.tableNumber,
     customerName: params.customerName,
     notes: params.notes,
-    items,
+    items: rawLines.map((line) => ({
+      menuItemId: line.menuItemId as string,
+      quantity: line.quantity as number,
+      observations: line.observations,
+    })),
   };
 
   const result = await createOrder(ctx, input);
@@ -206,7 +193,7 @@ export const posWorkspaceCmdRecordBasicPaymentHandler: BffHandler = async ({ req
   if (!params.orderId) {
     throw new AppError('VALIDATION_ERROR', 'orderId is required', 400, { field: 'orderId' });
   }
-  if (params.totalAmount === undefined || params.totalAmount === null) {
+  if (params.totalAmount == null) {
     throw new AppError('VALIDATION_ERROR', 'totalAmount is required', 400, { field: 'totalAmount' });
   }
   if (!params.paymentMethod) {

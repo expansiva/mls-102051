@@ -186,15 +186,18 @@ export const closeDailyShiftUsecase = {
         ],
         "transactional": true,
         "steps": [
-          "Resolve closedByUserId from ctx.sessionContext.actorId (actorSession) and closedAt from ctx.clock.now() (systemDefault)",
-          "Resolve activeLifecycleInstance: via DailyShift port list/find the single DailyShift with status 'open'; if none, fail validation with ordersRequireOpenDailyShift (no open shift to close)",
-          "Load the open DailyShift by id via DailyShift port; validate status is still 'open' (ordersRequireOpenDailyShift / only open shifts can be closed)",
-          "Via Order port, list all Orders for dailyShiftId; exclude cancelled when aggregating sales; compute totalOrders, totalSalesAmount from order.totalAmount, and totalItemsSold from non-cancelled OrderItems quantities",
-          "Derive cashPaymentsAmount and otherPaymentsAmount from OrderPayment data on those orders (cash vs non-cash methods); use user-provided cashTotal/otherPaymentsTotal when present as the conferenced totals, otherwise use the derived payment sums",
-          "Apply shiftClosingReportContents: build topSellingItemsSummary from OrderItem aggregation (menuItemName + quantity ranking); via ctx.mdm.collection.listByType for StockItem compute lowStockSignalsCount (currentBalance > 0 && currentBalance <= minimumLevel) and stockoutSignalsCount (currentBalance <= 0)",
-          "Inside ctx.data transaction: generate shiftClosingReportId via ctx.idGenerator; create ShiftClosingReport with dailyShiftId, shiftDate, totals, payment amounts, topSellingItemsSummary, stock signal counts, closingNotes from notes, generatedAt=closedAt; save via ShiftClosingReport port",
-          "Update DailyShift: status='closed', closedByUserId, closedAt, totalOrders, totalSalesAmount, totalItemsSold, cashTotal, otherPaymentsTotal, notes, updatedAt=closedAt; save via DailyShift port",
-          "Return outputShape: DailyShift closed fields plus ShiftClosingReport id and report metrics (totalSalesAmountReport, totalOrdersCount, totalItemsSoldReport, cashPaymentsAmount, otherPaymentsAmount, topSellingItemsSummary, lowStockSignalsCount, stockoutSignalsCount, generatedAt)"
+          "Resolve closedByUserId from ctx.sessionContext.actorId (actorSession) and closedAt from ctx.clock.now()",
+          "Resolve activeLifecycleInstance: via DailyShift port list/find the single DailyShift with status 'open'; if none, fail validation (ordersRequireOpenDailyShift / no open shift)",
+          "Load the open DailyShift by id via DailyShift port",
+          "Validate shift.status === 'open'; otherwise reject close (ordersRequireOpenDailyShift — only an open shift can be closed / accept new orders)",
+          "Via Order port, list orders for dailyShiftId; include nested OrderItems and OrderPayments (or load related collections) for aggregation",
+          "Compute totalOrders = count of non-cancelled orders; totalSalesAmount = sum of totalAmount of non-cancelled orders; totalItemsSold = sum of OrderItem.quantity for non-cancelled items on those orders",
+          "Compute cashPaymentsAmount from OrderPayments with paymentMethod 'cash' and status not voided; otherPaymentsAmount from remaining non-voided payments (pix/creditCard/debitCard/mixed)",
+          "Apply user-confirmed cashTotal/otherPaymentsTotal when provided; otherwise default to computed cash/other payment totals",
+          "Apply shiftClosingReportContents: build topSellingItemsSummary from OrderItems aggregated by menuItemId/menuItemName (qty desc); via ctx.mdm.collection.listByType StockItem compute lowStockSignalsCount (0 < currentBalance <= minimumLevel) and stockoutSignalsCount (currentBalance <= 0)",
+          "Inside ctx.data transaction: set DailyShift status='closed', closedByUserId, closedAt, totalOrders, totalSalesAmount, totalItemsSold, cashTotal, otherPaymentsTotal, notes, updatedAt=closedAt; save via DailyShift port",
+          "Create ShiftClosingReport with new id from ctx.idGenerator, dailyShiftId, shiftDate, totals, cash/other amounts, topSellingItemsSummary, stock signal counts, closingNotes=notes, generatedAt=closedAt; save via ShiftClosingReport port",
+          "Return outputShape: closed DailyShift fields plus report id and report projection fields (totalSalesAmountReport, totalOrdersCount, totalItemsSoldReport, cashPaymentsAmount, otherPaymentsAmount, topSellingItemsSummary, lowStockSignalsCount, stockoutSignalsCount, generatedAt)"
         ],
         "outputShape": {
           "kind": "object",

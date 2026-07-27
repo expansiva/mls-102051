@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:18:57.587Z",
+  "savedAt": "2026-07-24T19:59:53.799Z",
   "agentName": "agentCbRepositoryAdapter",
   "stepId": 9,
   "planning": {
@@ -23,108 +23,109 @@
               "entityId": "DailyShift",
               "className": "DailyShiftRepositoryAdapter",
               "portRef": "IDailyShiftRepository",
-              "tableRef": "daily_shift",
+              "tableRef": "ctx.data.moduleData.dailyShift",
               "mdmReads": [],
               "notes": [
                 "columns: daily_shift_id, status, opened_by_user_id, closed_by_user_id, created_at",
                 "details JSONB: shiftDate, openedAt, closedAt, totalOrders, totalSalesAmount, totalItemsSold, cashTotal, otherPaymentsTotal, notes, updatedAt",
-                "map domain DailyShift <-> row via ctx.data.moduleData; no mdmRefs"
+                "map domain DailyShift <-> row; no mdmRefs"
               ]
             },
             {
               "entityId": "Order",
               "className": "OrderRepositoryAdapter",
               "portRef": "IOrderRepository",
-              "tableRef": "order",
+              "tableRef": "ctx.data.moduleData.order",
               "mdmReads": [],
               "notes": [
                 "columns: order_id, daily_shift_id, order_type, status, created_at",
                 "details JSONB: tableNumber, customerName, totalAmount, notes, registeredAt, confirmedAt, inPreparationAt, readyAt, servedAt, cancelledAt, cancellationReason, updatedAt + embedded OrderItem[] and OrderPayment[]",
-                "map domain Order <-> row via ctx.data.moduleData; embedded members serialized inside details; no mdmRefs"
+                "map domain Order aggregate including OrderItem and OrderPayment children into details; no mdmRefs"
               ]
             },
             {
               "entityId": "ShiftClosingReport",
               "className": "ShiftClosingReportRepositoryAdapter",
               "portRef": "IShiftClosingReportRepository",
-              "tableRef": "shift_closing_report",
+              "tableRef": "ctx.data.moduleData.shiftClosingReport",
               "mdmReads": [],
               "notes": [
                 "columns: shift_closing_report_id, daily_shift_id, created_at",
                 "details JSONB: shiftDate, totalSalesAmount, totalOrdersCount, totalItemsSold, cashPaymentsAmount, otherPaymentsAmount, topSellingItemsSummary, lowStockSignalsCount, stockoutSignalsCount, closingNotes, generatedAt, updatedAt",
-                "map domain ShiftClosingReport <-> row via ctx.data.moduleData; no mdmRefs"
+                "map domain ShiftClosingReport <-> row; no mdmRefs"
               ]
             },
             {
               "entityId": "AiPromotionSuggestion",
               "className": "AiPromotionSuggestionRepositoryAdapter",
               "portRef": "IAiPromotionSuggestionRepository",
-              "tableRef": "ai_promotion_suggestion",
+              "tableRef": "ctx.data.moduleData.aiPromotionSuggestion",
               "mdmReads": [],
               "notes": [
                 "columns: ai_promotion_suggestion_id, operational_dashboard_id, menu_item_id, menu_category_id, status, reviewed_by_user_id, created_at",
                 "details JSONB: menuItemName, reason, salesLast7Days, salesToday, currentStockLevel, confidenceScore, suggestedDiscountPercent, reviewedAt, reviewNotes, generatedAt, expiresAt, updatedAt",
-                "map domain AiPromotionSuggestion <-> row via ctx.data.moduleData; menuItemId/menuCategoryId stored as local FK columns (not mdm entity.get loops); no mdmRefs"
+                "menuItemId/menuCategoryId stored as local FK columns only; no ctx.mdm resolution required per mdmRefs=[]"
               ]
             },
             {
               "entityId": "AiSalesSummary",
               "className": "AiSalesSummaryRepositoryAdapter",
               "portRef": "IAiSalesSummaryRepository",
-              "tableRef": "ai_sales_summary",
+              "tableRef": "ctx.data.moduleData.aiSalesSummary",
               "mdmReads": [],
               "notes": [
                 "columns: ai_sales_summary_id, operational_dashboard_id, model_id, created_at",
                 "details JSONB: summaryDate, periodStart, periodEnd, summaryText, promptTokens, completionTokens, generatedAt, updatedAt",
-                "map domain AiSalesSummary <-> row via ctx.data.moduleData; no mdmRefs"
+                "map domain AiSalesSummary <-> row; no mdmRefs"
               ]
             },
             {
               "entityId": "OperationalDashboard",
               "className": "OperationalDashboardRepositoryAdapter",
               "portRef": "IOperationalDashboardRepository",
-              "tableRef": "operational_dashboard",
+              "tableRef": "ctx.data.moduleData.operationalDashboard",
               "mdmReads": [],
               "notes": [
                 "columns: operational_dashboard_id, daily_shift_id, top_menu_item_id, created_at",
                 "details JSONB: referenceDate, todaySalesTotal, todayOrdersCount, todayItemsSold, topMenuItemQuantity, topSellingItemsCount, lowStockItemsCount, outOfStockItemsCount, lowStockItemIds, hasLowStockAlert, lastComputedAt, updatedAt",
-                "map domain OperationalDashboard <-> row via ctx.data.moduleData; no mdmRefs"
+                "topMenuItemId local column only; no mdmRefs"
               ]
             },
             {
               "entityId": "StockAdjustment",
               "className": "StockAdjustmentRepositoryAdapter",
               "portRef": "IStockAdjustmentRepository",
-              "tableRef": "stock_adjustment",
+              "tableRef": "ctx.data.moduleData.stockAdjustment",
               "mdmReads": [],
               "notes": [
-                "append-only event adapter: append (insert one row) + read finders; no update/delete",
+                "append-only event adapter: append (insert) + read finders only; no update/delete",
                 "columns: stock_adjustment_id, stock_item_id, direction, reason, manager_user_id, shift_id, status, created_at, voided_by_user_id, compensating_adjustment_id",
                 "details JSONB: quantity, resultingBalance, notes, voidedAt",
-                "map domain StockAdjustment <-> row via ctx.data.moduleData; no mdmRefs"
+                "map domain StockAdjustment <-> row; no mdmRefs"
               ]
             },
             {
               "entityId": "StockConsumption",
               "className": "StockConsumptionRepositoryAdapter",
               "portRef": "IStockConsumptionRepository",
-              "tableRef": "stock_consumption",
+              "tableRef": "ctx.data.moduleData.stockConsumption",
               "mdmReads": [],
               "notes": [
-                "append-only event adapter: append (insert one row) + read finders; no update/delete",
+                "append-only event adapter: append (insert) + read finders only; no update/delete",
                 "columns: stock_consumption_id, order_id, stock_item_id, status, created_at",
                 "details JSONB: quantity, occurredAt, voidedAt, voidReason",
-                "map domain StockConsumption <-> row via ctx.data.moduleData; no mdmRefs"
+                "map domain StockConsumption <-> row; no mdmRefs"
               ]
             }
           ]
         },
         "questions": [],
         "trace": [
-          "produced 6 aggregate adapters + 2 append-only event adapters",
-          "all mdmRefs empty; ctx.data.moduleData only for local module tables",
-          "columns snake_case real cols; detailsFields + embeddedMembers in details JSONB",
-          "no raw MDM primitives; no entity.get in loops"
+          "produced 6 aggregate adapters + 2 append-only event adapters for cafeFlow",
+          "all mdmRefs empty: no ctx.mdm calls; ctx.data.moduleData local tables only",
+          "columns -> snake_case real columns; detailsFields + embeddedMembers -> details JSONB",
+          "Order embeds OrderItem and OrderPayment inside details",
+          "StockAdjustment/StockConsumption: append+finders only per appendOnlyEvent"
         ]
       }
     },

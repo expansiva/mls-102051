@@ -17,61 +17,115 @@ export interface ShiftClosingReport {
   updatedAt: string;
 }
 
-export function shiftClosingReportPaymentsMatchTotal(
-  report: Pick<ShiftClosingReport, 'totalSalesAmount' | 'cashPaymentsAmount' | 'otherPaymentsAmount'>,
+export function isNonNegativeTotalSalesAmount(
+  report: Pick<ShiftClosingReport, 'totalSalesAmount'>,
 ): boolean {
-  return report.totalSalesAmount === report.cashPaymentsAmount + report.otherPaymentsAmount;
+  return report.totalSalesAmount >= 0;
 }
 
-export function shiftClosingReportCountsAreNonNegative(
+export function isNonNegativeCashPaymentsAmount(
+  report: Pick<ShiftClosingReport, 'cashPaymentsAmount'>,
+): boolean {
+  return report.cashPaymentsAmount >= 0;
+}
+
+export function isNonNegativeOtherPaymentsAmount(
+  report: Pick<ShiftClosingReport, 'otherPaymentsAmount'>,
+): boolean {
+  return report.otherPaymentsAmount >= 0;
+}
+
+export function totalsMatchPaymentBreakdown(
   report: Pick<
     ShiftClosingReport,
-    'totalOrdersCount' | 'totalItemsSold' | 'lowStockSignalsCount' | 'stockoutSignalsCount'
+    'totalSalesAmount' | 'cashPaymentsAmount' | 'otherPaymentsAmount'
   >,
 ): boolean {
   return (
-    report.totalOrdersCount >= 0 &&
-    report.totalItemsSold >= 0 &&
-    report.lowStockSignalsCount >= 0 &&
-    report.stockoutSignalsCount >= 0
+    report.totalSalesAmount ===
+    report.cashPaymentsAmount + report.otherPaymentsAmount
   );
 }
 
-export function shiftClosingReportAmountsAreNonNegative(
-  report: Pick<ShiftClosingReport, 'totalSalesAmount' | 'cashPaymentsAmount' | 'otherPaymentsAmount'>,
+export function isNonNegativeTotalOrdersCount(
+  report: Pick<ShiftClosingReport, 'totalOrdersCount'>,
 ): boolean {
-  return (
-    report.totalSalesAmount >= 0 &&
-    report.cashPaymentsAmount >= 0 &&
-    report.otherPaymentsAmount >= 0
-  );
+  return report.totalOrdersCount >= 0;
 }
 
-export function shiftClosingReportGeneratedAtIsValid(
-  report: Pick<ShiftClosingReport, 'generatedAt'>,
-  dailyShiftClosedAt: string,
+export function isNonNegativeTotalItemsSold(
+  report: Pick<ShiftClosingReport, 'totalItemsSold'>,
 ): boolean {
-  return report.generatedAt >= dailyShiftClosedAt;
+  return report.totalItemsSold >= 0;
 }
 
-export function shiftClosingReportTimestampsAreValid(
+export function emptyOrdersImpliesEmptySales(
+  report: Pick<
+    ShiftClosingReport,
+    'totalOrdersCount' | 'totalItemsSold' | 'totalSalesAmount'
+  >,
+): boolean {
+  if (report.totalOrdersCount !== 0) {
+    return true;
+  }
+  return report.totalItemsSold === 0 && report.totalSalesAmount === 0;
+}
+
+export function itemsSoldImpliesAtLeastOneOrder(
+  report: Pick<ShiftClosingReport, 'totalItemsSold' | 'totalOrdersCount'>,
+): boolean {
+  if (report.totalItemsSold <= 0) {
+    return true;
+  }
+  return report.totalOrdersCount >= 1;
+}
+
+export function isNonNegativeLowStockSignalsCount(
+  report: Pick<ShiftClosingReport, 'lowStockSignalsCount'>,
+): boolean {
+  return report.lowStockSignalsCount >= 0;
+}
+
+export function isNonNegativeStockoutSignalsCount(
+  report: Pick<ShiftClosingReport, 'stockoutSignalsCount'>,
+): boolean {
+  return report.stockoutSignalsCount >= 0;
+}
+
+export function generatedAtOnOrAfterShiftDate(
+  report: Pick<ShiftClosingReport, 'generatedAt' | 'shiftDate'>,
+): boolean {
+  return report.generatedAt >= report.shiftDate;
+}
+
+export function createdAtNotAfterUpdatedAt(
   report: Pick<ShiftClosingReport, 'createdAt' | 'updatedAt'>,
 ): boolean {
-  return report.updatedAt >= report.createdAt;
+  return report.createdAt <= report.updatedAt;
 }
 
-export function shiftClosingReportRequiresClosedDailyShift(dailyShiftStatus: string): boolean {
-  return dailyShiftStatus === 'closed';
-}
-
-export function shiftClosingReportIsUniqueForDailyShift(
-  existingReports: Array<Pick<ShiftClosingReport, 'dailyShiftId' | 'shiftClosingReportId'>>,
-  dailyShiftId: string,
-  excludeShiftClosingReportId?: string,
+export function generatedAtNotAfterUpdatedAt(
+  report: Pick<ShiftClosingReport, 'generatedAt' | 'updatedAt'>,
 ): boolean {
-  return !existingReports.some(
-    (report) =>
-      report.dailyShiftId === dailyShiftId &&
-      report.shiftClosingReportId !== excludeShiftClosingReportId,
+  return report.generatedAt <= report.updatedAt;
+}
+
+export function isValidShiftClosingReport(
+  report: ShiftClosingReport,
+): boolean {
+  return (
+    isNonNegativeTotalSalesAmount(report) &&
+    isNonNegativeCashPaymentsAmount(report) &&
+    isNonNegativeOtherPaymentsAmount(report) &&
+    totalsMatchPaymentBreakdown(report) &&
+    isNonNegativeTotalOrdersCount(report) &&
+    isNonNegativeTotalItemsSold(report) &&
+    emptyOrdersImpliesEmptySales(report) &&
+    itemsSoldImpliesAtLeastOneOrder(report) &&
+    isNonNegativeLowStockSignalsCount(report) &&
+    isNonNegativeStockoutSignalsCount(report) &&
+    generatedAtOnOrAfterShiftDate(report) &&
+    createdAtNotAfterUpdatedAt(report) &&
+    generatedAtNotAfterUpdatedAt(report)
   );
 }

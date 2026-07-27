@@ -94,7 +94,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "OperationalKpiSummaryCards",
           "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-          "purpose": "Exibe os indicadores-chave do turno corrente (total de vendas, pedidos, itens vendidos, alertas de estoque) para que o gerente avalie a saúde da operação de relance.",
+          "purpose": "Displays the key performance indicators for the current shift — total sales, order count, items sold and stock alert flags — so the manager gets an at-a-glance health check the moment the dashboard loads.",
           "userActions": [
             "getDashboard"
           ],
@@ -131,7 +131,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "TopSellingItemsList",
           "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-          "purpose": "Lista os itens mais vendidos do turno em ordem decrescente de quantidade, permitindo ao gerente identificar os produtos de maior saída.",
+          "purpose": "Shows the ranked list of best-selling menu items for the current shift so the manager can quickly identify what is driving revenue.",
           "userActions": [
             "getDashboard"
           ],
@@ -168,7 +168,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "LowStockAlertList",
           "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-          "purpose": "Destaca itens com estoque baixo ou em ruptura para que o gerente tome ação imediata antes que impacte o serviço.",
+          "purpose": "Highlights items with low or zero stock so the manager can take immediate action before service is impacted.",
           "userActions": [
             "getDashboard"
           ],
@@ -205,7 +205,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "AiSalesSummaryPanel",
           "titleKey": "organism.dashboardWorkspace.getAiSalesSummary.title",
-          "purpose": "Permite ao gerente solicitar e ler o resumo narrativo de vendas do dia gerado pela IA, com botão de geração e exibição do texto resultante.",
+          "purpose": "Presents the AI-generated narrative sales summary for the day and exposes the trigger to request a new summary, giving the manager a concise textual interpretation of the day's performance.",
           "userActions": [
             "getAiSalesSummary"
           ],
@@ -241,7 +241,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "AiPromotionSuggestionsBoard",
           "titleKey": "organism.dashboardWorkspace.getAiPromotionSuggestions.title",
-          "purpose": "Exibe as sugestões de itens a promover geradas pela IA com justificativa, score de confiança e desconto sugerido, apoiando a decisão do gerente sobre promoções.",
+          "purpose": "Displays AI-generated promotion suggestions per menu item — with justification, confidence score and suggested discount — so the manager can decide which items to promote during the shift.",
           "userActions": [
             "getAiPromotionSuggestions"
           ],
@@ -268,7 +268,7 @@ export const definition = {
   "templateId": "status_overview",
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "layout": {
-    "id": "cfe-20260723170708.1000",
+    "id": "cfe-20260727184832.1000",
     "type": "page",
     "sections": [
       {
@@ -284,7 +284,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "OperationalKpiSummaryCards",
             "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-            "purpose": "Exibe os indicadores-chave do turno corrente (total de vendas, pedidos, itens vendidos, alertas de estoque) para que o gerente avalie a saúde da operação de relance.",
+            "purpose": "Displays the key performance indicators for the current shift — total sales, order count, items sold and stock alert flags — so the manager gets an at-a-glance health check the moment the dashboard loads.",
             "userActions": [
               "getDashboard"
             ],
@@ -446,7 +446,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "TopSellingItemsList",
             "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-            "purpose": "Lista os itens mais vendidos do turno em ordem decrescente de quantidade, permitindo ao gerente identificar os produtos de maior saída.",
+            "purpose": "Shows the ranked list of best-selling menu items for the current shift so the manager can quickly identify what is driving revenue.",
             "userActions": [
               "getDashboard"
             ],
@@ -608,7 +608,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "LowStockAlertList",
             "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-            "purpose": "Destaca itens com estoque baixo ou em ruptura para que o gerente tome ação imediata antes que impacte o serviço.",
+            "purpose": "Highlights items with low or zero stock so the manager can take immediate action before service is impacted.",
             "userActions": [
               "getDashboard"
             ],
@@ -770,7 +770,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "AiSalesSummaryPanel",
             "titleKey": "organism.dashboardWorkspace.getAiSalesSummary.title",
-            "purpose": "Permite ao gerente solicitar e ler o resumo narrativo de vendas do dia gerado pela IA, com botão de geração e exibição do texto resultante.",
+            "purpose": "Presents the AI-generated narrative sales summary for the day and exposes the trigger to request a new summary, giving the manager a concise textual interpretation of the day's performance.",
             "userActions": [
               "getAiSalesSummary"
             ],
@@ -888,7 +888,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "AiPromotionSuggestionsBoard",
             "titleKey": "organism.dashboardWorkspace.getAiPromotionSuggestions.title",
-            "purpose": "Exibe as sugestões de itens a promover geradas pela IA com justificativa, score de confiança e desconto sugerido, apoiando a decisão do gerente sobre promoções.",
+            "purpose": "Displays AI-generated promotion suggestions per menu item — with justification, confidence score and suggested discount — so the manager can decide which items to promote during the shift.",
             "userActions": [
               "getAiPromotionSuggestions"
             ],

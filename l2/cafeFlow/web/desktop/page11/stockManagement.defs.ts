@@ -112,35 +112,15 @@ export const definition = {
   "navigationRefs": [],
   "sections": [
     {
-      "id": "section.stockManagement.sec-stockItemList",
+      "id": "section.stockManagement.stockItemList",
       "type": "section",
       "sectionName": "Stock Item List",
-      "titleKey": "section.stockManagement.sec-stockItemList.title",
+      "titleKey": "section.stockManagement.stockItemList.title",
       "mode": "edit",
       "order": 10,
       "organisms": [
         {
-          "id": "org-stockItemFilter",
-          "type": "content",
-          "organismName": "StockItemFilterBar",
-          "titleKey": "organism.stockManagement.inline-row-command10.title",
-          "purpose": "Allows the manager to filter the stock list by item name or toggle to show only low-stock items, so the most critical items surface immediately.",
-          "userActions": [],
-          "requiredEntities": [],
-          "readsFields": [],
-          "writesFields": [],
-          "rulesApplied": [],
-          "order": 10,
-          "intentionRefs": [
-            {
-              "id": "intent.stockManagement.inline-row-command10.content",
-              "intent": "inline-row-command",
-              "order": 10
-            }
-          ]
-        },
-        {
-          "id": "org-stockItemBoard",
+          "id": "stockItemBoard",
           "type": "queryResult",
           "organismName": "StockItemBoard",
           "titleKey": "organism.stockManagement.listStockItems.title",
@@ -154,7 +134,7 @@ export const definition = {
           "rulesApplied": [
             "lowStockMustBeVisible"
           ],
-          "order": 20,
+          "order": 10,
           "intentionRefs": [
             {
               "id": "intent.stockManagement.listStockItems.list",
@@ -166,24 +146,22 @@ export const definition = {
           ]
         },
         {
-          "id": "org-stockItemRowActions",
+          "id": "stockItemRowActions",
           "type": "commandForm",
           "organismName": "StockItemRowActions",
           "titleKey": "organism.stockManagement.editStockItem.title",
-          "purpose": "Surfaces per-row edit, remove and stock-adjustment commands so the manager can act on a selected item without leaving the list.",
+          "purpose": "Surfaces per-row contextual commands (edit, remove, register adjustment) so the manager can act on a selected item without leaving the list.",
           "userActions": [
             "editStockItem",
-            "removeStockItem",
-            "registerStockAdjustment"
+            "removeStockItem"
           ],
           "requiredEntities": [],
           "readsFields": [],
           "writesFields": [],
           "rulesApplied": [
-            "lowStockMustBeVisible",
-            "managerManualStockAdjustmentAllowed"
+            "lowStockMustBeVisible"
           ],
-          "order": 30,
+          "order": 20,
           "intentionRefs": [
             {
               "id": "intent.stockManagement.editStockItem.form",
@@ -196,7 +174,26 @@ export const definition = {
               "intent": "commandForm",
               "submitAction": "removeStockItem",
               "order": 10
-            },
+            }
+          ]
+        },
+        {
+          "id": "stockAdjustmentPanel",
+          "type": "commandForm",
+          "organismName": "StockAdjustmentPanel",
+          "titleKey": "organism.stockManagement.registerStockAdjustment.title",
+          "purpose": "Inline panel that lets the manager register a manual stock adjustment for the selected item, showing current balance as an anchor before the user enters quantity and direction.",
+          "userActions": [
+            "registerStockAdjustment"
+          ],
+          "requiredEntities": [],
+          "readsFields": [],
+          "writesFields": [],
+          "rulesApplied": [
+            "managerManualStockAdjustmentAllowed"
+          ],
+          "order": 30,
+          "intentionRefs": [
             {
               "id": "intent.stockManagement.registerStockAdjustment.form",
               "intent": "commandForm",
@@ -208,19 +205,19 @@ export const definition = {
       ]
     },
     {
-      "id": "section.stockManagement.sec-createStockItem",
+      "id": "section.stockManagement.createStockItemSection",
       "type": "section",
       "sectionName": "Add New Stock Item",
-      "titleKey": "section.stockManagement.sec-createStockItem.title",
+      "titleKey": "section.stockManagement.createStockItemSection.title",
       "mode": "edit",
       "order": 20,
       "organisms": [
         {
-          "id": "org-addStockItemForm",
+          "id": "addStockItemForm",
           "type": "commandForm",
           "organismName": "AddStockItemForm",
           "titleKey": "organism.stockManagement.addStockItem.title",
-          "purpose": "Lets the manager register a new stock item by entering name, unit, initial balance, minimum level and optional description, then confirm creation.",
+          "purpose": "Form for creating a new stock item with name, unit, initial balance and minimum level, allowing the manager to expand the catalogue without leaving the page.",
           "userActions": [
             "addStockItem"
           ],
@@ -246,48 +243,19 @@ export const definition = {
   "templateId": "pos_workspace",
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "layout": {
-    "id": "cfe-20260723170708.1000",
+    "id": "pos_workspace",
     "type": "page",
     "sections": [
       {
-        "id": "section.stockManagement.sec-stockItemList",
+        "id": "section.stockManagement.stockItemList",
         "type": "section",
         "sectionName": "Stock Item List",
-        "titleKey": "section.stockManagement.sec-stockItemList.title",
+        "titleKey": "section.stockManagement.stockItemList.title",
         "mode": "edit",
         "order": 10,
         "organisms": [
           {
-            "id": "org-stockItemFilter",
-            "type": "content",
-            "organismName": "StockItemFilterBar",
-            "titleKey": "organism.stockManagement.inline-row-command10.title",
-            "purpose": "Allows the manager to filter the stock list by item name or toggle to show only low-stock items, so the most critical items surface immediately.",
-            "userActions": [],
-            "requiredEntities": [],
-            "readsFields": [],
-            "writesFields": [],
-            "rulesApplied": [],
-            "order": 10,
-            "intentions": [
-              {
-                "id": "intent.stockManagement.inline-row-command10.content",
-                "intent": "inline-row-command",
-                "order": 10,
-                "titleKey": "intent.stockManagement.inline-row-command10.content.title",
-                "displayHint": "inline-row-command",
-                "fields": [],
-                "columns": [],
-                "filters": [],
-                "toolbar": [],
-                "rowActions": [],
-                "actions": []
-              }
-            ],
-            "displayHint": "inline-row-command"
-          },
-          {
-            "id": "org-stockItemBoard",
+            "id": "stockItemBoard",
             "type": "queryResult",
             "organismName": "StockItemBoard",
             "titleKey": "organism.stockManagement.listStockItems.title",
@@ -301,7 +269,7 @@ export const definition = {
             "rulesApplied": [
               "lowStockMustBeVisible"
             ],
-            "order": 20,
+            "order": 10,
             "intentions": [
               {
                 "id": "intent.stockManagement.listStockItems.list",
@@ -368,24 +336,22 @@ export const definition = {
             "displayHint": "master-detail"
           },
           {
-            "id": "org-stockItemRowActions",
+            "id": "stockItemRowActions",
             "type": "commandForm",
             "organismName": "StockItemRowActions",
             "titleKey": "organism.stockManagement.editStockItem.title",
-            "purpose": "Surfaces per-row edit, remove and stock-adjustment commands so the manager can act on a selected item without leaving the list.",
+            "purpose": "Surfaces per-row contextual commands (edit, remove, register adjustment) so the manager can act on a selected item without leaving the list.",
             "userActions": [
               "editStockItem",
-              "removeStockItem",
-              "registerStockAdjustment"
+              "removeStockItem"
             ],
             "requiredEntities": [],
             "readsFields": [],
             "writesFields": [],
             "rulesApplied": [
-              "lowStockMustBeVisible",
-              "managerManualStockAdjustmentAllowed"
+              "lowStockMustBeVisible"
             ],
-            "order": 30,
+            "order": 20,
             "intentions": [
               {
                 "id": "intent.stockManagement.editStockItem.form",
@@ -461,7 +427,27 @@ export const definition = {
                     "actionKey": "removeStockItem"
                   }
                 ]
-              },
+              }
+            ],
+            "displayHint": "contextual-transition-actions"
+          },
+          {
+            "id": "stockAdjustmentPanel",
+            "type": "commandForm",
+            "organismName": "StockAdjustmentPanel",
+            "titleKey": "organism.stockManagement.registerStockAdjustment.title",
+            "purpose": "Inline panel that lets the manager register a manual stock adjustment for the selected item, showing current balance as an anchor before the user enters quantity and direction.",
+            "userActions": [
+              "registerStockAdjustment"
+            ],
+            "requiredEntities": [],
+            "readsFields": [],
+            "writesFields": [],
+            "rulesApplied": [
+              "managerManualStockAdjustmentAllowed"
+            ],
+            "order": 30,
+            "intentions": [
               {
                 "id": "intent.stockManagement.registerStockAdjustment.form",
                 "intent": "commandForm",
@@ -522,24 +508,24 @@ export const definition = {
                 ]
               }
             ],
-            "displayHint": "contextual-transition-actions"
+            "displayHint": "inline-row-command"
           }
         ]
       },
       {
-        "id": "section.stockManagement.sec-createStockItem",
+        "id": "section.stockManagement.createStockItemSection",
         "type": "section",
         "sectionName": "Add New Stock Item",
-        "titleKey": "section.stockManagement.sec-createStockItem.title",
+        "titleKey": "section.stockManagement.createStockItemSection.title",
         "mode": "edit",
         "order": 20,
         "organisms": [
           {
-            "id": "org-addStockItemForm",
+            "id": "addStockItemForm",
             "type": "commandForm",
             "organismName": "AddStockItemForm",
             "titleKey": "organism.stockManagement.addStockItem.title",
-            "purpose": "Lets the manager register a new stock item by entering name, unit, initial balance, minimum level and optional description, then confirm creation.",
+            "purpose": "Form for creating a new stock item with name, unit, initial balance and minimum level, allowing the manager to expand the catalogue without leaving the page.",
             "userActions": [
               "addStockItem"
             ],

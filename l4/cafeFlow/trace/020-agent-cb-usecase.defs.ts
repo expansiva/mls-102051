@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:50.950Z",
+  "savedAt": "2026-07-25T23:28:54.481Z",
   "agentName": "agentCbUsecase",
   "stepId": 20,
   "planning": null,
@@ -11,221 +11,204 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "viewShiftClosingReport",
+          "usecaseId": "viewKitchenQueue",
           "ports": [
-            "ShiftClosingReport"
+            "Order",
+            "DailyShift",
+            "StockConsumption"
           ],
           "functions": [
             {
-              "functionName": "viewShiftClosingReport",
-              "inputTypeName": "ViewShiftClosingReportInput",
-              "outputTypeName": "ViewShiftClosingReportOutput",
-              "input": [
-                {
-                  "name": "shiftClosingReportId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport",
-                  "fieldRef": "ShiftClosingReport.shiftClosingReportId"
-                }
-              ],
+              "functionName": "viewKitchenQueue",
+              "inputTypeName": "ViewKitchenQueueInput",
+              "outputTypeName": "ViewKitchenQueueOutput",
+              "input": [],
               "output": [
                 {
-                  "name": "shiftClosingReportId",
+                  "name": "orderId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "ShiftClosingReport"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "dailyShiftId",
+                  "name": "orderType",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "ShiftClosingReport"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "shiftDate",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "totalSalesAmount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "totalOrdersCount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "totalItemsSold",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "cashPaymentsAmount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "otherPaymentsAmount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "topSellingItemsSummary",
+                  "name": "tableNumber",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "ShiftClosingReport"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "lowStockSignalsCount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "stockoutSignalsCount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "ShiftClosingReport"
-                },
-                {
-                  "name": "closingNotes",
+                  "name": "customerName",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "ShiftClosingReport"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "generatedAt",
+                  "name": "notes",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "Order"
+                },
+                {
+                  "name": "status",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "ShiftClosingReport"
+                  "ofEntity": "Order"
+                },
+                {
+                  "name": "confirmedAt",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "Order"
+                },
+                {
+                  "name": "inPreparationAt",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "Order"
+                },
+                {
+                  "name": "items",
+                  "type": "array",
+                  "required": true
                 }
               ],
               "ports": [
-                "ShiftClosingReport"
+                "Order",
+                "DailyShift"
               ],
               "rulesApplied": [
-                "shiftClosingReportContents",
-                "shiftClosingRecordsBasicTotalsAndPayments"
+                "orderEntersKitchenQueueAfterAttendantConfirmation",
+                "completedOrdersLeaveKitchenQueue",
+                "orderItemsArePrepReference",
+                "ordersRequireOpenDailyShift",
+                "orderRequiresTableOrTakeout"
               ],
               "transactional": false,
               "steps": [
-                "Resolve shiftClosingReportId from route param input",
-                "Load ShiftClosingReport by id via ShiftClosingReport port",
-                "If not found, fail with not-found validation error",
-                "Apply shiftClosingReportContents: ensure report exposes shiftClosingReportId, dailyShiftId, shiftDate, totals, payment breakdown, stock signal counts, optional topSellingItemsSummary and closingNotes, and generatedAt",
-                "Apply shiftClosingRecordsBasicTotalsAndPayments: map totalSalesAmount, totalOrdersCount, totalItemsSold, cashPaymentsAmount and otherPaymentsAmount as basic totals without advanced reconciliation",
-                "Return the report projection matching outputShape"
+                "Resolve the single open DailyShift (status=open) via DailyShift port; if none is open, return empty list per ordersRequireOpenDailyShift (do not require dailyShiftId from client)",
+                "Via Order port, list orders filtered by dailyShiftId of the open shift and status in [confirmed, inPreparation] (orderEntersKitchenQueueAfterAttendantConfirmation; exclude registered; completedOrdersLeaveKitchenQueue excludes ready/served/cancelled)",
+                "Sort orders by confirmedAt ascending to prioritize kitchen flow",
+                "For each order, project embedded OrderItem collection as prep reference (orderItemId, menuItemName, quantity, observations, status) — orderItemsArePrepReference",
+                "Map each order to output shape: orderId, orderType, tableNumber, customerName, notes, status, confirmedAt, inPreparationAt, items (orderRequiresTableOrTakeout is already enforced at order creation; surface tableNumber/customerName as stored)",
+                "Return the projected kitchen queue list"
               ],
               "outputShape": {
-                "kind": "object",
+                "kind": "list",
                 "fields": [
                   {
-                    "name": "shiftClosingReportId",
+                    "name": "orderId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "ShiftClosingReport.shiftClosingReportId"
+                    "fieldRef": "Order.orderId"
                   },
                   {
-                    "name": "dailyShiftId",
+                    "name": "orderType",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "ShiftClosingReport.dailyShiftId"
+                    "fieldRef": "Order.orderType"
                   },
                   {
-                    "name": "shiftDate",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.shiftDate"
-                  },
-                  {
-                    "name": "totalSalesAmount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.totalSalesAmount"
-                  },
-                  {
-                    "name": "totalOrdersCount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.totalOrdersCount"
-                  },
-                  {
-                    "name": "totalItemsSold",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.totalItemsSold"
-                  },
-                  {
-                    "name": "cashPaymentsAmount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.cashPaymentsAmount"
-                  },
-                  {
-                    "name": "otherPaymentsAmount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.otherPaymentsAmount"
-                  },
-                  {
-                    "name": "topSellingItemsSummary",
+                    "name": "tableNumber",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "ShiftClosingReport.topSellingItemsSummary"
+                    "fieldRef": "Order.tableNumber"
                   },
                   {
-                    "name": "lowStockSignalsCount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.lowStockSignalsCount"
-                  },
-                  {
-                    "name": "stockoutSignalsCount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "ShiftClosingReport.stockoutSignalsCount"
-                  },
-                  {
-                    "name": "closingNotes",
+                    "name": "customerName",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "ShiftClosingReport.closingNotes"
+                    "fieldRef": "Order.customerName"
                   },
                   {
-                    "name": "generatedAt",
+                    "name": "notes",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "Order.notes"
+                  },
+                  {
+                    "name": "status",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "ShiftClosingReport.generatedAt"
+                    "fieldRef": "Order.status"
+                  },
+                  {
+                    "name": "confirmedAt",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "Order.confirmedAt"
+                  },
+                  {
+                    "name": "inPreparationAt",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "Order.inPreparationAt"
+                  },
+                  {
+                    "name": "items",
+                    "type": "array",
+                    "required": true,
+                    "item": {
+                      "fields": [
+                        {
+                          "name": "orderItemId",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "OrderItem.orderItemId"
+                        },
+                        {
+                          "name": "menuItemName",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "OrderItem.menuItemName"
+                        },
+                        {
+                          "name": "quantity",
+                          "type": "number",
+                          "required": true,
+                          "fieldRef": "OrderItem.quantity"
+                        },
+                        {
+                          "name": "observations",
+                          "type": "string",
+                          "required": false,
+                          "fieldRef": "OrderItem.observations"
+                        },
+                        {
+                          "name": "status",
+                          "type": "string",
+                          "required": true,
+                          "fieldRef": "OrderItem.status"
+                        }
+                      ]
+                    }
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "shiftClosingReportContents",
-            "shiftClosingRecordsBasicTotalsAndPayments"
+            "orderEntersKitchenQueueAfterAttendantConfirmation",
+            "completedOrdersLeaveKitchenQueue",
+            "orderItemsArePrepReference",
+            "ordersRequireOpenDailyShift",
+            "orderRequiresTableOrTakeout"
           ],
           "mdmRefs": []
         },
         "questions": [],
         "trace": [
-          "viewShiftClosingReport: getById on ShiftClosingReport by routeParam shiftClosingReportId",
-          "output pinned to outputShape fieldRefs",
-          "ports: ShiftClosingReport only; read-only non-transactional"
+          "viewKitchenQueue: list query on Order via Order+DailyShift ports; dailyShiftId from activeLifecycleInstance (open DailyShift); outputShape fields verbatim; no public input; rules applied inline; query non-transactional; no eventWrites on read"
         ]
       }
     },
     "status": "completed",
-    "stepId": 6,
+    "stepId": 7,
     "interaction": null,
     "nextSteps": null
   }

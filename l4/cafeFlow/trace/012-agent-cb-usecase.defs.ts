@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:49.837Z",
+  "savedAt": "2026-07-24T20:01:47.304Z",
   "agentName": "agentCbUsecase",
   "stepId": 12,
   "planning": null,
@@ -11,273 +11,206 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "updateMenuItem",
-          "ports": [],
+          "usecaseId": "updateOrderStatus",
+          "ports": [
+            "Order",
+            "StockConsumption"
+          ],
           "functions": [
             {
-              "functionName": "updateMenuItem",
-              "inputTypeName": "UpdateMenuItemInput",
-              "outputTypeName": "UpdateMenuItemOutput",
+              "functionName": "updateOrderStatus",
+              "inputTypeName": "UpdateOrderStatusInput",
+              "outputTypeName": "UpdateOrderStatusOutput",
               "input": [
                 {
-                  "name": "menuItemId",
+                  "name": "orderId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.menuItemId"
-                },
-                {
-                  "name": "menuCategoryId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.menuCategoryId"
-                },
-                {
-                  "name": "name",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.name"
-                },
-                {
-                  "name": "description",
-                  "type": "string",
-                  "required": false,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.description"
-                },
-                {
-                  "name": "price",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.price"
+                  "ofEntity": "Order",
+                  "fieldRef": "Order.orderId"
                 },
                 {
                   "name": "status",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.status"
+                  "ofEntity": "Order",
+                  "fieldRef": "Order.status"
                 },
                 {
-                  "name": "pauseReason",
+                  "name": "cancellationReason",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.pauseReason"
-                },
-                {
-                  "name": "imageUrl",
-                  "type": "string",
-                  "required": false,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.imageUrl"
-                },
-                {
-                  "name": "displayOrder",
-                  "type": "number",
-                  "required": false,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.displayOrder"
-                },
-                {
-                  "name": "requiresStockLink",
-                  "type": "boolean",
-                  "required": true,
-                  "ofEntity": "MenuItem",
-                  "fieldRef": "MenuItem.requiresStockLink"
+                  "ofEntity": "Order",
+                  "fieldRef": "Order.cancellationReason"
                 }
               ],
               "output": [
                 {
-                  "name": "menuItemId",
+                  "name": "orderId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "MenuItem"
-                },
-                {
-                  "name": "menuCategoryId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "MenuItem"
-                },
-                {
-                  "name": "name",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "MenuItem"
-                },
-                {
-                  "name": "description",
-                  "type": "string",
-                  "required": false,
-                  "ofEntity": "MenuItem"
-                },
-                {
-                  "name": "price",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "MenuItem"
+                  "ofEntity": "Order"
                 },
                 {
                   "name": "status",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "MenuItem"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "pausedAt",
+                  "name": "confirmedAt",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "MenuItem"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "pauseReason",
+                  "name": "inPreparationAt",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "MenuItem"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "imageUrl",
+                  "name": "readyAt",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "MenuItem"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "displayOrder",
-                  "type": "number",
+                  "name": "servedAt",
+                  "type": "string",
                   "required": false,
-                  "ofEntity": "MenuItem"
+                  "ofEntity": "Order"
                 },
                 {
-                  "name": "requiresStockLink",
-                  "type": "boolean",
-                  "required": true,
-                  "ofEntity": "MenuItem"
+                  "name": "cancelledAt",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "Order"
+                },
+                {
+                  "name": "cancellationReason",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "Order"
                 },
                 {
                   "name": "updatedAt",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "MenuItem"
+                  "ofEntity": "Order"
                 }
               ],
-              "ports": [],
+              "ports": [
+                "Order",
+                "StockConsumption"
+              ],
               "rulesApplied": [
-                "onlyActiveMenuItemsCanBeOrdered",
-                "menuItemNeedsCategoryAndPrice"
+                "orderEntersKitchenQueueAfterAttendantConfirmation",
+                "onlyReadyOrdersCanBeServed",
+                "autoStockDeductionOnServe",
+                "completedOrdersLeaveKitchenQueue",
+                "kitchenStatusProgressesInOrder"
               ],
               "transactional": true,
               "steps": [
-                "Load existing MenuItem by input.menuItemId via ctx.mdm.entity.get({ mdmId: menuItemId }); fail if not found",
-                "Validate menuCategoryId is present and price is defined and > 0 (rule menuItemNeedsCategoryAndPrice); include rule id in validation error details when blocked",
-                "Verify target MenuCategory exists via ctx.mdm.entity.get({ mdmId: menuCategoryId }) and is usable; fail if missing",
-                "Validate status is 'active' or 'paused'; when status is 'paused', item becomes unavailable for new POS orders (rule onlyActiveMenuItemsCanBeOrdered); when status is 'active', item is available again",
-                "Resolve updatedAt from ctx.clock.now(); if status is 'paused', set pausedAt to ctx.clock.now() (keep or set pauseReason from input); if status is 'active', clear pausedAt and pauseReason",
-                "Persist via ctx.mdm.entity.update with menuItemId and fields: menuCategoryId, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, updatedAt",
-                "Return the updated MenuItem projection: menuItemId, menuCategoryId, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, updatedAt"
+                "Resolve updatedAt from ctx.clock.now() (systemDefault); do not accept it from the client",
+                "Validate input status is one of: confirmed | inPreparation | ready | served | cancelled; if cancelled, accept optional cancellationReason",
+                "Load Order by orderId via Order port; fail if not found",
+                "Apply kitchenStatusProgressesInOrder inline: allow only registered→confirmed, confirmed→inPreparation, inPreparation→ready, ready→served, and any non-terminal→cancelled; reject any other transition with rule id kitchenStatusProgressesInOrder",
+                "Apply onlyReadyOrdersCanBeServed inline: if target status is served and current status is not ready, reject with rule id onlyReadyOrdersCanBeServed",
+                "Apply orderEntersKitchenQueueAfterAttendantConfirmation: on transition to confirmed, set status=confirmed and confirmedAt=now (order becomes visible in active kitchen queue)",
+                "On transition to inPreparation set inPreparationAt=now; on ready set readyAt=now",
+                "On transition to served set servedAt=now; apply completedOrdersLeaveKitchenQueue so the order leaves the active kitchen queue and does not return",
+                "On transition to cancelled set cancelledAt=now and cancellationReason when provided; apply completedOrdersLeaveKitchenQueue so it leaves the active kitchen queue",
+                "Set order.updatedAt to the resolved now timestamp",
+                "When transitioning to served, apply autoStockDeductionOnServe inside the same transaction: read embedded OrderItems from the Order aggregate; collect distinct menuItemIds; resolve MenuItemIngredient rows for those menu items (recipe links); aggregate required qty = quantityPerPortion * OrderItem.quantity per stockItemId",
+                "Bulk-read StockItem MDM via ctx.mdm.collection.getMany({ mdmIds: stockItemIds }) (StockItem is mdmRef — never a port); for each aggregated consumption, reduce StockItem.currentBalance by the consumed qty and ctx.mdm.entity.update each StockItem",
+                "For each stock deduction build a StockConsumption audit event (new id from ctx.idGenerator, orderId, stockItemId, quantity, occurredAt=now, status='posted', createdAt=now) and append-only save via StockConsumption port — never update/delete",
+                "Save the mutated Order via Order port in the same ctx.data transaction wrapper as StockConsumption appends and after MDM balance updates",
+                "Return outputShape fields: orderId, status, confirmedAt, inPreparationAt, readyAt, servedAt, cancelledAt, cancellationReason, updatedAt"
               ],
               "outputShape": {
                 "kind": "object",
                 "fields": [
                   {
-                    "name": "menuItemId",
+                    "name": "orderId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "MenuItem.menuItemId"
-                  },
-                  {
-                    "name": "menuCategoryId",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "MenuItem.menuCategoryId"
-                  },
-                  {
-                    "name": "name",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "MenuItem.name"
-                  },
-                  {
-                    "name": "description",
-                    "type": "string",
-                    "required": false,
-                    "fieldRef": "MenuItem.description"
-                  },
-                  {
-                    "name": "price",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "MenuItem.price"
+                    "fieldRef": "Order.orderId"
                   },
                   {
                     "name": "status",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "MenuItem.status"
+                    "fieldRef": "Order.status"
                   },
                   {
-                    "name": "pausedAt",
+                    "name": "confirmedAt",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "MenuItem.pausedAt"
+                    "fieldRef": "Order.confirmedAt"
                   },
                   {
-                    "name": "pauseReason",
+                    "name": "inPreparationAt",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "MenuItem.pauseReason"
+                    "fieldRef": "Order.inPreparationAt"
                   },
                   {
-                    "name": "imageUrl",
+                    "name": "readyAt",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "MenuItem.imageUrl"
+                    "fieldRef": "Order.readyAt"
                   },
                   {
-                    "name": "displayOrder",
-                    "type": "number",
+                    "name": "servedAt",
+                    "type": "string",
                     "required": false,
-                    "fieldRef": "MenuItem.displayOrder"
+                    "fieldRef": "Order.servedAt"
                   },
                   {
-                    "name": "requiresStockLink",
-                    "type": "boolean",
-                    "required": true,
-                    "fieldRef": "MenuItem.requiresStockLink"
+                    "name": "cancelledAt",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "Order.cancelledAt"
+                  },
+                  {
+                    "name": "cancellationReason",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "Order.cancellationReason"
                   },
                   {
                     "name": "updatedAt",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "MenuItem.updatedAt"
+                    "fieldRef": "Order.updatedAt"
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "onlyActiveMenuItemsCanBeOrdered",
-            "menuItemNeedsCategoryAndPrice"
+            "orderEntersKitchenQueueAfterAttendantConfirmation",
+            "onlyReadyOrdersCanBeServed",
+            "autoStockDeductionOnServe",
+            "completedOrdersLeaveKitchenQueue",
+            "kitchenStatusProgressesInOrder"
           ],
           "mdmRefs": [
-            "MenuItem",
-            "MenuCategory"
+            "StockItem"
           ]
         },
         "questions": [],
         "trace": [
-          "MenuItem/MenuCategory are mdmRefs — no ports; mutate via ctx.mdm.entity.update",
-          "Public inputs = routeParam menuItemId + userInput writable fields; pausedAt/updatedAt from systemDefault/ctx.clock",
-          "output[] mirrors outputShape verbatim",
-          "Rules onlyActiveMenuItemsCanBeOrdered and menuItemNeedsCategoryAndPrice applied inline"
+          "updateOrderStatus: commandInput on Order; public inputs orderId+status+optional cancellationReason; updatedAt from ctx.clock",
+          "ports=Order+StockConsumption (eventWrite audit); StockItem via ctx.mdm; OrderItems embedded on Order",
+          "inline rules: kitchen progression, only ready→served, confirm enters queue, serve/cancel leave queue, auto stock deduction+StockConsumption on serve"
         ]
       }
     },
     "status": "completed",
-    "stepId": 24,
+    "stepId": 6,
     "interaction": null,
     "nextSteps": null
   }

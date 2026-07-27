@@ -28,7 +28,7 @@ export async function createStockItem(
 ): Promise<CreateStockItemOutput> {
   const name = (input.name ?? '').trim();
   if (!name) {
-    throw new AppError('VALIDATION_ERROR', 'name must be non-empty', 400, { field: 'name' });
+    throw new AppError('VALIDATION_ERROR', 'name must be non-empty', 400, { name: input.name });
   }
 
   if (!ALLOWED_UNITS.has(input.unit)) {
@@ -36,30 +36,39 @@ export async function createStockItem(
       'VALIDATION_ERROR',
       'unit must be one of: kg, liter, portion, unit',
       400,
-      { field: 'unit', value: input.unit },
+      { unit: input.unit },
     );
   }
 
-  if (input.currentBalance < 0) {
+  if (
+    typeof input.currentBalance !== 'number' ||
+    Number.isNaN(input.currentBalance) ||
+    input.currentBalance < 0
+  ) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'currentBalance must be >= 0',
+      'currentBalance must be a non-negative number',
       400,
-      { field: 'currentBalance', value: input.currentBalance },
+      { currentBalance: input.currentBalance },
     );
   }
 
-  if (input.minimumLevel < 0) {
+  if (
+    typeof input.minimumLevel !== 'number' ||
+    Number.isNaN(input.minimumLevel) ||
+    input.minimumLevel < 0
+  ) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'minimumLevel must be >= 0',
+      'minimumLevel must be a non-negative number',
       400,
-      { field: 'minimumLevel', value: input.minimumLevel },
+      { minimumLevel: input.minimumLevel },
     );
   }
 
-  // rule: lowStockMustBeVisible — persist currentBalance and minimumLevel so the item is
-  // eligible for low-stock visibility whenever currentBalance <= minimumLevel (no extra flag)
+  const description = input.description ?? null;
+
+  // StockItem is MDM-owned; no local repository port.
   const created = await ctx.mdm.entity.create({
     details: {
       subtype: 'Product',
@@ -71,12 +80,14 @@ export async function createStockItem(
         unit: input.unit,
         currentBalance: input.currentBalance,
         minimumLevel: input.minimumLevel,
-        description: input.description ?? null,
+        description,
       },
     },
   });
 
-  const cafeFlowDetails = (
+  // rule: lowStockMustBeVisible — item is persisted with currentBalance and minimumLevel so it is eligible for low-stock visibility when currentBalance <= minimumLevel
+
+  const moduleDetails = (
     created.details as unknown as {
       cafeFlow?: {
         unit?: string;
@@ -87,16 +98,20 @@ export async function createStockItem(
     }
   ).cafeFlow;
 
-  const description = cafeFlowDetails?.description ?? input.description ?? undefined;
-
-  return {
+  const output: CreateStockItemOutput = {
     stockItemId: created.mdmId,
     name: created.details.name,
-    unit: cafeFlowDetails?.unit ?? input.unit,
-    currentBalance: cafeFlowDetails?.currentBalance ?? input.currentBalance,
-    minimumLevel: cafeFlowDetails?.minimumLevel ?? input.minimumLevel,
-    ...(description !== undefined && description !== null ? { description } : {}),
+    unit: moduleDetails?.unit ?? input.unit,
+    currentBalance: moduleDetails?.currentBalance ?? input.currentBalance,
+    minimumLevel: moduleDetails?.minimumLevel ?? input.minimumLevel,
     createdAt: created.index.createdAt,
     updatedAt: created.index.updatedAt,
   };
+
+  const resolvedDescription = moduleDetails?.description ?? description;
+  if (resolvedDescription != null && resolvedDescription !== '') {
+    output.description = resolvedDescription;
+  }
+
+  return output;
 }

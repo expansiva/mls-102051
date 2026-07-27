@@ -107,14 +107,11 @@ export const updateStockItemUsecase = {
         "transactional": true,
         "steps": [
           "Resolve updatedAt from ctx.clock.now() (systemDefault); do not accept it from the client",
-          "Load existing StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); fail if not found",
-          "Validate name is non-empty",
-          "Validate unit is one of: kg, liter, portion, unit",
-          "Validate minimumLevel is >= 0",
-          "Apply lowStockMustBeVisible inline: after update, if currentBalance < new minimumLevel the item remains eligible for low-stock highlight/alerts (visibility is driven by comparing currentBalance to minimumLevel; do not hide or clear balance)",
-          "Do not modify currentBalance — cadastral update only",
-          "Persist via ctx.mdm.entity.update with name, unit, minimumLevel, description and updatedAt",
-          "Return stockItemId, name, unit, currentBalance (unchanged), minimumLevel, description, updatedAt"
+          "Load existing StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); if not found, fail with not-found",
+          "Validate name is non-empty; unit is one of kg|liter|portion|unit; minimumLevel is a finite number >= 0",
+          "Apply lowStockMustBeVisible inline: after update, when currentBalance < minimumLevel the item remains eligible for low-stock highlight in stock control and dashboard (no extra persistence flag; visibility is derived from balance vs minimumLevel). Do not mutate currentBalance",
+          "Update StockItem via ctx.mdm.entity.update with name, unit, minimumLevel, description and updatedAt; preserve currentBalance and createdAt",
+          "Return stockItemId, name, unit, currentBalance, minimumLevel, description, updatedAt"
         ],
         "outputShape": {
           "kind": "object",

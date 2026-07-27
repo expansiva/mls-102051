@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:40.945Z",
+  "savedAt": "2026-07-24T20:00:51.469Z",
   "agentName": "agentCbUsecase",
   "stepId": 19,
   "planning": null,
@@ -11,192 +11,169 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "recordBasicPayment",
+          "usecaseId": "openDailyShift",
           "ports": [
-            "Order",
-            "StockConsumption"
+            "DailyShift"
           ],
           "functions": [
             {
-              "functionName": "recordBasicPayment",
-              "inputTypeName": "RecordBasicPaymentInput",
-              "outputTypeName": "RecordBasicPaymentOutput",
+              "functionName": "openDailyShift",
+              "inputTypeName": "OpenDailyShiftInput",
+              "outputTypeName": "OpenDailyShiftOutput",
               "input": [
                 {
-                  "name": "orderId",
+                  "name": "shiftDate",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "Order",
-                  "fieldRef": "OrderPayment.orderId"
-                },
-                {
-                  "name": "totalAmount",
-                  "type": "number",
-                  "required": true,
-                  "fieldRef": "OrderPayment.totalAmount"
-                },
-                {
-                  "name": "paymentMethod",
-                  "type": "string",
-                  "required": true,
-                  "fieldRef": "OrderPayment.paymentMethod"
+                  "ofEntity": "DailyShift",
+                  "fieldRef": "DailyShift.shiftDate"
                 },
                 {
                   "name": "notes",
                   "type": "string",
                   "required": false,
-                  "fieldRef": "OrderPayment.notes"
+                  "ofEntity": "DailyShift",
+                  "fieldRef": "DailyShift.notes"
                 }
               ],
               "output": [
                 {
-                  "name": "orderPaymentId",
+                  "name": "dailyShiftId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OrderPayment"
+                  "ofEntity": "DailyShift"
                 },
                 {
-                  "name": "orderId",
+                  "name": "shiftDate",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OrderPayment"
-                },
-                {
-                  "name": "totalAmount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "OrderPayment"
-                },
-                {
-                  "name": "paymentMethod",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "OrderPayment"
+                  "ofEntity": "DailyShift"
                 },
                 {
                   "name": "status",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OrderPayment"
+                  "ofEntity": "DailyShift"
                 },
                 {
-                  "name": "paidAt",
+                  "name": "openedByUserId",
                   "type": "string",
-                  "required": false,
-                  "ofEntity": "OrderPayment"
+                  "required": true,
+                  "ofEntity": "DailyShift"
+                },
+                {
+                  "name": "openedAt",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "DailyShift"
                 },
                 {
                   "name": "notes",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "OrderPayment"
+                  "ofEntity": "DailyShift"
                 },
                 {
                   "name": "createdAt",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OrderPayment"
+                  "ofEntity": "DailyShift"
                 },
                 {
                   "name": "updatedAt",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OrderPayment"
+                  "ofEntity": "DailyShift"
                 }
               ],
               "ports": [
-                "Order",
-                "StockConsumption"
+                "DailyShift"
               ],
               "rulesApplied": [
-                "shiftClosingRecordsBasicTotalsAndPayments"
+                "ordersRequireOpenDailyShift"
               ],
               "transactional": true,
               "steps": [
-                "Resolve orderId from selectedEntity input; generate orderPaymentId via ctx.idGenerator and paidAt/createdAt/updatedAt via ctx.clock; set status to 'open' (systemDefault)",
-                "Validate paymentMethod is one of cash|pix|creditCard|debitCard|mixed; validate totalAmount > 0; on violation raise validation error with rule id shiftClosingRecordsBasicTotalsAndPayments",
-                "Begin transaction via ctx.data",
-                "Load parent Order by orderId through Order port (resolveRepository); fail if not found",
-                "Ensure one-to-one: reject if Order already has an embedded OrderPayment that is not voided (rule shiftClosingRecordsBasicTotalsAndPayments)",
-                "Create OrderPayment { orderPaymentId, orderId, totalAmount, paymentMethod, status: 'open', paidAt, notes, createdAt, updatedAt } and embed it on the Order aggregate payment collection",
-                "Save parent Order through Order port",
-                "Build persisted StockConsumption audit event for the payment recording on Order and append it through StockConsumption port inside the same transaction (append-only)",
-                "Commit transaction and return the created OrderPayment fields per outputShape"
+                "resolve openedByUserId from ctx.sessionContext.actorId (actorSession)",
+                "generate dailyShiftId via ctx.idGenerator and openedAt/createdAt/updatedAt via ctx.clock.now()",
+                "set status to 'open' (systemDefault)",
+                "load existing DailyShifts via DailyShift port and reject if any has status 'open' (ordersRequireOpenDailyShift) — include rule id in validation error details",
+                "build DailyShift aggregate with shiftDate, optional notes, openedByUserId, status open, timestamps",
+                "persist new DailyShift through DailyShift port inside ctx.data transaction",
+                "return dailyShiftId, shiftDate, status, openedByUserId, openedAt, notes, createdAt, updatedAt"
               ],
               "outputShape": {
                 "kind": "object",
                 "fields": [
                   {
-                    "name": "orderPaymentId",
+                    "name": "dailyShiftId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OrderPayment.orderPaymentId"
+                    "fieldRef": "DailyShift.dailyShiftId"
                   },
                   {
-                    "name": "orderId",
+                    "name": "shiftDate",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OrderPayment.orderId"
-                  },
-                  {
-                    "name": "totalAmount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "OrderPayment.totalAmount"
-                  },
-                  {
-                    "name": "paymentMethod",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "OrderPayment.paymentMethod"
+                    "fieldRef": "DailyShift.shiftDate"
                   },
                   {
                     "name": "status",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OrderPayment.status"
+                    "fieldRef": "DailyShift.status"
                   },
                   {
-                    "name": "paidAt",
+                    "name": "openedByUserId",
                     "type": "string",
-                    "required": false,
-                    "fieldRef": "OrderPayment.paidAt"
+                    "required": true,
+                    "fieldRef": "DailyShift.openedByUserId"
+                  },
+                  {
+                    "name": "openedAt",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "DailyShift.openedAt"
                   },
                   {
                     "name": "notes",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "OrderPayment.notes"
+                    "fieldRef": "DailyShift.notes"
                   },
                   {
                     "name": "createdAt",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OrderPayment.createdAt"
+                    "fieldRef": "DailyShift.createdAt"
                   },
                   {
                     "name": "updatedAt",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OrderPayment.updatedAt"
+                    "fieldRef": "DailyShift.updatedAt"
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "shiftClosingRecordsBasicTotalsAndPayments"
+            "ordersRequireOpenDailyShift"
           ],
           "mdmRefs": []
         },
         "questions": [],
         "trace": [
-          "recordBasicPayment: child OrderPayment via parent Order port; public inputs orderId/totalAmount/paymentMethod/notes; systemDefaults for id/status/timestamps; emit StockConsumption audit in-tx"
+          "openDailyShift: commandInput create on DailyShift",
+          "public inputs: shiftDate, notes only",
+          "context: dailyShiftId/status/timestamps systemDefault; openedByUserId actorSession",
+          "rule ordersRequireOpenDailyShift inline: block when an open DailyShift already exists",
+          "outputShape pinned verbatim"
         ]
       }
     },
     "status": "completed",
-    "stepId": 6,
+    "stepId": 24,
     "interaction": null,
     "nextSteps": null
   }

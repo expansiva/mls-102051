@@ -152,12 +152,12 @@ export const createMenuItemUsecase = {
         ],
         "transactional": true,
         "steps": [
-          "Generate menuItemId via ctx.idGenerator.generate() and createdAt/updatedAt via ctx.clock.now()",
-          "Apply menuItemNeedsCategoryAndPrice inline: require non-empty menuCategoryId and price > 0; on failure raise validation error with rule id menuItemNeedsCategoryAndPrice",
-          "Load MenuCategory by menuCategoryId via ctx.mdm.entity.get({ mdmId: menuCategoryId }); if missing raise validation error that category must reference an existing MenuCategory",
-          "Resolve status: if omitted default to 'active'; if provided must be 'active' or 'paused' (onlyActiveMenuItemsCanBeOrdered — active items are orderable; paused are not available for new POS launches)",
-          "Create MenuItem via ctx.mdm.entity.create with menuItemId, menuCategoryId, name, description, price, status, imageUrl, displayOrder, requiresStockLink, createdAt, updatedAt (module fields under details when applicable)",
-          "Return the created MenuItem projection: menuItemId, menuCategoryId, name, description, price, status, imageUrl, displayOrder, requiresStockLink, createdAt, updatedAt"
+          "Generate menuItemId via ctx.idGenerator and createdAt/updatedAt via ctx.clock.now()",
+          "Apply menuItemNeedsCategoryAndPrice: reject when menuCategoryId is missing/blank or price is missing/not a finite number > 0; include rule id in validation error details",
+          "Resolve status: if omitted, default to 'active'; if provided, allow only 'active' or 'paused' (onlyActiveMenuItemsCanBeOrdered — paused items are not orderable at POS)",
+          "Validate menuCategoryId references an existing MenuCategory via ctx.mdm.entity.get({ mdmId: menuCategoryId }); reject if not found",
+          "Persist the new MenuItem via ctx.mdm.entity.create with menuItemId, menuCategoryId, name, description, price, status, imageUrl, displayOrder, requiresStockLink, createdAt, updatedAt (module-specific fields under details when applicable)",
+          "Return the created MenuItem projection matching outputShape"
         ],
         "outputShape": {
           "kind": "object",

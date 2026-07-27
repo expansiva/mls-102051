@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:38.586Z",
+  "savedAt": "2026-07-24T20:01:01.108Z",
   "agentName": "agentCbUsecase",
   "stepId": 14,
   "planning": null,
@@ -107,14 +107,13 @@
               "transactional": false,
               "steps": [
                 "Resolve summaryDate and periodEnd from ctx.clock.now (system date); compute periodStart as approximately 7 days before summaryDate",
-                "Load OperationalDashboard by input operationalDashboardId via OperationalDashboard port; fail validation if not found",
-                "Load the DailyShift referenced by dashboard.dailyShiftId via DailyShift port",
-                "List DailyShifts whose shiftDate falls within [periodStart, periodEnd] via DailyShift port to gather the last-7-days operational window",
-                "For those shifts, list Orders via Order port (OrderItems are embedded on each Order); aggregate only existing sales metrics (totals, counts, top items, statuses) — never invent external data (rule aiSummaryUsesExistingOperationalData)",
-                "Also read dashboard snapshot fields (todaySalesTotal, todayOrdersCount, todayItemsSold, topMenuItem*, low/out-of-stock counts and alerts) as the day-current operational source",
-                "Lookup existing AiSalesSummary by operationalDashboardId (and summaryDate) via AiSalesSummary port; if found with non-empty summaryText, return it mapped to the output shape",
-                "Otherwise build a narrative summaryText from the aggregated OperationalDashboard + DailyShift + Order/OrderItem data for the period; set modelId/promptTokens/completionTokens/generatedAt when the assistant path is used",
-                "Return aiSalesSummaryId, operationalDashboardId, summaryDate, periodStart, periodEnd, summaryText, modelId, promptTokens, completionTokens, generatedAt"
+                "Load OperationalDashboard by input.operationalDashboardId via OperationalDashboard port; fail if not found",
+                "Load the DailyShift referenced by dashboard.dailyShiftId via DailyShift port for shift-level sales context",
+                "List Orders (and embedded OrderItems) via Order port scoped to the dashboard dailyShift and/or shifts whose shiftDate falls within [periodStart, periodEnd]",
+                "Apply aiSummaryUsesExistingOperationalData inline: build the narrative exclusively from already-persisted OperationalDashboard aggregates (todaySalesTotal, todayOrdersCount, todayItemsSold, top sellers, stock alerts), DailyShift totals, and Order/OrderItem lines — never invent external metrics",
+                "Lookup existing AiSalesSummary by operationalDashboardId (and summaryDate when present) via AiSalesSummary port; if found with non-empty summaryText, return it mapped to outputShape",
+                "Otherwise compose summaryText from the collected operational facts (sales totals, order counts, items sold, top items, low/out-of-stock counts) for the period; set operationalDashboardId from the loaded dashboard, periodStart/periodEnd/summaryDate from resolved dates, and optional model/token/generatedAt metadata when available",
+                "Return the AiSalesSummary projection matching outputShape (aiSalesSummaryId, operationalDashboardId, summaryDate, periodStart, periodEnd, summaryText, modelId, promptTokens, completionTokens, generatedAt)"
               ],
               "outputShape": {
                 "kind": "object",
@@ -191,8 +190,8 @@
         "questions": [],
         "trace": [
           "lookup view generateAiSalesSummary: public input operationalDashboardId only; dates from systemDefault via ctx.clock",
-          "ports exactly as provided; OrderItem via Order aggregate; rule aiSummaryUsesExistingOperationalData applied inline",
-          "output[] pinned to outputShape top-level fields"
+          "ports AiSalesSummary+OperationalDashboard+DailyShift+Order; OrderItem via Order aggregate embed",
+          "output pinned to outputShape; rule aiSummaryUsesExistingOperationalData applied inline; no writes/eventWrites"
         ]
       }
     },

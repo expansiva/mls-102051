@@ -6,284 +6,259 @@ import type { IStockConsumptionRepository } from '/_102051_/l1/cafeFlow/layer_2_
 import type { Order, OrderStatus } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
 import { canTransitionOrder } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
 import type { StockConsumption } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.js';
-
 export interface UpdateOrderStatusInput {
-  orderId: string;
-  status: string;
-  cancellationReason?: string;
+orderId: string;
+status: string;
+cancellationReason?: string;
 }
-
 export interface UpdateOrderStatusOutput {
-  orderId: string;
-  status: string;
-  confirmedAt?: string;
-  inPreparationAt?: string;
-  readyAt?: string;
-  servedAt?: string;
-  cancelledAt?: string;
-  cancellationReason?: string;
-  updatedAt: string;
+orderId: string;
+status: string;
+confirmedAt?: string | null;
+inPreparationAt?: string | null;
+readyAt?: string | null;
+servedAt?: string | null;
+cancelledAt?: string | null;
+cancellationReason?: string | null;
+updatedAt: string;
 }
-
 const ALLOWED_TARGET_STATUSES: ReadonlySet<string> = new Set([
-  'confirmed',
-  'inPreparation',
-  'ready',
-  'served',
-  'cancelled',
+'confirmed',
+'inPreparation',
+'ready',
+'served',
+'cancelled',
 ]);
-
-interface MenuItemIngredientLink {
-  stockItemId: string;
-  quantityPerPortion: number;
+interface RecipeIngredient {
+stockItemId: string;
+quantityPerPortion: number;
 }
-
-function asRecord(value: unknown): Record<string, unknown> {
-  if (value && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return {};
+interface MdmEntityRef {
+mdmId: string;
+version: number;
+details: unknown;
 }
-
-function readIngredientsFromMenuDetails(details: unknown): MenuItemIngredientLink[] {
-  const root = asRecord(details);
-  const cafeFlow = asRecord(root.cafeFlow);
-  const rawIngredients = Array.isArray(cafeFlow.ingredients)
-    ? cafeFlow.ingredients
-    : Array.isArray(root.ingredients)
-      ? root.ingredients
-      : [];
-  const links: MenuItemIngredientLink[] = [];
-  for (const entry of rawIngredients) {
-    const row = asRecord(entry);
-    const stockItemId = typeof row.stockItemId === 'string' ? row.stockItemId : null;
-    const quantityPerPortion = Number(row.quantityPerPortion ?? row.quantity ?? NaN);
-    if (!stockItemId || !Number.isFinite(quantityPerPortion)) {
-      continue;
-    }
-    links.push({ stockItemId, quantityPerPortion });
-  }
-  return links;
+function extractIngredients(details: unknown): RecipeIngredient[] {
+const root = (details ?? {}) as Record<string, unknown>;
+const moduleDetails = (root.cafeFlow ?? root) as Record<string, unknown>;
+const raw = moduleDetails.ingredients ?? moduleDetails.recipe ?? root.ingredients;
+if (!Array.isArray(raw)) {
+return [];
 }
-
+const result: RecipeIngredient[] = [];
+for (const entry of raw) {
+const row = (entry ?? {}) as Record<string, unknown>;
+const stockItemId = row.stockItemId;
+const quantityPerPortion = row.quantityPerPortion;
+if (typeof stockItemId !== 'string' || stockItemId.length === 0) {
+continue;
+}
+const qty = typeof quantityPerPortion === 'number' ? quantityPerPortion : Number(quantityPerPortion);
+if (!Number.isFinite(qty) || qty < 0) {
+continue;
+}
+result.push({ stockItemId, quantityPerPortion: qty });
+}
+return result;
+}
 function readCurrentBalance(details: unknown): number {
-  const root = asRecord(details);
-  const cafeFlow = asRecord(root.cafeFlow);
-  const raw = cafeFlow.currentBalance ?? root.currentBalance ?? 0;
-  const balance = Number(raw);
-  return Number.isFinite(balance) ? balance : 0;
+const root = (details ?? {}) as Record<string, unknown>;
+const moduleDetails = (root.cafeFlow ?? {}) as Record<string, unknown>;
+const raw = moduleDetails.currentBalance ?? root.currentBalance ?? 0;
+const value = typeof raw === 'number' ? raw : Number(raw);
+return Number.isFinite(value) ? value : 0;
 }
-
+function assertOrderStatusTransition(from: OrderStatus, to: OrderStatus): void {
+if (to === 'served' && from !== 'ready') {
+throw new AppError(
+'VALIDATION_ERROR',
+'onlyReadyOrdersCanBeServed: only orders with status ready can transition to served.',
+400,
+{ ruleId: 'onlyReadyOrdersCanBeServed', from, to },
+);
+}
+if (to === 'confirmed' && from !== 'registered') {
+throw new AppError(
+'VALIDATION_ERROR',
+'orderEntersKitchenQueueAfterAttendantConfirmation: confirmed is allowed only from registered (attendant confirmation).',
+400,
+{ ruleId: 'orderEntersKitchenQueueAfterAttendantConfirmation', from, to },
+);
+}
+const kitchenForward: Partial<Record<OrderStatus, OrderStatus>> = {
+registered: 'confirmed',
+confirmed: 'inPreparation',
+inPreparation: 'ready',
+};
+if (to === 'confirmed' || to === 'inPreparation' || to === 'ready') {
+if (kitchenForward[from] !== to) {
+throw new AppError(
+'VALIDATION_ERROR',
+'kitchenStatusProgressesInOrder: kitchen status must progress registered→confirmed→inPreparation→ready.',
+400,
+{ ruleId: 'kitchenStatusProgressesInOrder', from, to },
+);
+}
+}
+if (!canTransitionOrder(from, to)) {
+throw new AppError(
+'VALIDATION_ERROR',
+`Invalid order status transition from ${from} to ${to}.`,
+400,
+{ from, to },
+);
+}
+}
+async function applyAutoStockDeductionOnServe(
+ctx: RequestContext,
+order: Order,
+now: string,
+stockConsumptions: IStockConsumptionRepository,
+): Promise<void> {
+// rule: autoStockDeductionOnServe
+const qtyByMenuItemId = new Map<string, number>();
+for (const item of order.items) {
+if (String(item.status) === 'cancelled') {
+continue;
+}
+if (typeof item.menuItemId !== 'string' || item.menuItemId.length === 0) {
+continue;
+}
+qtyByMenuItemId.set(item.menuItemId, (qtyByMenuItemId.get(item.menuItemId) ?? 0) + item.quantity);
+}
+const menuItemIds = [...qtyByMenuItemId.keys()];
+if (menuItemIds.length === 0) {
+return;
+}
+const menuEntities = (await ctx.mdm.collection.getMany({ mdmIds: menuItemIds })) as unknown as MdmEntityRef[];
+const requiredByStockItemId = new Map<string, number>();
+for (const entity of menuEntities) {
+const orderQty = qtyByMenuItemId.get(entity.mdmId) ?? 0;
+if (orderQty <= 0) {
+continue;
+}
+for (const ingredient of extractIngredients(entity.details)) {
+const need = ingredient.quantityPerPortion * orderQty;
+requiredByStockItemId.set(
+ingredient.stockItemId,
+(requiredByStockItemId.get(ingredient.stockItemId) ?? 0) + need,
+);
+}
+}
+const stockItemIds = [...requiredByStockItemId.keys()];
+if (stockItemIds.length === 0) {
+return;
+}
+const stockEntities = (await ctx.mdm.collection.getMany({ mdmIds: stockItemIds })) as unknown as MdmEntityRef[];
+const stockById = new Map(stockEntities.map((entity) => [entity.mdmId, entity]));
+for (const stockItemId of stockItemIds) {
+const consumedQty = requiredByStockItemId.get(stockItemId) ?? 0;
+if (consumedQty <= 0) {
+continue;
+}
+const stock = stockById.get(stockItemId);
+if (!stock) {
+throw new AppError('NOT_FOUND', `MDM StockItem not found: ${stockItemId}`, 404, {
+mdmId: stockItemId,
+ruleId: 'autoStockDeductionOnServe',
+});
+}
+const detailsRoot = stock.details as unknown as Record<string, unknown>;
+const existingCafeFlow = {
+...((detailsRoot.cafeFlow as Record<string, unknown> | undefined) ?? {}),
+};
+const currentBalance = readCurrentBalance(stock.details);
+const nextBalance = currentBalance - consumedQty;
+const cafeFlow = {
+...existingCafeFlow,
+currentBalance: nextBalance,
+};
+await ctx.mdm.entity.update({
+mdmId: stock.mdmId,
+expectedVersion: stock.version,
+patch: { cafeFlow } as never,
+});
+const consumption: StockConsumption = {
+stockConsumptionId: ctx.idGenerator.newId(),
+orderId: order.orderId,
+stockItemId,
+quantity: consumedQty,
+occurredAt: now,
+status: 'posted',
+voidedAt: null,
+voidReason: null,
+createdAt: now,
+};
+await stockConsumptions.append(consumption);
+}
+}
 export async function updateOrderStatus(
-  ctx: RequestContext,
-  input: UpdateOrderStatusInput,
+ctx: RequestContext,
+input: UpdateOrderStatusInput,
 ): Promise<UpdateOrderStatusOutput> {
-  const orders = resolveRepository<IOrderRepository>(ctx, 'Order');
-  const stockConsumptions = resolveRepository<IStockConsumptionRepository>(ctx, 'StockConsumption');
-
-  const now = ctx.clock.nowIso();
-
-  if (!ALLOWED_TARGET_STATUSES.has(input.status)) {
-    throw new AppError(
-      'VALIDATION_ERROR',
-      'status must be one of: confirmed | inPreparation | ready | served | cancelled',
-      400,
-      { status: input.status },
-    );
-  }
-
-  const targetStatus = input.status as OrderStatus;
-
-  const existing = await orders.getById(input.orderId);
-  if (!existing) {
-    throw new AppError('NOT_FOUND', `Order not found: ${input.orderId}`, 404, {
-      orderId: input.orderId,
-    });
-  }
-
-  // rule: kitchenStatusProgressesInOrder
-  if (!canTransitionOrder(existing.status, targetStatus)) {
-    throw new AppError(
-      'VALIDATION_ERROR',
-      `kitchenStatusProgressesInOrder: cannot transition from '${existing.status}' to '${targetStatus}'`,
-      400,
-      {
-        ruleId: 'kitchenStatusProgressesInOrder',
-        from: existing.status,
-        to: targetStatus,
-      },
-    );
-  }
-
-  // rule: onlyReadyOrdersCanBeServed
-  if (targetStatus === 'served' && existing.status !== 'ready') {
-    throw new AppError(
-      'VALIDATION_ERROR',
-      'onlyReadyOrdersCanBeServed: only orders with status ready can be served',
-      400,
-      {
-        ruleId: 'onlyReadyOrdersCanBeServed',
-        from: existing.status,
-        to: targetStatus,
-      },
-    );
-  }
-
-  if (targetStatus === 'cancelled') {
-    const reason = input.cancellationReason?.trim() ?? '';
-    if (!reason) {
-      throw new AppError(
-        'VALIDATION_ERROR',
-        'cancellationReason is required when cancelling an order',
-        400,
-        { orderId: input.orderId },
-      );
-    }
-  }
-
-  const order: Order = {
-    ...existing,
-    items: existing.items.map((item) => ({ ...item })),
-    payment: existing.payment ? { ...existing.payment } : null,
-    status: targetStatus,
-    updatedAt: now,
-  };
-
-  if (targetStatus === 'confirmed') {
-    order.confirmedAt = now;
-    // rule: orderEntersKitchenQueueAfterAttendantConfirmation
-  } else if (targetStatus === 'inPreparation') {
-    order.inPreparationAt = now;
-  } else if (targetStatus === 'ready') {
-    order.readyAt = now;
-  } else if (targetStatus === 'served') {
-    order.servedAt = now;
-    // rule: completedOrdersLeaveKitchenQueue
-  } else if (targetStatus === 'cancelled') {
-    order.cancelledAt = now;
-    order.cancellationReason = input.cancellationReason?.trim() ?? null;
-    // rule: completedOrdersLeaveKitchenQueue
-  }
-
-  await ctx.data.runInTransaction(async (tx) => {
-    const txCtx: RequestContext = { ...ctx, data: tx };
-    const txOrders = resolveRepository<IOrderRepository>(txCtx, 'Order');
-    const txStockConsumptions = resolveRepository<IStockConsumptionRepository>(
-      txCtx,
-      'StockConsumption',
-    );
-
-    // rule: autoStockDeductionOnServe
-    if (targetStatus === 'served') {
-      const qtyByMenuItemId = new Map<string, number>();
-      for (const item of order.items) {
-        if (item.status === 'cancelled') {
-          continue;
-        }
-        const prev = qtyByMenuItemId.get(item.menuItemId) ?? 0;
-        qtyByMenuItemId.set(item.menuItemId, prev + item.quantity);
-      }
-
-      const menuItemIds = [...qtyByMenuItemId.keys()];
-      const menuEntities =
-        menuItemIds.length > 0
-          ? await txCtx.mdm.collection.getMany({ mdmIds: menuItemIds })
-          : [];
-
-      const requiredByStockItemId = new Map<string, number>();
-      for (const menuEntity of menuEntities) {
-        const orderQty = qtyByMenuItemId.get(menuEntity.mdmId) ?? 0;
-        if (orderQty <= 0) {
-          continue;
-        }
-        const ingredients = readIngredientsFromMenuDetails(menuEntity.details);
-        for (const link of ingredients) {
-          const need = link.quantityPerPortion * orderQty;
-          const prev = requiredByStockItemId.get(link.stockItemId) ?? 0;
-          requiredByStockItemId.set(link.stockItemId, prev + need);
-        }
-      }
-
-      const stockItemIds = [...requiredByStockItemId.keys()];
-      if (stockItemIds.length > 0) {
-        const stockEntities = await txCtx.mdm.collection.getMany({ mdmIds: stockItemIds });
-        const stockById = new Map(stockEntities.map((entity) => [entity.mdmId, entity]));
-
-        for (const stockItemId of stockItemIds) {
-          const requiredQty = requiredByStockItemId.get(stockItemId) ?? 0;
-          if (requiredQty <= 0) {
-            continue;
-          }
-
-          const stockEntity = stockById.get(stockItemId);
-          if (!stockEntity) {
-            throw new AppError('NOT_FOUND', `MDM record not found: ${stockItemId}`, 404, {
-              mdmId: stockItemId,
-              ruleId: 'autoStockDeductionOnServe',
-            });
-          }
-
-          const detailsRoot = asRecord(stockEntity.details);
-          const cafeFlow = asRecord(detailsRoot.cafeFlow);
-          const currentBalance = readCurrentBalance(stockEntity.details);
-          const nextBalance = currentBalance - requiredQty;
-
-          await txCtx.mdm.entity.update({
-            mdmId: stockEntity.mdmId,
-            expectedVersion: stockEntity.version,
-            patch: {
-              cafeFlow: {
-                ...cafeFlow,
-                currentBalance: nextBalance,
-              },
-            } as unknown as Parameters<typeof txCtx.mdm.entity.update>[0]['patch'],
-          });
-
-          const consumption: StockConsumption = {
-            stockConsumptionId: txCtx.idGenerator.newId(),
-            orderId: order.orderId,
-            stockItemId,
-            quantity: requiredQty,
-            occurredAt: now,
-            status: 'posted',
-            voidedAt: null,
-            voidReason: null,
-            createdAt: now,
-          };
-          await txStockConsumptions.append(consumption);
-        }
-      }
-    }
-
-    await txOrders.save(order);
-  });
-
-  // silence unused outer resolves when transaction re-binds adapters
-  void orders;
-  void stockConsumptions;
-
-  const output: UpdateOrderStatusOutput = {
-    orderId: order.orderId,
-    status: order.status,
-    updatedAt: order.updatedAt,
-  };
-  if (order.confirmedAt != null) {
-    output.confirmedAt = order.confirmedAt;
-  }
-  if (order.inPreparationAt != null) {
-    output.inPreparationAt = order.inPreparationAt;
-  }
-  if (order.readyAt != null) {
-    output.readyAt = order.readyAt;
-  }
-  if (order.servedAt != null) {
-    output.servedAt = order.servedAt;
-  }
-  if (order.cancelledAt != null) {
-    output.cancelledAt = order.cancelledAt;
-  }
-  if (order.cancellationReason != null) {
-    output.cancellationReason = order.cancellationReason;
-  }
-  return output;
+const orders = resolveRepository<IOrderRepository>(ctx, 'Order');
+const stockConsumptions = resolveRepository<IStockConsumptionRepository>(ctx, 'StockConsumption');
+const now = ctx.clock.nowIso();
+const existing = await orders.getById(input.orderId);
+if (!existing) {
+throw new AppError('NOT_FOUND', `Order not found: ${input.orderId}`, 404, {
+orderId: input.orderId,
+});
+}
+if (!ALLOWED_TARGET_STATUSES.has(input.status)) {
+throw new AppError(
+'VALIDATION_ERROR',
+`Invalid status "${input.status}". Allowed: confirmed | inPreparation | ready | served | cancelled.`,
+400,
+{ status: input.status },
+);
+}
+const targetStatus = input.status as OrderStatus;
+assertOrderStatusTransition(existing.status, targetStatus);
+const order: Order = {
+...existing,
+items: existing.items.map((item) => ({ ...item })),
+payment: existing.payment ? { ...existing.payment } : null,
+};
+if (targetStatus === 'confirmed') {
+// rule: orderEntersKitchenQueueAfterAttendantConfirmation
+order.status = 'confirmed';
+order.confirmedAt = now;
+} else if (targetStatus === 'inPreparation') {
+// rule: kitchenStatusProgressesInOrder
+order.status = 'inPreparation';
+order.inPreparationAt = now;
+} else if (targetStatus === 'ready') {
+// rule: kitchenStatusProgressesInOrder
+order.status = 'ready';
+order.readyAt = now;
+} else if (targetStatus === 'served') {
+// rule: onlyReadyOrdersCanBeServed
+// rule: completedOrdersLeaveKitchenQueue
+order.status = 'served';
+order.servedAt = now;
+} else if (targetStatus === 'cancelled') {
+// rule: completedOrdersLeaveKitchenQueue
+order.status = 'cancelled';
+order.cancelledAt = now;
+order.cancellationReason = input.cancellationReason ?? order.cancellationReason ?? null;
+}
+order.updatedAt = now;
+await ctx.data.runInTransaction(async () => {
+if (targetStatus === 'served') {
+await applyAutoStockDeductionOnServe(ctx, order, now, stockConsumptions);
+}
+await orders.save(order);
+});
+return {
+orderId: order.orderId,
+status: order.status,
+confirmedAt: order.confirmedAt,
+inPreparationAt: order.inPreparationAt,
+readyAt: order.readyAt,
+servedAt: order.servedAt,
+cancelledAt: order.cancelledAt,
+cancellationReason: order.cancellationReason,
+updatedAt: order.updatedAt,
+};
 }

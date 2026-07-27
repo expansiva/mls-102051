@@ -164,15 +164,14 @@ export const createOrderUsecase = {
         ],
         "transactional": true,
         "steps": [
-          "Resolve the single open DailyShift via DailyShift port (list/find by status 'open'); if none found, fail validation with rule ordersRequireOpenDailyShift — never accept dailyShiftId from client",
-          "Validate orderType is 'table' or 'takeout'; when orderType is 'table', require tableNumber filled (rule orderRequiresTableOrTakeout); reject empty items array",
-          "Generate orderId via ctx.idGenerator.uuid(); set registeredAt and confirmedAt via ctx.clock.now()",
-          "Collect unique menuItemIds from input items; bulk-load MenuItem MDM via ctx.mdm.collection.getMany({ mdmIds }) — never get inside a loop",
-          "For each input line: ensure MenuItem exists and is active; capture menuItemName and unitPrice from MenuItem at launch time; generate orderItemId; compute subtotal = unitPrice * quantity; set item status to 'sentToKitchen' and sentToKitchenAt = now (rules orderTotalFromPriceAtLaunchTime, orderItemsArePrepReference)",
-          "Compute order.totalAmount as sum of item subtotals (rule orderTotalFromPriceAtLaunchTime)",
-          "Inside ctx.data transaction: build Order aggregate with dailyShiftId from open shift, status 'confirmed', confirmedAt set, embedded OrderItems collection (rule orderEntersKitchenQueueAfterAttendantConfirmation); save via Order port",
-          "For each OrderItem, append a StockConsumption audit event through StockConsumption port inside the same transaction (persisted eventWrite)",
-          "Return the created order projection matching outputShape including items with captured prices and names"
+          "Resolve the single open DailyShift via DailyShift port (status=open); if none, fail with ordersRequireOpenDailyShift",
+          "Validate orderType is table or takeout; when table, require tableNumber (orderRequiresTableOrTakeout)",
+          "Require non-empty items[]; collect menuItemIds and bulk-load MenuItem via ctx.mdm.collection.getMany",
+          "For each line, capture menuItemName and unitPrice from MenuItem at launch time; compute subtotal=unitPrice*quantity and totalAmount as sum (orderTotalFromPriceAtLaunchTime); items become prep reference (orderItemsArePrepReference)",
+          "Generate orderId and each orderItemId via ctx.idGenerator; set registeredAt and confirmedAt via ctx.clock.now()",
+          "Inside ctx.data transaction: build Order with status confirmed, embedded OrderItems with status sentToKitchen, dailyShiftId from open shift; save via Order port",
+          "Append StockConsumption audit events for each item through StockConsumption port in the same transaction",
+          "Return order fields plus items per outputShape (orderEntersKitchenQueueAfterAttendantConfirmation)"
         ],
         "outputShape": {
           "kind": "object",

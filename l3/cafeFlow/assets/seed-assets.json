@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "cafeFlow",
+  "assets": [
+    {
+      "id": "MenuItem/brownie",
+      "path": "seed/MenuItem/brownie.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/brownie.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:33141650",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/butter-croissant",
+      "path": "seed/MenuItem/butter-croissant.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/butter-croissant.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:79ca812e",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/caesarSalad",
+      "path": "seed/MenuItem/caesarSalad.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/caesarSalad.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:b8195725",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/cappuccino",
+      "path": "seed/MenuItem/cappuccino.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/cappuccino.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:62c5a6f1",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/cheese-croissant",
+      "path": "seed/MenuItem/cheese-croissant.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/cheese-croissant.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:9fd1dc91",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/cheeseSandwich",
+      "path": "seed/MenuItem/cheeseSandwich.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/cheeseSandwich.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:605f5bcf",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/espresso",
+      "path": "seed/MenuItem/espresso.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/espresso.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:a4dd53dc",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/ham-sandwich",
+      "path": "seed/MenuItem/ham-sandwich.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/ham-sandwich.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:45ac3646",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/iced-latte",
+      "path": "seed/MenuItem/iced-latte.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/iced-latte.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:905ff6ea",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/seasonal-latte",
+      "path": "seed/MenuItem/seasonal-latte.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/seasonal-latte.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:62daa8c3",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/seasonalLatte",
+      "path": "seed/MenuItem/seasonalLatte.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/seasonalLatte.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:64990880",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/seasonalSpecial",
+      "path": "seed/MenuItem/seasonalSpecial.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/seasonalSpecial.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:9140fd31",
+      "status": "ready"
+    },
+    {
+      "id": "MenuItem/sourdoughSandwich",
+      "path": "seed/MenuItem/sourdoughSandwich.webp",
+      "publicUrl": "/cafeFlow/assets/seed/MenuItem/sourdoughSandwich.webp",
+      "source": "imagem",
+      "promptHash": "fnv1a32:43077813",
+      "status": "ready"
+    }
+  ]
+}

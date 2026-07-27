@@ -1,0 +1,65 @@
+{
+  "savedAt": "2026-07-26T20:40:23.559Z",
+  "planId": "materialize-phase-shared-verify-v2-v3-v4",
+  "attempt": 4,
+  "brokenCount": 5,
+  "broken": [
+    {
+      "planId": "materialize-dashboardworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2792 - Cannot find module '/_102029_/l2/lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2339 - Property 'connectedCallback' does not exist on type 'CollabLitElement'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2339 - Property 'disconnectedCallback' does not exist on type 'CollabLitElement'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2339 - Property 'requestUpdate' does not exist on type 'CafeFlowDashboardWorkspaceBase'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2339 - Property 'requestUpdate' does not exist on type 'CafeFlowDashboardWorkspaceBase'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2339 - Property 'requestUpdate' does not exist on type 'CafeFlowDashboardWorkspaceBase'.",
+        "file://server/_102051_/l2/cafeFlow/web/shared/dashboardWorkspace.ts - TS2339 - Property 'requestUpdate' does not exist on type 'CafeFlowDashboardWorkspaceBase'."
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-kitchenworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/kitchenWorkspace.ts - TS2792 - Cannot find module '/_102029_/node_modules/lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-menumanagement-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/menuManagement.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/menuManagement.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/menuManagement.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-posworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/posWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/posWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/posWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": []
+    },
+    {
+      "planId": "materialize-shiftworkspace-l2-shared",
+      "defPath": "_102051_/l2/cafeFlow/web/shared/shiftWorkspace.defs.ts",
+      "outputPath": "_102051_/l2/cafeFlow/web/shared/shiftWorkspace.ts",
+      "typecheck": "passed",
+      "errors": [
+        "file://server/_102051_/l2/cafeFlow/web/shared/shiftWorkspace.ts - TS2792 - Cannot find module 'lit/decorators.js'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?"
+      ],
+      "warnings": []
+    }
+  ],
+  "agent": "agentCfeMaterializePhase"
+}

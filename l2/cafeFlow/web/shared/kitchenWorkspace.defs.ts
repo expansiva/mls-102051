@@ -87,7 +87,7 @@ export const definition = {
   },
   "layoutRef": {
     "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.defs.ts",
-    "layoutId": "cfe-20260723170708.1000"
+    "layoutId": "cfe-20260727184832.1000"
   },
   "states": [
     {
@@ -353,7 +353,7 @@ export const definition = {
     "intent.kitchenWorkspace.changeOrderStatus.form.field.status.label": "Status",
     "intent.kitchenWorkspace.changeOrderStatus.form.field.cancellationReason.label": "Cancellation Reason",
     "intent.kitchenWorkspace.changeOrderStatus.form.field.updatedAt.label": "Updated At",
-    "section.kitchenWorkspace.kitchen-queue-section.title": "Fila da Cozinha"
+    "section.kitchenWorkspace.sec-kitchen-queue.title": "Fila da Cozinha"
   },
   "automation": {
     "statePrefix": "ui.kitchenWorkspace",

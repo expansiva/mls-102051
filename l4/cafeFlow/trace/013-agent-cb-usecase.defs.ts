@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:39.806Z",
+  "savedAt": "2026-07-24T20:01:06.214Z",
   "agentName": "agentCbUsecase",
   "stepId": 13,
   "planning": null,
@@ -11,229 +11,273 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "trackOrders",
-          "ports": [
-            "Order",
-            "DailyShift",
-            "StockConsumption"
-          ],
+          "usecaseId": "updateMenuItem",
+          "ports": [],
           "functions": [
             {
-              "functionName": "trackOrders",
-              "inputTypeName": "TrackOrdersInput",
-              "outputTypeName": "TrackOrdersOutput",
+              "functionName": "updateMenuItem",
+              "inputTypeName": "UpdateMenuItemInput",
+              "outputTypeName": "UpdateMenuItemOutput",
               "input": [
+                {
+                  "name": "menuItemId",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.menuItemId"
+                },
+                {
+                  "name": "menuCategoryId",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.menuCategoryId"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.name"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.description"
+                },
+                {
+                  "name": "price",
+                  "type": "number",
+                  "required": true,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.price"
+                },
                 {
                   "name": "status",
                   "type": "string",
-                  "required": false,
-                  "fieldRef": "Order.status"
+                  "required": true,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.status"
                 },
                 {
-                  "name": "orderType",
+                  "name": "pauseReason",
                   "type": "string",
                   "required": false,
-                  "fieldRef": "Order.orderType"
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.pauseReason"
                 },
                 {
-                  "name": "tableNumber",
+                  "name": "imageUrl",
                   "type": "string",
                   "required": false,
-                  "fieldRef": "Order.tableNumber"
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.imageUrl"
                 },
                 {
-                  "name": "page",
+                  "name": "displayOrder",
                   "type": "number",
-                  "required": false
+                  "required": false,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.displayOrder"
                 },
                 {
-                  "name": "pageSize",
-                  "type": "number",
-                  "required": false
+                  "name": "requiresStockLink",
+                  "type": "boolean",
+                  "required": true,
+                  "ofEntity": "MenuItem",
+                  "fieldRef": "MenuItem.requiresStockLink"
                 }
               ],
               "output": [
                 {
-                  "name": "orders",
-                  "type": "array",
-                  "required": true
+                  "name": "menuItemId",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem"
                 },
                 {
-                  "name": "total",
+                  "name": "menuCategoryId",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "price",
                   "type": "number",
-                  "required": true
+                  "required": true,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "status",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "pausedAt",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "pauseReason",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "imageUrl",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "displayOrder",
+                  "type": "number",
+                  "required": false,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "requiresStockLink",
+                  "type": "boolean",
+                  "required": true,
+                  "ofEntity": "MenuItem"
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "MenuItem"
                 }
               ],
-              "ports": [
-                "Order",
-                "DailyShift"
-              ],
+              "ports": [],
               "rulesApplied": [
-                "ordersRequireOpenDailyShift",
-                "orderRequiresTableOrTakeout",
-                "onlyReadyOrdersCanBeServed",
-                "completedOrdersLeaveKitchenQueue"
+                "onlyActiveMenuItemsCanBeOrdered",
+                "menuItemNeedsCategoryAndPrice"
               ],
-              "transactional": false,
+              "transactional": true,
               "steps": [
-                "Resolve the active open DailyShift via DailyShift port (list/find where status = 'open'); if none is open, apply ordersRequireOpenDailyShift and return empty orders with total 0 (or validation error per L4)",
-                "Use the resolved dailyShiftId as mandatory scope for Order queries — never accept dailyShiftId from the client",
-                "List Orders through Order port filtered by dailyShiftId and excluding status in ['served', 'cancelled'] (completedOrdersLeaveKitchenQueue: served/cancelled leave the open tracking queue)",
-                "Apply optional user filters: status, orderType, tableNumber when provided",
-                "Sort by Order.registeredAt ascending",
-                "Apply optional pagination (page, pageSize) and compute total matching count",
-                "For each order, project embedded OrderItems (orderItemId, menuItemName, quantity, observations, status) from the Order aggregate — do not use a child OrderItem repository",
-                "Map each order to the output shape including timestamps (registeredAt, confirmedAt, inPreparationAt, readyAt) and items array",
-                "Return { orders, total }"
+                "Load existing MenuItem by input.menuItemId via ctx.mdm.entity.get({ mdmId: menuItemId }); fail if not found",
+                "Validate menuCategoryId is present and price is defined and > 0 (rule menuItemNeedsCategoryAndPrice); include rule id in validation error details if blocked",
+                "Verify target MenuCategory exists via ctx.mdm.entity.get({ mdmId: menuCategoryId }); fail if missing or inactive",
+                "Resolve updatedAt = ctx.clock.now()",
+                "Apply status transition (rule onlyActiveMenuItemsCanBeOrdered): if status is 'paused', set pausedAt = ctx.clock.now() and keep pauseReason; if status is 'active', clear pausedAt and pauseReason so the item is orderable again",
+                "Persist via ctx.mdm.entity.update with menuCategoryId, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, updatedAt",
+                "Return the updated MenuItem projection matching outputShape"
               ],
               "outputShape": {
-                "kind": "paginated",
+                "kind": "object",
                 "fields": [
                   {
-                    "name": "orders",
-                    "type": "array",
+                    "name": "menuItemId",
+                    "type": "string",
                     "required": true,
-                    "item": {
-                      "fields": [
-                        {
-                          "name": "orderId",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "Order.orderId"
-                        },
-                        {
-                          "name": "dailyShiftId",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "Order.dailyShiftId"
-                        },
-                        {
-                          "name": "orderType",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "Order.orderType"
-                        },
-                        {
-                          "name": "tableNumber",
-                          "type": "string",
-                          "required": false,
-                          "fieldRef": "Order.tableNumber"
-                        },
-                        {
-                          "name": "customerName",
-                          "type": "string",
-                          "required": false,
-                          "fieldRef": "Order.customerName"
-                        },
-                        {
-                          "name": "totalAmount",
-                          "type": "number",
-                          "required": true,
-                          "fieldRef": "Order.totalAmount"
-                        },
-                        {
-                          "name": "notes",
-                          "type": "string",
-                          "required": false,
-                          "fieldRef": "Order.notes"
-                        },
-                        {
-                          "name": "status",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "Order.status"
-                        },
-                        {
-                          "name": "registeredAt",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "Order.registeredAt"
-                        },
-                        {
-                          "name": "confirmedAt",
-                          "type": "string",
-                          "required": false,
-                          "fieldRef": "Order.confirmedAt"
-                        },
-                        {
-                          "name": "inPreparationAt",
-                          "type": "string",
-                          "required": false,
-                          "fieldRef": "Order.inPreparationAt"
-                        },
-                        {
-                          "name": "readyAt",
-                          "type": "string",
-                          "required": false,
-                          "fieldRef": "Order.readyAt"
-                        },
-                        {
-                          "name": "items",
-                          "type": "array",
-                          "required": true,
-                          "item": {
-                            "fields": [
-                              {
-                                "name": "orderItemId",
-                                "type": "string",
-                                "required": true,
-                                "fieldRef": "OrderItem.orderItemId"
-                              },
-                              {
-                                "name": "menuItemName",
-                                "type": "string",
-                                "required": true,
-                                "fieldRef": "OrderItem.menuItemName"
-                              },
-                              {
-                                "name": "quantity",
-                                "type": "number",
-                                "required": true,
-                                "fieldRef": "OrderItem.quantity"
-                              },
-                              {
-                                "name": "observations",
-                                "type": "string",
-                                "required": false,
-                                "fieldRef": "OrderItem.observations"
-                              },
-                              {
-                                "name": "status",
-                                "type": "string",
-                                "required": true,
-                                "fieldRef": "OrderItem.status"
-                              }
-                            ]
-                          }
-                        }
-                      ]
-                    }
+                    "fieldRef": "MenuItem.menuItemId"
                   },
                   {
-                    "name": "total",
+                    "name": "menuCategoryId",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.menuCategoryId"
+                  },
+                  {
+                    "name": "name",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.name"
+                  },
+                  {
+                    "name": "description",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "MenuItem.description"
+                  },
+                  {
+                    "name": "price",
                     "type": "number",
-                    "required": true
+                    "required": true,
+                    "fieldRef": "MenuItem.price"
+                  },
+                  {
+                    "name": "status",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.status"
+                  },
+                  {
+                    "name": "pausedAt",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "MenuItem.pausedAt"
+                  },
+                  {
+                    "name": "pauseReason",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "MenuItem.pauseReason"
+                  },
+                  {
+                    "name": "imageUrl",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "MenuItem.imageUrl"
+                  },
+                  {
+                    "name": "displayOrder",
+                    "type": "number",
+                    "required": false,
+                    "fieldRef": "MenuItem.displayOrder"
+                  },
+                  {
+                    "name": "requiresStockLink",
+                    "type": "boolean",
+                    "required": true,
+                    "fieldRef": "MenuItem.requiresStockLink"
+                  },
+                  {
+                    "name": "updatedAt",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "MenuItem.updatedAt"
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "ordersRequireOpenDailyShift",
-            "orderRequiresTableOrTakeout",
-            "onlyReadyOrdersCanBeServed",
-            "completedOrdersLeaveKitchenQueue"
+            "onlyActiveMenuItemsCanBeOrdered",
+            "menuItemNeedsCategoryAndPrice"
           ],
-          "mdmRefs": []
+          "mdmRefs": [
+            "MenuItem",
+            "MenuCategory"
+          ]
         },
         "questions": [],
         "trace": [
-          "trackOrders: list query scoped to active open DailyShift; public inputs status/orderType/tableNumber/page/pageSize; outputShape paginated orders+total; ports Order+DailyShift only"
+          "MenuItem/MenuCategory are mdmRefs — no repository ports; mutate via ctx.mdm.entity",
+          "Public inputs from routeParam+userInput only; pausedAt/updatedAt from ctx.clock",
+          "output[] mirrors outputShape verbatim",
+          "Rules menuItemNeedsCategoryAndPrice and onlyActiveMenuItemsCanBeOrdered applied inline"
         ]
       }
     },
     "status": "completed",
-    "stepId": 23,
+    "stepId": 6,
     "interaction": null,
     "nextSteps": null
   }

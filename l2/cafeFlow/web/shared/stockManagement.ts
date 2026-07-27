@@ -40,54 +40,89 @@ export type {
 
 /// **collab_i18n_start**
 const message_pt = {
-  'section.stockManagement.sec-stockItemList.title': 'Stock Item List',
-  'organism.stockManagement.inline-row-command10.title': 'Inline row command',
-  'intent.stockManagement.inline-row-command10.content.title': 'Inline row command',
-  'organism.stockManagement.listStockItems.title': 'Listar itens de estoque',
-  'intent.stockManagement.listStockItems.list.title': 'Listar itens de estoque',
-  'intent.stockManagement.listStockItems.list.empty': 'Nenhum registro encontrado',
-  'intent.stockManagement.listStockItems.list.column.stockItems.label': 'Stock Items',
-  'intent.stockManagement.listStockItems.list.column.total.label': 'Total',
-  'intent.stockManagement.listStockItems.list.filter.nameFilter.label': 'Name Filter',
-  'intent.stockManagement.listStockItems.list.filter.lowStockOnly.label': 'Low Stock Only',
-  'intent.stockManagement.listStockItems.list.filter.page.label': 'Page',
-  'intent.stockManagement.listStockItems.list.filter.pageSize.label': 'Page Size',
-  'organism.stockManagement.editStockItem.title': 'Atualizar item de estoque',
-  'intent.stockManagement.editStockItem.form.title': 'Atualizar item de estoque',
-  'intent.stockManagement.editStockItem.form.action.editStockItem': 'Atualizar item de estoque',
-  'intent.stockManagement.editStockItem.form.field.name.label': 'Name',
-  'intent.stockManagement.editStockItem.form.field.unit.label': 'Unit',
-  'intent.stockManagement.editStockItem.form.field.minimumLevel.label': 'Minimum Level',
-  'intent.stockManagement.editStockItem.form.field.description.label': 'Description',
-  'organism.stockManagement.removeStockItem.title': 'Excluir item de estoque',
-  'intent.stockManagement.removeStockItem.form.title': 'Excluir item de estoque',
-  'intent.stockManagement.removeStockItem.form.action.removeStockItem': 'Excluir item de estoque',
-  'organism.stockManagement.registerStockAdjustment.title': 'Registrar ajuste manual de estoque',
-  'intent.stockManagement.registerStockAdjustment.form.title': 'Registrar ajuste manual de estoque',
-  'intent.stockManagement.registerStockAdjustment.form.action.registerStockAdjustment': 'Registrar ajuste manual de estoque',
-  'intent.stockManagement.registerStockAdjustment.form.field.stockItemId.label': 'Stock Item Id',
-  'intent.stockManagement.registerStockAdjustment.form.field.quantity.label': 'Quantity',
-  'intent.stockManagement.registerStockAdjustment.form.field.direction.label': 'Direction',
-  'intent.stockManagement.registerStockAdjustment.form.field.reason.label': 'Reason',
-  'intent.stockManagement.registerStockAdjustment.form.field.notes.label': 'Notes',
-  'section.stockManagement.sec-createStockItem.title': 'Add New Stock Item',
-  'organism.stockManagement.addStockItem.title': 'Criar item de estoque',
-  'intent.stockManagement.addStockItem.form.title': 'Criar item de estoque',
-  'intent.stockManagement.addStockItem.form.action.addStockItem': 'Criar item de estoque',
-  'intent.stockManagement.addStockItem.form.field.name.label': 'Name',
-  'intent.stockManagement.addStockItem.form.field.unit.label': 'Unit',
-  'intent.stockManagement.addStockItem.form.field.currentBalance.label': 'Current Balance',
-  'intent.stockManagement.addStockItem.form.field.minimumLevel.label': 'Minimum Level',
-  'intent.stockManagement.addStockItem.form.field.description.label': 'Description',
-  'section.stockManagement.sec-stock-overview.title': 'Visão geral do estoque',
-  'section.stockManagement.sec-stock-master-detail.title': 'Controle de insumos',
-  'section.stockManagement.sec-add-stock-item.title': 'Cadastrar novo insumo',
+  "section.stockManagement.stockItemList.title": "Stock Item List",
+  "organism.stockManagement.listStockItems.title": "Listar itens de estoque",
+  "intent.stockManagement.listStockItems.list.title": "Listar itens de estoque",
+  "intent.stockManagement.listStockItems.list.empty": "Nenhum registro encontrado",
+  "intent.stockManagement.listStockItems.list.column.stockItems.label": "Stock Items",
+  "intent.stockManagement.listStockItems.list.column.total.label": "Total",
+  "intent.stockManagement.listStockItems.list.filter.nameFilter.label": "Name Filter",
+  "intent.stockManagement.listStockItems.list.filter.lowStockOnly.label": "Low Stock Only",
+  "intent.stockManagement.listStockItems.list.filter.page.label": "Page",
+  "intent.stockManagement.listStockItems.list.filter.pageSize.label": "Page Size",
+  "organism.stockManagement.editStockItem.title": "Atualizar item de estoque",
+  "intent.stockManagement.editStockItem.form.title": "Atualizar item de estoque",
+  "intent.stockManagement.editStockItem.form.action.editStockItem": "Atualizar item de estoque",
+  "intent.stockManagement.editStockItem.form.field.name.label": "Name",
+  "intent.stockManagement.editStockItem.form.field.unit.label": "Unit",
+  "intent.stockManagement.editStockItem.form.field.minimumLevel.label": "Minimum Level",
+  "intent.stockManagement.editStockItem.form.field.description.label": "Description",
+  "organism.stockManagement.removeStockItem.title": "Excluir item de estoque",
+  "intent.stockManagement.removeStockItem.form.title": "Excluir item de estoque",
+  "intent.stockManagement.removeStockItem.form.action.removeStockItem": "Excluir item de estoque",
+  "organism.stockManagement.registerStockAdjustment.title": "Registrar ajuste manual de estoque",
+  "intent.stockManagement.registerStockAdjustment.form.title": "Registrar ajuste manual de estoque",
+  "intent.stockManagement.registerStockAdjustment.form.action.registerStockAdjustment": "Registrar ajuste manual de estoque",
+  "intent.stockManagement.registerStockAdjustment.form.field.stockItemId.label": "Stock Item Id",
+  "intent.stockManagement.registerStockAdjustment.form.field.quantity.label": "Quantity",
+  "intent.stockManagement.registerStockAdjustment.form.field.direction.label": "Direction",
+  "intent.stockManagement.registerStockAdjustment.form.field.reason.label": "Reason",
+  "intent.stockManagement.registerStockAdjustment.form.field.notes.label": "Notes",
+  "section.stockManagement.createStockItemSection.title": "Add New Stock Item",
+  "organism.stockManagement.addStockItem.title": "Criar item de estoque",
+  "intent.stockManagement.addStockItem.form.title": "Criar item de estoque",
+  "intent.stockManagement.addStockItem.form.action.addStockItem": "Criar item de estoque",
+  "intent.stockManagement.addStockItem.form.field.name.label": "Name",
+  "intent.stockManagement.addStockItem.form.field.unit.label": "Unit",
+  "intent.stockManagement.addStockItem.form.field.currentBalance.label": "Current Balance",
+  "intent.stockManagement.addStockItem.form.field.minimumLevel.label": "Minimum Level",
+  "intent.stockManagement.addStockItem.form.field.description.label": "Description",
+  "section.stockManagement.sec-stock-master.title": "Controle de Estoque",
+  "section.stockManagement.sec-create-panel.title": "Novo Insumo"
 };
 type MessageType = typeof message_pt;
 const messages: { [key: string]: MessageType } = { pt: message_pt };
 /// **collab_i18n_end**
 
 const LIST_STOCK_ITEMS_DEFAULT: ListStockItemsOutput = { stockItems: [], total: 0 };
+
+const SUBSCRIBED_STATE_KEYS: string[] = [
+  'ui.stockManagement.status',
+  'ui.stockManagement.action.listStockItems.status',
+  'ui.stockManagement.input.listStockItems.nameFilter',
+  'ui.stockManagement.input.listStockItems.lowStockOnly',
+  'ui.stockManagement.input.listStockItems.page',
+  'ui.stockManagement.input.listStockItems.pageSize',
+  'ui.stockManagement.data.listStockItems',
+  'ui.stockManagement.action.addStockItem.status',
+  'ui.stockManagement.input.addStockItem.name',
+  'ui.stockManagement.input.addStockItem.unit',
+  'ui.stockManagement.input.addStockItem.currentBalance',
+  'ui.stockManagement.input.addStockItem.minimumLevel',
+  'ui.stockManagement.input.addStockItem.description',
+  'ui.stockManagement.output.addStockItem',
+  'ui.stockManagement.action.addStockItem.error',
+  'ui.stockManagement.action.editStockItem.status',
+  'ui.stockManagement.input.editStockItem.stockItemId',
+  'ui.stockManagement.input.editStockItem.name',
+  'ui.stockManagement.input.editStockItem.unit',
+  'ui.stockManagement.input.editStockItem.minimumLevel',
+  'ui.stockManagement.input.editStockItem.description',
+  'ui.stockManagement.output.editStockItem',
+  'ui.stockManagement.action.editStockItem.error',
+  'ui.stockManagement.action.removeStockItem.status',
+  'ui.stockManagement.input.removeStockItem.stockItemId',
+  'ui.stockManagement.output.removeStockItem',
+  'ui.stockManagement.action.removeStockItem.error',
+  'ui.stockManagement.action.registerStockAdjustment.status',
+  'ui.stockManagement.input.registerStockAdjustment.stockItemId',
+  'ui.stockManagement.input.registerStockAdjustment.quantity',
+  'ui.stockManagement.input.registerStockAdjustment.direction',
+  'ui.stockManagement.input.registerStockAdjustment.reason',
+  'ui.stockManagement.input.registerStockAdjustment.notes',
+  'ui.stockManagement.output.registerStockAdjustment',
+  'ui.stockManagement.action.registerStockAdjustment.error',
+];
 
 export class CafeFlowStockManagementBase extends CollabLitElement {
   /** state status — pageStatus */
@@ -161,44 +196,6 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
   /** state registerStockAdjustmentError — actionError */
   @property() registerStockAdjustmentError: string = '';
 
-  private readonly subscribedKeys: string[] = [
-    'ui.stockManagement.status',
-    'ui.stockManagement.action.listStockItems.status',
-    'ui.stockManagement.input.listStockItems.nameFilter',
-    'ui.stockManagement.input.listStockItems.lowStockOnly',
-    'ui.stockManagement.input.listStockItems.page',
-    'ui.stockManagement.input.listStockItems.pageSize',
-    'ui.stockManagement.data.listStockItems',
-    'ui.stockManagement.action.addStockItem.status',
-    'ui.stockManagement.input.addStockItem.name',
-    'ui.stockManagement.input.addStockItem.unit',
-    'ui.stockManagement.input.addStockItem.currentBalance',
-    'ui.stockManagement.input.addStockItem.minimumLevel',
-    'ui.stockManagement.input.addStockItem.description',
-    'ui.stockManagement.output.addStockItem',
-    'ui.stockManagement.action.addStockItem.error',
-    'ui.stockManagement.action.editStockItem.status',
-    'ui.stockManagement.input.editStockItem.stockItemId',
-    'ui.stockManagement.input.editStockItem.name',
-    'ui.stockManagement.input.editStockItem.unit',
-    'ui.stockManagement.input.editStockItem.minimumLevel',
-    'ui.stockManagement.input.editStockItem.description',
-    'ui.stockManagement.output.editStockItem',
-    'ui.stockManagement.action.editStockItem.error',
-    'ui.stockManagement.action.removeStockItem.status',
-    'ui.stockManagement.input.removeStockItem.stockItemId',
-    'ui.stockManagement.output.removeStockItem',
-    'ui.stockManagement.action.removeStockItem.error',
-    'ui.stockManagement.action.registerStockAdjustment.status',
-    'ui.stockManagement.input.registerStockAdjustment.stockItemId',
-    'ui.stockManagement.input.registerStockAdjustment.quantity',
-    'ui.stockManagement.input.registerStockAdjustment.direction',
-    'ui.stockManagement.input.registerStockAdjustment.reason',
-    'ui.stockManagement.input.registerStockAdjustment.notes',
-    'ui.stockManagement.output.registerStockAdjustment',
-    'ui.stockManagement.action.registerStockAdjustment.error',
-  ];
-
   /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
   protected get msg(): MessageType {
     const lang: string = this.getMessageKey(messages);
@@ -242,17 +239,16 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     this.initStateValue('ui.stockManagement.input.registerStockAdjustment.notes', 'registerStockAdjustmentNotes', '');
     this.initStateValue('ui.stockManagement.output.registerStockAdjustment', 'registerStockAdjustmentOutput', null);
     this.initStateValue('ui.stockManagement.action.registerStockAdjustment.error', 'registerStockAdjustmentError', '');
-    this.applyRouteParams();
-    subscribe(this.subscribedKeys, this);
+    subscribe(SUBSCRIBED_STATE_KEYS, this);
     void this.loadListStockItems();
   }
 
   disconnectedCallback(): void {
-    unsubscribe(this.subscribedKeys, this);
+    unsubscribe(SUBSCRIBED_STATE_KEYS, this);
     super.disconnectedCallback();
   }
 
-  /** Deliver collabState notifications into local @property fields and re-render. */
+  /** Notify contract — assign shared state to the mapped field and re-render */
   handleIcaStateChange(key: string, value: unknown): void {
     switch (key) {
       case 'ui.stockManagement.status':
@@ -265,13 +261,13 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
         this.listStockItemsNameFilter = (value as string) ?? '';
         break;
       case 'ui.stockManagement.input.listStockItems.lowStockOnly':
-        this.listStockItemsLowStockOnly = (value as string) ?? '';
+        this.listStockItemsLowStockOnly = value === true || value === 'true' ? 'true' : (value as string) ?? '';
         break;
       case 'ui.stockManagement.input.listStockItems.page':
-        this.listStockItemsPage = (value as string) ?? '';
+        this.listStockItemsPage = value === null || value === undefined ? '' : String(value);
         break;
       case 'ui.stockManagement.input.listStockItems.pageSize':
-        this.listStockItemsPageSize = (value as string) ?? '';
+        this.listStockItemsPageSize = value === null || value === undefined ? '' : String(value);
         break;
       case 'ui.stockManagement.data.listStockItems':
         this.listStockItemsData = (value as ListStockItemsOutput) ?? LIST_STOCK_ITEMS_DEFAULT;
@@ -286,10 +282,10 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
         this.addStockItemUnit = (value as string) ?? '';
         break;
       case 'ui.stockManagement.input.addStockItem.currentBalance':
-        this.addStockItemCurrentBalance = (value as string) ?? '';
+        this.addStockItemCurrentBalance = value === null || value === undefined ? '' : String(value);
         break;
       case 'ui.stockManagement.input.addStockItem.minimumLevel':
-        this.addStockItemMinimumLevel = (value as string) ?? '';
+        this.addStockItemMinimumLevel = value === null || value === undefined ? '' : String(value);
         break;
       case 'ui.stockManagement.input.addStockItem.description':
         this.addStockItemDescription = (value as string) ?? '';
@@ -313,7 +309,7 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
         this.editStockItemUnit = (value as string) ?? '';
         break;
       case 'ui.stockManagement.input.editStockItem.minimumLevel':
-        this.editStockItemMinimumLevel = (value as string) ?? '';
+        this.editStockItemMinimumLevel = value === null || value === undefined ? '' : String(value);
         break;
       case 'ui.stockManagement.input.editStockItem.description':
         this.editStockItemDescription = (value as string) ?? '';
@@ -343,7 +339,7 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
         this.registerStockAdjustmentStockItemId = (value as string) ?? '';
         break;
       case 'ui.stockManagement.input.registerStockAdjustment.quantity':
-        this.registerStockAdjustmentQuantity = (value as string) ?? '';
+        this.registerStockAdjustmentQuantity = value === null || value === undefined ? '' : String(value);
         break;
       case 'ui.stockManagement.input.registerStockAdjustment.direction':
         this.registerStockAdjustmentDirection = (value as string) ?? '';
@@ -366,10 +362,10 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     this.requestUpdate();
   }
 
-  private initStateValue(stateKey: string, propName: keyof CafeFlowStockManagementBase, defaultValue: unknown): void {
+  private initStateValue(stateKey: string, propName: string, defaultValue: unknown): void {
     const existing = getState(stateKey);
     const value = existing !== undefined && existing !== null ? existing : defaultValue;
-    (this as unknown as Record<string, unknown>)[propName as string] = value;
+    (this as unknown as Record<string, unknown>)[propName] = value;
     if (existing === undefined || existing === null) {
       setState(stateKey, value);
     }
@@ -377,19 +373,33 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   private applyRouteParams(): void {
     const path = window.location.pathname;
-    const match = path.match(/^\/cafeFlow\/stockManagement(?:\/([^/]+))?\/?$/);
-    if (match && match[1]) {
-      let segment = match[1];
-      try {
-        segment = decodeURIComponent(segment);
-      } catch {
-        // keep raw segment
-      }
-      if (segment && !this.editStockItemStockItemId) {
-        this.editStockItemStockItemId = segment;
-        setState('ui.stockManagement.input.editStockItem.stockItemId', segment);
+    const patternParts = '/cafeFlow/stockManagement/:stockItemId?'.split('/').filter(Boolean);
+    const pathParts = path.split('/').filter(Boolean);
+    let stockItemId = '';
+    for (let i = 0; i < patternParts.length; i++) {
+      const part = patternParts[i];
+      if (part.startsWith(':')) {
+        const optional = part.endsWith('?');
+        const name = optional ? part.slice(1, -1) : part.slice(1);
+        const raw = pathParts[i];
+        if (raw !== undefined && raw !== '') {
+          const decoded = decodeURIComponent(raw);
+          if (name === 'stockItemId') {
+            stockItemId = decoded;
+          }
+        }
       }
     }
+    if (stockItemId !== '') {
+      this.editStockItemStockItemId = stockItemId;
+      setState('ui.stockManagement.input.editStockItem.stockItemId', stockItemId);
+    }
+  }
+
+  private readErrorMessage(error: { message?: string } | null | undefined): string {
+    if (!error) return '';
+    if (typeof error.message === 'string' && error.message.length > 0) return error.message;
+    return String(error);
   }
 
   private parseOptionalNumber(raw: string): number | undefined {
@@ -408,35 +418,44 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     return undefined;
   }
 
-  private readErrorMessage(error: { message?: string } | null | undefined): string {
-    if (error && typeof error.message === 'string') return error.message;
-    return '';
+  private parseRequiredNumber(raw: string): number {
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : 0;
   }
 
   /** action listStockItems (query) — route cafeFlow.stockManagement.listStockItems; inputs: nameFilter, lowStockOnly, page, pageSize; writes ui.stockManagement.data.listStockItems; status ui.stockManagement.action.listStockItems.status */
-  async loadListStockItems(): Promise<void> {
+  async loadListStockItems(): Promise<boolean> {
     this.listStockItemsState = 'loading';
     setState('ui.stockManagement.action.listStockItems.status', 'loading');
     const params: ListStockItemsInput = {};
-    if (this.listStockItemsNameFilter !== '') params.nameFilter = this.listStockItemsNameFilter;
+    if (this.listStockItemsNameFilter !== '') {
+      params.nameFilter = this.listStockItemsNameFilter;
+    }
     const lowStockOnly = this.parseOptionalBoolean(this.listStockItemsLowStockOnly);
-    if (lowStockOnly !== undefined) params.lowStockOnly = lowStockOnly;
+    if (lowStockOnly !== undefined) {
+      params.lowStockOnly = lowStockOnly;
+    }
     const page = this.parseOptionalNumber(this.listStockItemsPage);
-    if (page !== undefined) params.page = page;
+    if (page !== undefined) {
+      params.page = page;
+    }
     const pageSize = this.parseOptionalNumber(this.listStockItemsPageSize);
-    if (pageSize !== undefined) params.pageSize = pageSize;
+    if (pageSize !== undefined) {
+      params.pageSize = pageSize;
+    }
     const options: BffClientOptions = { mode: 'silent' };
     const response = await execBff<ListStockItemsOutput>(listStockItemsRoute, params, options);
-    if (!response.ok) {
-      this.listStockItemsState = 'error';
-      setState('ui.stockManagement.action.listStockItems.status', 'error');
-      return;
+    if (response.ok) {
+      const data = response.data ?? LIST_STOCK_ITEMS_DEFAULT;
+      this.listStockItemsData = data;
+      setState('ui.stockManagement.data.listStockItems', data);
+      this.listStockItemsState = 'success';
+      setState('ui.stockManagement.action.listStockItems.status', 'success');
+      return true;
     }
-    const data = response.data ?? LIST_STOCK_ITEMS_DEFAULT;
-    this.listStockItemsData = data;
-    setState('ui.stockManagement.data.listStockItems', data);
-    this.listStockItemsState = 'success';
-    setState('ui.stockManagement.action.listStockItems.status', 'success');
+    this.listStockItemsState = 'error';
+    setState('ui.stockManagement.action.listStockItems.status', 'error');
+    return false;
   }
 
   /** handler for action listStockItems — bind UI events here */
@@ -453,10 +472,12 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     const params: AddStockItemInput = {
       name: this.addStockItemName,
       unit: this.addStockItemUnit,
-      currentBalance: Number(this.addStockItemCurrentBalance),
-      minimumLevel: Number(this.addStockItemMinimumLevel),
+      currentBalance: this.parseRequiredNumber(this.addStockItemCurrentBalance),
+      minimumLevel: this.parseRequiredNumber(this.addStockItemMinimumLevel),
     };
-    if (this.addStockItemDescription !== '') params.description = this.addStockItemDescription;
+    if (this.addStockItemDescription !== '') {
+      params.description = this.addStockItemDescription;
+    }
     const options: BffClientOptions = { mode: 'blocking' };
     const response = await execBff<AddStockItemOutput>(addStockItemRoute, params, options);
     if (!response.ok) {
@@ -470,8 +491,8 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     const data = response.data ?? null;
     this.addStockItemOutput = data;
     setState('ui.stockManagement.output.addStockItem', data);
-    await this.loadListStockItems();
-    if (this.listStockItemsState === 'error') {
+    const refreshed = await this.loadListStockItems();
+    if (!refreshed) {
       this.addStockItemState = 'error';
       setState('ui.stockManagement.action.addStockItem.status', 'error');
       return;
@@ -513,9 +534,11 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
       stockItemId: this.editStockItemStockItemId,
       name: this.editStockItemName,
       unit: this.editStockItemUnit,
-      minimumLevel: Number(this.editStockItemMinimumLevel),
+      minimumLevel: this.parseRequiredNumber(this.editStockItemMinimumLevel),
     };
-    if (this.editStockItemDescription !== '') params.description = this.editStockItemDescription;
+    if (this.editStockItemDescription !== '') {
+      params.description = this.editStockItemDescription;
+    }
     const options: BffClientOptions = { mode: 'blocking' };
     const response = await execBff<EditStockItemOutput>(editStockItemRoute, params, options);
     if (!response.ok) {
@@ -529,8 +552,8 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     const data = response.data ?? null;
     this.editStockItemOutput = data;
     setState('ui.stockManagement.output.editStockItem', data);
-    await this.loadListStockItems();
-    if (this.listStockItemsState === 'error') {
+    const refreshed = await this.loadListStockItems();
+    if (!refreshed) {
       this.editStockItemState = 'error';
       setState('ui.stockManagement.action.editStockItem.status', 'error');
       return;
@@ -576,8 +599,8 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     const data = response.data ?? null;
     this.removeStockItemOutput = data;
     setState('ui.stockManagement.output.removeStockItem', data);
-    await this.loadListStockItems();
-    if (this.listStockItemsState === 'error') {
+    const refreshed = await this.loadListStockItems();
+    if (!refreshed) {
       this.removeStockItemState = 'error';
       setState('ui.stockManagement.action.removeStockItem.status', 'error');
       return;
@@ -603,11 +626,13 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     setState('ui.stockManagement.action.registerStockAdjustment.error', '');
     const params: RegisterStockAdjustmentInput = {
       stockItemId: this.registerStockAdjustmentStockItemId,
-      quantity: Number(this.registerStockAdjustmentQuantity),
+      quantity: this.parseRequiredNumber(this.registerStockAdjustmentQuantity),
       direction: this.registerStockAdjustmentDirection,
       reason: this.registerStockAdjustmentReason,
     };
-    if (this.registerStockAdjustmentNotes !== '') params.notes = this.registerStockAdjustmentNotes;
+    if (this.registerStockAdjustmentNotes !== '') {
+      params.notes = this.registerStockAdjustmentNotes;
+    }
     const options: BffClientOptions = { mode: 'blocking' };
     const response = await execBff<RegisterStockAdjustmentOutput>(registerStockAdjustmentRoute, params, options);
     if (!response.ok) {
@@ -621,8 +646,8 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
     const data = response.data ?? null;
     this.registerStockAdjustmentOutput = data;
     setState('ui.stockManagement.output.registerStockAdjustment', data);
-    await this.loadListStockItems();
-    if (this.listStockItemsState === 'error') {
+    const refreshed = await this.loadListStockItems();
+    if (!refreshed) {
       this.registerStockAdjustmentState = 'error';
       setState('ui.stockManagement.action.registerStockAdjustment.status', 'error');
       return;
@@ -657,8 +682,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.listStockItemsNameFilter — bind UI events here */
   handleListStockItemsNameFilterChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setListStockItemsNameFilter(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setListStockItemsNameFilter(value);
   }
 
   /** setter for state ui.stockManagement.input.listStockItems.lowStockOnly */
@@ -670,8 +696,15 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.listStockItemsLowStockOnly — bind UI events here */
   handleListStockItemsLowStockOnlyChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const value = target.type === 'checkbox' ? String(target.checked) : target.value;
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    let value = '';
+    if (target) {
+      if (target instanceof HTMLInputElement && target.type === 'checkbox') {
+        value = target.checked ? 'true' : 'false';
+      } else {
+        value = target.value ?? '';
+      }
+    }
     this.setListStockItemsLowStockOnly(value);
   }
 
@@ -684,8 +717,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.listStockItemsPage — bind UI events here */
   handleListStockItemsPageChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setListStockItemsPage(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setListStockItemsPage(value);
   }
 
   /** setter for state ui.stockManagement.input.listStockItems.pageSize */
@@ -697,8 +731,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.listStockItemsPageSize — bind UI events here */
   handleListStockItemsPageSizeChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setListStockItemsPageSize(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setListStockItemsPageSize(value);
   }
 
   /** setter for state ui.stockManagement.input.addStockItem.name */
@@ -710,8 +745,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.addStockItemName — bind UI events here */
   handleAddStockItemNameChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setAddStockItemName(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setAddStockItemName(value);
   }
 
   /** setter for state ui.stockManagement.input.addStockItem.unit */
@@ -723,8 +759,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.addStockItemUnit — bind UI events here */
   handleAddStockItemUnitChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setAddStockItemUnit(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setAddStockItemUnit(value);
   }
 
   /** setter for state ui.stockManagement.input.addStockItem.currentBalance */
@@ -736,8 +773,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.addStockItemCurrentBalance — bind UI events here */
   handleAddStockItemCurrentBalanceChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setAddStockItemCurrentBalance(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setAddStockItemCurrentBalance(value);
   }
 
   /** setter for state ui.stockManagement.input.addStockItem.minimumLevel */
@@ -749,8 +787,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.addStockItemMinimumLevel — bind UI events here */
   handleAddStockItemMinimumLevelChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setAddStockItemMinimumLevel(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setAddStockItemMinimumLevel(value);
   }
 
   /** setter for state ui.stockManagement.input.addStockItem.description */
@@ -762,8 +801,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.addStockItemDescription — bind UI events here */
   handleAddStockItemDescriptionChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setAddStockItemDescription(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setAddStockItemDescription(value);
   }
 
   /** setter for state ui.stockManagement.input.editStockItem.stockItemId */
@@ -775,8 +815,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.editStockItemStockItemId — bind UI events here */
   handleEditStockItemStockItemIdChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setEditStockItemStockItemId(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setEditStockItemStockItemId(value);
   }
 
   /** setter for state ui.stockManagement.input.editStockItem.name */
@@ -788,8 +829,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.editStockItemName — bind UI events here */
   handleEditStockItemNameChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setEditStockItemName(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setEditStockItemName(value);
   }
 
   /** setter for state ui.stockManagement.input.editStockItem.unit */
@@ -801,8 +843,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.editStockItemUnit — bind UI events here */
   handleEditStockItemUnitChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setEditStockItemUnit(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setEditStockItemUnit(value);
   }
 
   /** setter for state ui.stockManagement.input.editStockItem.minimumLevel */
@@ -814,8 +857,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.editStockItemMinimumLevel — bind UI events here */
   handleEditStockItemMinimumLevelChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setEditStockItemMinimumLevel(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setEditStockItemMinimumLevel(value);
   }
 
   /** setter for state ui.stockManagement.input.editStockItem.description */
@@ -827,8 +871,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.editStockItemDescription — bind UI events here */
   handleEditStockItemDescriptionChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setEditStockItemDescription(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setEditStockItemDescription(value);
   }
 
   /** setter for state ui.stockManagement.input.removeStockItem.stockItemId */
@@ -840,8 +885,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.removeStockItemStockItemId — bind UI events here */
   handleRemoveStockItemStockItemIdChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setRemoveStockItemStockItemId(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setRemoveStockItemStockItemId(value);
   }
 
   /** setter for state ui.stockManagement.input.registerStockAdjustment.stockItemId */
@@ -853,8 +899,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.registerStockAdjustmentStockItemId — bind UI events here */
   handleRegisterStockAdjustmentStockItemIdChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setRegisterStockAdjustmentStockItemId(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setRegisterStockAdjustmentStockItemId(value);
   }
 
   /** setter for state ui.stockManagement.input.registerStockAdjustment.quantity */
@@ -866,8 +913,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.registerStockAdjustmentQuantity — bind UI events here */
   handleRegisterStockAdjustmentQuantityChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setRegisterStockAdjustmentQuantity(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setRegisterStockAdjustmentQuantity(value);
   }
 
   /** setter for state ui.stockManagement.input.registerStockAdjustment.direction */
@@ -879,8 +927,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.registerStockAdjustmentDirection — bind UI events here */
   handleRegisterStockAdjustmentDirectionChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setRegisterStockAdjustmentDirection(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setRegisterStockAdjustmentDirection(value);
   }
 
   /** setter for state ui.stockManagement.input.registerStockAdjustment.reason */
@@ -892,8 +941,9 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.registerStockAdjustmentReason — bind UI events here */
   handleRegisterStockAdjustmentReasonChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setRegisterStockAdjustmentReason(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setRegisterStockAdjustmentReason(value);
   }
 
   /** setter for state ui.stockManagement.input.registerStockAdjustment.notes */
@@ -905,7 +955,8 @@ export class CafeFlowStockManagementBase extends CollabLitElement {
 
   /** handler for action set.registerStockAdjustmentNotes — bind UI events here */
   handleRegisterStockAdjustmentNotesChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.setRegisterStockAdjustmentNotes(target.value);
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    const value = target?.value ?? '';
+    this.setRegisterStockAdjustmentNotes(value);
   }
 }

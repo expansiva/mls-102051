@@ -7,7 +7,7 @@ export const operationalDashboardTableDef: TableDefinition = {
   tableName: 'operational_dashboard',
   purpose: 'controle',
   description:
-    'Dashboard operacional do turno. Métricas e campos não indexados em details (JSONB).',
+    'Dashboard operacional por turno. Métricas e campos não indexados em details (JSONB).',
   backupHot: false,
   storageProfile: 'postgres',
   writeMode: 'sync',
@@ -20,9 +20,18 @@ export const operationalDashboardTableDef: TableDefinition = {
   ],
   primaryKey: ['operational_dashboard_id'],
   indexes: [
-    { name: 'idx_operational_dashboard_daily_shift_id', columns: ['daily_shift_id'] },
-    { name: 'idx_operational_dashboard_top_menu_item_id', columns: ['top_menu_item_id'] },
-    { name: 'idx_operational_dashboard_created_at', columns: ['created_at'] },
+    {
+      name: 'idx_operational_dashboard_daily_shift_id',
+      columns: ['daily_shift_id'],
+    },
+    {
+      name: 'idx_operational_dashboard_top_menu_item_id',
+      columns: ['top_menu_item_id'],
+    },
+    {
+      name: 'idx_operational_dashboard_created_at',
+      columns: ['created_at'],
+    },
   ],
   version: 1,
 };

@@ -1,5 +1,5 @@
 /// <mls fileReference="_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.ts" enhancement="_blank"/>
-import { AppError, type RequestContext } from '/_102034_/l1/server/layer_2_controllers/contracts.js';
+import type { RequestContext } from '/_102034_/l1/server/layer_2_controllers/contracts.js';
 import type {
   IOperationalDashboardRepository,
   OperationalDashboardFilter,
@@ -58,7 +58,7 @@ function parseDetails(row: OperationalDashboardRow): OperationalDashboardDetails
     return JSON.parse(row.details ?? '{}') as OperationalDashboardDetails;
   } catch {
     return {
-      referenceDate: '',
+      referenceDate: row.created_at.slice(0, 10),
       todaySalesTotal: 0,
       todayOrdersCount: 0,
       todayItemsSold: 0,
@@ -99,26 +99,28 @@ function toDomain(row: OperationalDashboardRow): OperationalDashboard {
 export function createOperationalDashboardRepositoryAdapter(
   ctx: RequestContext,
 ): IOperationalDashboardRepository {
-  const getTable = () => ctx.data.moduleData.getTable<OperationalDashboardRow>('operational_dashboard');
+  const getTable = () =>
+    ctx.data.moduleData.getTable<OperationalDashboardRow>('operational_dashboard');
 
   return {
     async getById(id) {
-      const row = await (await getTable()).findOne({ where: { operational_dashboard_id: id } });
-      if (!row) {
-        throw new AppError('NOT_FOUND', `OperationalDashboard ${id} not found`, 404, { operationalDashboardId: id });
-      }
-      return toDomain(row);
+      const row = await (
+        await getTable()
+      ).findOne({ where: { operational_dashboard_id: id } });
+      return row ? toDomain(row) : null;
     },
 
     async list(filter: OperationalDashboardFilter) {
       const where: Partial<OperationalDashboardRow> = {};
-      if (filter.dailyShiftId) where.daily_shift_id = filter.dailyShiftId;
-      const rows = await (await getTable()).findMany({
+      if (filter?.dailyShiftId) where.daily_shift_id = filter.dailyShiftId;
+      const rows = await (
+        await getTable()
+      ).findMany({
         where,
         orderBy: { field: 'created_at', direction: 'desc' },
       });
       let result = rows.map(toDomain);
-      if (filter.referenceDate) {
+      if (filter?.referenceDate) {
         result = result.filter((d) => d.referenceDate === filter.referenceDate);
       }
       return result;
@@ -140,16 +142,19 @@ export function createOperationalDashboardRepositoryAdapter(
     },
 
     async findCurrent() {
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         orderBy: { field: 'created_at', direction: 'desc' },
         limit: 1,
       });
-      const row = rows[0];
-      return row ? toDomain(row) : null;
+      return rows.length > 0 ? toDomain(rows[0]) : null;
     },
 
     async findByDailyShiftId(dailyShiftId) {
-      const row = await (await getTable()).findOne({ where: { daily_shift_id: dailyShiftId } });
+      const row = await (
+        await getTable()
+      ).findOne({ where: { daily_shift_id: dailyShiftId } });
       return row ? toDomain(row) : null;
     },
   };

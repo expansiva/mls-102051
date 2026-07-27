@@ -1,7 +1,15 @@
 /// <mls fileReference="_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.ts" enhancement="_blank"/>
 import { type RequestContext } from '/_102034_/l1/server/layer_2_controllers/contracts.js';
-import type { IOrderRepository, OrderFilter } from '/_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.js';
-import type { Order, OrderItem, OrderPayment, OrderStatus } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
+import type {
+  IOrderRepository,
+  OrderFilter,
+} from '/_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.js';
+import type {
+  Order,
+  OrderItem,
+  OrderPayment,
+  OrderStatus,
+} from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
 
 interface OrderRow {
   order_id: string;
@@ -29,7 +37,12 @@ interface OrderDetails {
   payment: OrderPayment | null;
 }
 
-const OPEN_STATUSES: OrderStatus[] = ['registered', 'confirmed', 'inPreparation', 'ready'];
+const OPEN_STATUSES: OrderStatus[] = [
+  'registered',
+  'confirmed',
+  'inPreparation',
+  'ready',
+];
 
 function toRow(order: Order): OrderRow {
   const details: OrderDetails = {
@@ -124,8 +137,8 @@ export function createOrderRepositoryAdapter(ctx: RequestContext): IOrderReposit
         orderBy: { field: 'created_at', direction: 'desc' },
       });
       let orders = rows.map(toDomain);
-      if (filter?.tableId) {
-        orders = orders.filter((order) => order.tableNumber === filter.tableId);
+      if (filter?.tableNumber) {
+        orders = orders.filter((o) => o.tableNumber === filter.tableNumber);
       }
       return orders;
     },
@@ -148,15 +161,16 @@ export function createOrderRepositoryAdapter(ctx: RequestContext): IOrderReposit
       return rows.map(toDomain);
     },
 
-    async findOpenByTable(tableId) {
+    async findOpenByTable(tableRef) {
       const rows = await (await getTable()).findMany({
         orderBy: { field: 'created_at', direction: 'desc' },
       });
       const open = rows
         .map(toDomain)
         .find(
-          (order) =>
-            order.tableNumber === tableId && OPEN_STATUSES.includes(order.status),
+          (o) =>
+            o.tableNumber === tableRef &&
+            OPEN_STATUSES.includes(o.status),
         );
       return open ?? null;
     },

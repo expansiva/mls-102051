@@ -105,17 +105,17 @@ export const generateAiSalesSummaryUsecase = {
         "rulesApplied": [
           "aiSummaryUsesExistingOperationalData"
         ],
-        "transactional": false,
+        "transactional": true,
         "steps": [
-          "Resolve summaryDate and periodEnd from ctx.clock.now (system date); compute periodStart as approximately 7 days before summaryDate",
-          "Load OperationalDashboard by input operationalDashboardId via OperationalDashboard port; fail validation if not found",
-          "Load the DailyShift referenced by dashboard.dailyShiftId via DailyShift port",
-          "List DailyShifts whose shiftDate falls within [periodStart, periodEnd] via DailyShift port to gather the last-7-days operational window",
-          "For those shifts, list Orders via Order port (OrderItems are embedded on each Order); aggregate only existing sales metrics (totals, counts, top items, statuses) — never invent external data (rule aiSummaryUsesExistingOperationalData)",
-          "Also read dashboard snapshot fields (todaySalesTotal, todayOrdersCount, todayItemsSold, topMenuItem*, low/out-of-stock counts and alerts) as the day-current operational source",
-          "Lookup existing AiSalesSummary by operationalDashboardId (and summaryDate) via AiSalesSummary port; if found with non-empty summaryText, return it mapped to the output shape",
-          "Otherwise build a narrative summaryText from the aggregated OperationalDashboard + DailyShift + Order/OrderItem data for the period; set modelId/promptTokens/completionTokens/generatedAt when the assistant path is used",
-          "Return aiSalesSummaryId, operationalDashboardId, summaryDate, periodStart, periodEnd, summaryText, modelId, promptTokens, completionTokens, generatedAt"
+          "Resolve summaryDate and periodEnd from ctx.clock.now (system date); compute periodStart as 7 days before summaryDate",
+          "Load OperationalDashboard by input operationalDashboardId via OperationalDashboard port; fail if not found",
+          "Try find existing AiSalesSummary by operationalDashboardId + summaryDate via AiSalesSummary port; if found with non-empty summaryText, return it",
+          "Load DailyShift by dashboard.dailyShiftId; list DailyShifts whose shiftDate is within [periodStart, periodEnd] via DailyShift port",
+          "List Orders for those dailyShiftIds via Order port (OrderItems are embedded on each Order)",
+          "Apply aiSummaryUsesExistingOperationalData inline: build the narrative exclusively from already-persisted OperationalDashboard metrics (todaySalesTotal, todayOrdersCount, todayItemsSold, top sellers, stock alerts) plus DailyShift totals and Order/OrderItem aggregates for the 7-day window — never invent external sales figures",
+          "Generate summaryText (non-empty narrative) and optional modelId/promptTokens/completionTokens; set generatedAt from ctx.clock.now",
+          "Create AiSalesSummary with ctx.idGenerator for aiSalesSummaryId, operationalDashboardId, summaryDate, periodStart, periodEnd, summaryText and token metadata; save via AiSalesSummary port inside ctx.data transaction",
+          "Return the AiSalesSummary fields per outputShape"
         ],
         "outputShape": {
           "kind": "object",

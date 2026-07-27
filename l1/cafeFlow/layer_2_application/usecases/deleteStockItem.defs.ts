@@ -46,10 +46,9 @@ export const deleteStockItemUsecase = {
         "rulesApplied": [],
         "transactional": true,
         "steps": [
-          "Load StockItem by input.stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId })",
-          "If not found, fail validation with not-found error for StockItem",
+          "Load StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); if not found, fail with not-found validation error",
           "Capture name from the loaded StockItem before deletion",
-          "Delete the StockItem via ctx.mdm.entity.delete({ mdmId: stockItemId }) inside the transaction wrapper when needed",
+          "Delete the StockItem via ctx.mdm.entity.delete({ mdmId: stockItemId }) inside the transaction wrapper (ctx.data)",
           "Return stockItemId and name of the removed item"
         ],
         "outputShape": {

@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:17:17.534Z",
+  "savedAt": "2026-07-24T19:57:52.728Z",
   "agentName": "agentCbDomainEntity",
   "stepId": 5,
   "planning": {
@@ -21,7 +21,7 @@
           "items": [
             {
               "entityId": "DailyShift",
-              "title": "DailyShift",
+              "title": "Daily Shift",
               "fields": [
                 {
                   "fieldId": "dailyShiftId",
@@ -118,22 +118,20 @@
                   "description": "Data e hora da última atualização do registro do turno."
                 }
               ],
-              "valueObjects": [],
-              "invariants": [
-                "Um turno deve sempre ter openedByUserId e openedAt definidos no momento da criação.",
-                "closedByUserId e closedAt devem ser preenchidos em conjunto (ambos presentes ou ambos nulos).",
-                "Quando status = 'open', closedAt e closedByUserId devem ser nulos.",
-                "Quando status = 'closed', closedAt e closedByUserId devem estar preenchidos.",
-                "closedAt, quando presente, deve ser maior ou igual a openedAt.",
-                "totalSalesAmount, quando presente, deve ser igual à soma dos pedidos confirmados vinculados ao turno.",
-                "cashTotal + otherPaymentsTotal, quando ambos presentes, deve ser igual a totalSalesAmount.",
-                "totalOrders, totalItemsSold, totalSalesAmount, cashTotal e otherPaymentsTotal, quando presentes, devem ser maiores ou iguais a zero.",
-                "updatedAt deve ser maior ou igual a createdAt.",
-                "Não pode existir mais de um DailyShift aberto (status = 'open') para a mesma shiftDate simultaneamente."
-              ],
               "statusEnum": [
                 "open",
                 "closed"
+              ],
+              "invariants": [
+                "dailyShiftId é único no agregado e nunca reutilizado.",
+                "shiftDate é obrigatório e deve ser uma data válida de calendário.",
+                "Quando status = \"open\", openedAt e openedByUserId são obrigatórios e closedAt/closedByUserId devem ser nulos.",
+                "Quando status = \"closed\", closedAt e closedByUserId passam a ser obrigatórios; openedAt e openedByUserId permanecem imutáveis.",
+                "openedAt deve ser menor ou igual a closedAt quando o turno está fechado.",
+                "totalOrders, totalItemsSold, totalSalesAmount, cashTotal e otherPaymentsTotal, quando presentes, devem ser maiores ou iguais a zero.",
+                "cashTotal + otherPaymentsTotal = totalSalesAmount (quando todos presentes).",
+                "Transição de status só é permitida de \"open\" para \"closed\"; após \"closed\" o turno é imutável (apenas leitura para auditoria).",
+                "createdAt deve ser menor ou igual a updatedAt, e updatedAt deve ser maior ou igual a createdAt em qualquer alteração."
               ]
             },
             {
@@ -456,29 +454,6 @@
                   ]
                 }
               ],
-              "invariants": [
-                "Um pedido deve possuir ao menos um OrderItem associado.",
-                "totalAmount deve ser igual à soma dos subtotal de todos os OrderItem do pedido.",
-                "Quando orderType = 'table', tableNumber deve estar preenchido.",
-                "Quando orderType = 'takeout', customerName deve estar preenchido.",
-                "Transições de status devem seguir o ciclo: registered → confirmed → inPreparation → ready → served, ou desvio para cancelled a partir de estados não terminais.",
-                "servedAt e cancelledAt são mutuamente exclusivos (não podem estar ambos preenchidos).",
-                "confirmedAt deve estar preenchido quando status >= 'confirmed'.",
-                "inPreparationAt deve estar preenchido quando status >= 'inPreparation'.",
-                "readyAt deve estar preenchido quando status >= 'ready'.",
-                "servedAt deve estar preenchido quando status = 'served'.",
-                "cancelledAt deve estar preenchido quando status = 'cancelled'.",
-                "cancellationReason deve estar preenchido quando status = 'cancelled'.",
-                "confirmedAt, quando presente, deve ser maior ou igual a registeredAt.",
-                "inPreparationAt, quando presente, deve ser maior ou igual a confirmedAt.",
-                "readyAt, quando presente, deve ser maior ou igual a inPreparationAt.",
-                "servedAt, quando presente, deve ser maior ou igual a readyAt.",
-                "updatedAt deve ser maior ou igual a createdAt.",
-                "dailyShiftId referenciado deve corresponder a um DailyShift existente e em estado 'open' no momento do registro.",
-                "Cada OrderItem deve referenciar um menuItemId ativo no momento do lançamento.",
-                "subtotal de cada OrderItem deve ser igual a quantity × unitPrice.",
-                "quantity de cada OrderItem deve ser maior que zero."
-              ],
               "statusEnum": [
                 "registered",
                 "confirmed",
@@ -486,11 +461,30 @@
                 "ready",
                 "served",
                 "cancelled"
+              ],
+              "invariants": [
+                "orderId é único no agregado.",
+                "dailyShiftId é obrigatório e deve referenciar um DailyShift existente.",
+                "orderType é obrigatório; se orderType = \"table\", tableNumber é obrigatório; se orderType = \"takeout\", customerName é recomendado.",
+                "totalAmount é obrigatório e deve ser maior ou igual a zero.",
+                "registeredAt é obrigatório e marca o início do ciclo de vida do pedido.",
+                "Transições de status permitidas: registered → confirmed → inPreparation → ready → served; a partir de qualquer estado (exceto terminais) é possível ir para cancelled.",
+                "\"served\" e \"cancelled\" são estados terminais: depois de atingidos, status, totalAmount e itens não podem mais ser alterados.",
+                "Quando status = \"confirmed\", confirmedAt é obrigatório; quando status = \"inPreparation\", inPreparationAt é obrigatório; quando status = \"ready\", readyAt é obrigatório; quando status = \"served\", servedAt é obrigatório.",
+                "Quando status = \"cancelled\", cancelledAt e cancellationReason são obrigatórios.",
+                "A linha do tempo registeredAt ≤ confirmedAt ≤ inPreparationAt ≤ readyAt ≤ servedAt deve ser monotônica.",
+                "Cada Order deve conter ao menos um OrderItem para existir.",
+                "Para cada OrderItem: subtotal = quantity × unitPrice, ambos devem ser maiores que zero; menuItemId deve referenciar um MenuItem ativo no momento do lançamento.",
+                "Order.totalAmount = soma de OrderItem.subtotal de todos os itens do pedido.",
+                "Se OrderItem.status = \"cancelled\", então cancelledAt e cancellationReason são obrigatórios e o item não conta para o totalAmount.",
+                "Order pode ter no máximo um OrderPayment (relação um-para-um); OrderPayment.totalAmount deve ser igual a Order.totalAmount no momento do fechamento.",
+                "OrderPayment.status = \"closed\" exige closedAt; OrderPayment.status = \"voided\" exige voidedAt e voidReason.",
+                "createdAt ≤ updatedAt, e updatedAt avança a cada transição de status."
               ]
             },
             {
               "entityId": "ShiftClosingReport",
-              "title": "ShiftClosingReport",
+              "title": "Shift Closing Report",
               "fields": [
                 {
                   "fieldId": "shiftClosingReportId",
@@ -583,24 +577,23 @@
                   "description": "Data e hora da última atualização do registro."
                 }
               ],
-              "valueObjects": [],
               "invariants": [
-                "dailyShiftId referenciado deve corresponder a um DailyShift existente e em estado 'closed'.",
-                "totalSalesAmount deve ser igual a cashPaymentsAmount + otherPaymentsAmount.",
-                "totalOrdersCount deve ser maior ou igual a zero.",
-                "totalItemsSold deve ser maior ou igual a zero.",
-                "lowStockSignalsCount deve ser maior ou igual a zero.",
-                "stockoutSignalsCount deve ser maior ou igual a zero.",
+                "shiftClosingReportId é único no agregado.",
+                "dailyShiftId é obrigatório e deve referenciar um DailyShift com status = \"closed\".",
+                "shiftDate deve coincidir com DailyShift.shiftDate do turno referenciado.",
+                "Existe no máximo um ShiftClosingReport por DailyShift (relação um-para-um).",
                 "totalSalesAmount, cashPaymentsAmount e otherPaymentsAmount devem ser maiores ou iguais a zero.",
-                "generatedAt deve ser maior ou igual ao closedAt do DailyShift referenciado.",
-                "updatedAt deve ser maior ou igual a createdAt.",
-                "Não pode existir mais de um ShiftClosingReport para o mesmo dailyShiftId."
-              ],
-              "statusEnum": []
+                "totalSalesAmount = cashPaymentsAmount + otherPaymentsAmount.",
+                "totalOrdersCount e totalItemsSold devem ser maiores ou iguais a zero.",
+                "lowStockSignalsCount e stockoutSignalsCount devem ser maiores ou iguais a zero.",
+                "generatedAt é obrigatório e representa o instante de fechamento do relatório.",
+                "Uma vez gerado, o relatório é somente leitura (campos financeiros e contagens são imutáveis); apenas closingNotes pode ser ajustado em reedições controladas, com atualização de updatedAt.",
+                "createdAt ≤ updatedAt, e updatedAt ≥ generatedAt."
+              ]
             },
             {
               "entityId": "AiPromotionSuggestion",
-              "title": "AiPromotionSuggestion",
+              "title": "AI Promotion Suggestion",
               "fields": [
                 {
                   "fieldId": "aiPromotionSuggestionId",
@@ -723,30 +716,31 @@
                   "description": "Data e hora da última atualização do registro da sugestão."
                 }
               ],
-              "valueObjects": [],
-              "invariants": [
-                "confidenceScore deve estar entre 0 e 100 (inclusive).",
-                "suggestedDiscountPercent, quando presente, deve estar entre 0 e 100 (inclusive).",
-                "salesLast7Days deve ser maior ou igual a zero.",
-                "salesToday, quando presente, deve ser maior ou igual a zero.",
-                "currentStockLevel, quando presente, deve ser maior ou igual a zero.",
-                "Quando status = 'accepted' ou status = 'rejected', reviewedAt e reviewedByUserId devem estar preenchidos.",
-                "Quando status = 'pending', reviewedAt e reviewedByUserId devem ser nulos.",
-                "expiresAt, quando presente, deve ser maior que generatedAt.",
-                "reviewedAt, quando presente, deve ser maior ou igual a generatedAt.",
-                "updatedAt deve ser maior ou igual a createdAt.",
-                "reason deve ser um texto não vazio."
-              ],
               "statusEnum": [
                 "pending",
                 "accepted",
                 "rejected",
                 "expired"
+              ],
+              "invariants": [
+                "aiPromotionSuggestionId é único no agregado.",
+                "operationalDashboardId é obrigatório e deve referenciar um OperationalDashboard existente.",
+                "menuItemId é obrigatório e deve referenciar um item de menu válido.",
+                "menuItemName é obrigatório e deve ser uma cópia do nome do item no momento da geração (preserva contexto histórico).",
+                "reason é obrigatório e não pode ser vazio.",
+                "salesLast7Days deve ser maior ou igual a zero.",
+                "salesToday e currentStockLevel, quando presentes, devem ser maiores ou iguais a zero.",
+                "confidenceScore deve estar no intervalo [0, 100].",
+                "suggestedDiscountPercent, quando presente, deve estar no intervalo [0, 100].",
+                "generatedAt é obrigatório; expiresAt, quando presente, deve ser estritamente maior que generatedAt.",
+                "Quando status passa de \"pending\" para \"accepted\" ou \"rejected\", reviewedAt e reviewedByUserId passam a ser obrigatórios.",
+                "\"accepted\", \"rejected\" e \"expired\" são estados terminais: nenhuma transição adicional é permitida a partir deles.",
+                "createdAt ≤ updatedAt, e updatedAt avança quando o status é alterado."
               ]
             },
             {
               "entityId": "AiSalesSummary",
-              "title": "AiSalesSummary",
+              "title": "AI Sales Summary",
               "fields": [
                 {
                   "fieldId": "aiSalesSummaryId",
@@ -821,21 +815,20 @@
                   "description": "Data e hora da última atualização do registro do resumo."
                 }
               ],
-              "valueObjects": [],
               "invariants": [
-                "periodEnd deve ser maior ou igual a periodStart.",
-                "summaryDate deve estar dentro do intervalo [periodStart, periodEnd].",
-                "summaryText deve ser um texto não vazio.",
-                "promptTokens, quando presente, deve ser maior ou igual a zero.",
-                "completionTokens, quando presente, deve ser maior ou igual a zero.",
-                "generatedAt, quando presente, deve ser maior ou igual a createdAt.",
-                "updatedAt deve ser maior ou igual a createdAt."
-              ],
-              "statusEnum": []
+                "aiSalesSummaryId é único no agregado.",
+                "operationalDashboardId é obrigatório e deve referenciar um OperationalDashboard existente.",
+                "summaryDate é obrigatório e identifica o dia do resumo.",
+                "periodStart deve ser menor ou igual a periodEnd, e periodEnd deve ser menor ou igual a summaryDate.",
+                "summaryText é obrigatório e não pode ser vazio.",
+                "promptTokens e completionTokens, quando presentes, devem ser maiores ou iguais a zero.",
+                "createdAt ≤ updatedAt, e generatedAt, quando presente, deve estar entre createdAt e updatedAt.",
+                "Uma vez gerado, o registro é imutável (audit trail da geração de IA); somente metadata técnico (updatedAt) pode refletir regenerações controladas."
+              ]
             },
             {
               "entityId": "OperationalDashboard",
-              "title": "OperationalDashboard",
+              "title": "Operational Dashboard",
               "fields": [
                 {
                   "fieldId": "operationalDashboardId",
@@ -934,27 +927,21 @@
                   "description": "Data e hora da última atualização do registro do dashboard."
                 }
               ],
-              "valueObjects": [],
               "invariants": [
-                "todaySalesTotal deve ser maior ou igual a zero.",
-                "todayOrdersCount deve ser maior ou igual a zero.",
-                "todayItemsSold deve ser maior ou igual a zero.",
-                "topSellingItemsCount deve ser maior ou igual a zero.",
-                "lowStockItemsCount deve ser maior ou igual a zero.",
-                "outOfStockItemsCount deve ser maior ou igual a zero.",
-                "topMenuItemQuantity, quando presente, deve ser maior ou igual a zero.",
-                "hasLowStockAlert deve ser verdadeiro se e somente se lowStockItemsCount > 0 ou outOfStockItemsCount > 0.",
-                "Quando topMenuItemId está preenchido, topMenuItemQuantity também deve estar preenchido.",
-                "Quando topMenuItemId é nulo, topMenuItemQuantity deve ser nulo.",
-                "lastComputedAt deve ser maior ou igual a createdAt.",
-                "updatedAt deve ser maior ou igual a createdAt.",
-                "dailyShiftId referenciado deve corresponder a um DailyShift existente."
-              ],
-              "statusEnum": []
+                "operationalDashboardId é único no agregado.",
+                "dailyShiftId é obrigatório e deve referenciar um DailyShift existente.",
+                "referenceDate deve coincidir com DailyShift.shiftDate do turno referenciado.",
+                "todaySalesTotal, todayOrdersCount, todayItemsSold, topSellingItemsCount, lowStockItemsCount e outOfStockItemsCount devem ser maiores ou iguais a zero.",
+                "topMenuItemQuantity, quando presente, deve ser maior que zero; topMenuItemId, quando presente, deve referenciar um MenuItem válido.",
+                "hasLowStockAlert deve ser true se e somente se (lowStockItemsCount > 0 OR outOfStockItemsCount > 0).",
+                "lowStockItemIds, quando presente, deve listar identificadores coerentes com lowStockItemsCount.",
+                "lastComputedAt é obrigatório e deve ser maior ou igual a createdAt; updatedAt deve ser maior ou igual a lastComputedAt.",
+                "O dashboard é uma projeção derivada: seus contadores são recalculáveis a partir do DailyShift e dos agregados relacionados, sem efeito colateral."
+              ]
             },
             {
               "entityId": "StockAdjustment",
-              "title": "StockAdjustment",
+              "title": "Stock Adjustment",
               "fields": [
                 {
                   "fieldId": "stockAdjustmentId",
@@ -966,7 +953,7 @@
                   "fieldId": "stockItemId",
                   "type": "uuid",
                   "required": true,
-                  "description": "Identificador do insumo cujo saldo foi ajustado."
+                  "description": "Identificador do insumo cujo saldo foi afetado."
                 },
                 {
                   "fieldId": "quantity",
@@ -1057,16 +1044,15 @@
                   "description": "Identificador do ajuste de compensação quando este registro foi anulado."
                 }
               ],
-              "valueObjects": [],
-              "invariants": [],
               "statusEnum": [
                 "posted",
                 "voided"
-              ]
+              ],
+              "invariants": []
             },
             {
               "entityId": "StockConsumption",
-              "title": "StockConsumption",
+              "title": "Stock Consumption",
               "fields": [
                 {
                   "fieldId": "stockConsumptionId",
@@ -1127,22 +1113,22 @@
                   "description": "Data e hora de criação do registro."
                 }
               ],
-              "valueObjects": [],
-              "invariants": [],
               "statusEnum": [
                 "posted",
                 "voided"
-              ]
+              ],
+              "invariants": []
             }
           ]
         },
         "questions": [],
         "trace": [
-          "Produced 8 pure domain entities: 6 aggregate roots (DailyShift, Order, ShiftClosingReport, AiPromotionSuggestion, AiSalesSummary, OperationalDashboard) and 2 append-only event records (StockAdjustment, StockConsumption).",
-          "Order aggregate exposes two valueObjects: OrderItem (collection=true, oneToMany) and OrderPayment (collection=false, oneToOne).",
-          "Event records (StockAdjustment, StockConsumption) carry no invariants beyond their fields, as instructed.",
-          "All fieldIds are camelCase derived from the ontology; entityIds are PascalCase and never reuse the PT titles.",
-          "No persistence, SQL, or ctx.data references were introduced."
+          "Mapped 6 aggregate roots to pure domain entities: DailyShift, Order, ShiftClosingReport, AiPromotionSuggestion, AiSalesSummary, OperationalDashboard.",
+          "Embedded OrderItem and OrderPayment within Order as valueObjects; OrderItem is one-to-many (collection=true) and OrderPayment is one-to-one (collection=false).",
+          "Defined business invariants for each aggregate root covering uniqueness, required references, monetary/non-negative arithmetic, status transitions, and chronological consistency of timestamps.",
+          "Mapped 2 append-only event records: StockAdjustment (no eventOwner) and StockConsumption (eventOwner=Order); events carry no invariants beyond their fields.",
+          "Preserved all fieldIds in camelCase, types, enums and Portuguese descriptions directly from the ontology.",
+          "No persistence concerns, no ctx.data references and no SQL included in the output."
         ]
       }
     },

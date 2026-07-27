@@ -21,7 +21,7 @@ export const dailyShiftRepositoryPort = {
         "params": [
           "id: DailyShiftId"
         ],
-        "description": "Load a daily shift by its identity"
+        "description": "Load a daily shift by identity"
       },
       {
         "name": "list",
@@ -43,9 +43,9 @@ export const dailyShiftRepositoryPort = {
         "name": "findOpenByDate",
         "returns": "DailyShift | null",
         "params": [
-          "date: LocalDate"
+          "date: CalendarDate"
         ],
-        "description": "Find the open shift for a calendar date"
+        "description": "Find open shift for a calendar date"
       },
       {
         "name": "findByPeriod",

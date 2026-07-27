@@ -30,7 +30,6 @@ export interface UpdateMenuItemOutput {
 }
 
 interface CafeFlowMenuItemDetails {
-  menuItemId?: string;
   menuCategoryId?: string;
   description?: string | null;
   price?: number;
@@ -40,8 +39,9 @@ interface CafeFlowMenuItemDetails {
   imageUrl?: string | null;
   displayOrder?: number | null;
   requiresStockLink?: boolean;
-  createdAt?: string;
   updatedAt?: string;
+  createdAt?: string;
+  [key: string]: unknown;
 }
 
 export async function updateMenuItem(
@@ -50,10 +50,10 @@ export async function updateMenuItem(
 ): Promise<UpdateMenuItemOutput> {
   const existing = await ctx.mdm.entity.get({ mdmId: input.menuItemId });
 
-  if (!input.menuCategoryId || typeof input.price !== 'number' || !(input.price > 0)) {
+  if (!input.menuCategoryId.trim() || !(input.price > 0)) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'menuItemNeedsCategoryAndPrice: item de cardápio precisa de categoria e preço maior que zero.',
+      'menuItemNeedsCategoryAndPrice: o item precisa de categoria e preço maior que zero.',
       400,
       { ruleId: 'menuItemNeedsCategoryAndPrice' },
     );
@@ -61,38 +61,44 @@ export async function updateMenuItem(
 
   await ctx.mdm.entity.get({ mdmId: input.menuCategoryId });
 
+  const now = ctx.clock.nowIso();
+
   if (input.status !== 'active' && input.status !== 'paused') {
     throw new AppError(
       'VALIDATION_ERROR',
-      "status must be 'active' or 'paused'.",
+      'onlyActiveMenuItemsCanBeOrdered: status deve ser active ou paused.',
       400,
-      { status: input.status, ruleId: 'onlyActiveMenuItemsCanBeOrdered' },
+      { ruleId: 'onlyActiveMenuItemsCanBeOrdered' },
     );
   }
 
-  // rule: onlyActiveMenuItemsCanBeOrdered — when status is 'paused', item is unavailable for new POS orders; when 'active', it is available again.
-  const now = ctx.clock.nowIso();
-  const pausedAt = input.status === 'paused' ? now : null;
-  const pauseReason =
-    input.status === 'paused' ? (input.pauseReason ?? null) : null;
+  let pausedAt: string | null = null;
+  let pauseReason: string | null = null;
+  if (input.status === 'paused') {
+    // rule: onlyActiveMenuItemsCanBeOrdered
+    pausedAt = now;
+    pauseReason = input.pauseReason ?? null;
+  } else {
+    // rule: onlyActiveMenuItemsCanBeOrdered — clear pause so item is orderable again
+    pausedAt = null;
+    pauseReason = null;
+  }
 
-  const details = existing.details as unknown as Record<string, unknown>;
-  const prevCafeFlow = (details.cafeFlow ?? {}) as unknown as CafeFlowMenuItemDetails;
+  const existingDetails = existing.details as unknown as Record<string, unknown>;
+  const existingCafeFlow = (existingDetails.cafeFlow ?? {}) as CafeFlowMenuItemDetails;
 
-  const cafeFlow: CafeFlowMenuItemDetails = {
-    ...prevCafeFlow,
-    menuItemId: input.menuItemId,
+  const nextCafeFlow: CafeFlowMenuItemDetails = {
+    ...existingCafeFlow,
     menuCategoryId: input.menuCategoryId,
-    description: input.description !== undefined ? input.description : (prevCafeFlow.description ?? null),
+    description:
+      input.description !== undefined ? input.description : (existingCafeFlow.description ?? null),
     price: input.price,
     status: input.status,
     pausedAt,
     pauseReason,
-    imageUrl: input.imageUrl !== undefined ? input.imageUrl : (prevCafeFlow.imageUrl ?? null),
+    imageUrl: input.imageUrl !== undefined ? input.imageUrl : (existingCafeFlow.imageUrl ?? null),
     displayOrder:
-      input.displayOrder !== undefined
-        ? input.displayOrder
-        : (prevCafeFlow.displayOrder ?? null),
+      input.displayOrder !== undefined ? input.displayOrder : (existingCafeFlow.displayOrder ?? null),
     requiresStockLink: input.requiresStockLink,
     updatedAt: now,
   };
@@ -102,25 +108,46 @@ export async function updateMenuItem(
     expectedVersion: existing.version,
     patch: {
       name: input.name,
-      cafeFlow,
-    } as never,
+      cafeFlow: nextCafeFlow,
+    } as unknown as Partial<typeof existing.details>,
   });
 
-  const outDetails = updated.details as unknown as Record<string, unknown>;
-  const outCafe = (outDetails.cafeFlow ?? cafeFlow) as unknown as CafeFlowMenuItemDetails;
+  const cafeFlow = ((updated.details as unknown as Record<string, unknown>).cafeFlow ??
+    nextCafeFlow) as CafeFlowMenuItemDetails;
+
+  const description =
+    cafeFlow.description === null || cafeFlow.description === undefined
+      ? undefined
+      : String(cafeFlow.description);
+  const outPausedAt =
+    cafeFlow.pausedAt === null || cafeFlow.pausedAt === undefined
+      ? undefined
+      : String(cafeFlow.pausedAt);
+  const outPauseReason =
+    cafeFlow.pauseReason === null || cafeFlow.pauseReason === undefined
+      ? undefined
+      : String(cafeFlow.pauseReason);
+  const outImageUrl =
+    cafeFlow.imageUrl === null || cafeFlow.imageUrl === undefined
+      ? undefined
+      : String(cafeFlow.imageUrl);
+  const outDisplayOrder =
+    cafeFlow.displayOrder === null || cafeFlow.displayOrder === undefined
+      ? undefined
+      : Number(cafeFlow.displayOrder);
 
   return {
-    menuItemId: input.menuItemId,
-    menuCategoryId: outCafe.menuCategoryId ?? input.menuCategoryId,
-    name: updated.details.name ?? input.name,
-    description: outCafe.description ?? undefined,
-    price: outCafe.price ?? input.price,
-    status: outCafe.status ?? input.status,
-    pausedAt: outCafe.pausedAt ?? undefined,
-    pauseReason: outCafe.pauseReason ?? undefined,
-    imageUrl: outCafe.imageUrl ?? undefined,
-    displayOrder: outCafe.displayOrder ?? undefined,
-    requiresStockLink: outCafe.requiresStockLink ?? input.requiresStockLink,
-    updatedAt: outCafe.updatedAt ?? now,
+    menuItemId: updated.mdmId,
+    menuCategoryId: String(cafeFlow.menuCategoryId ?? input.menuCategoryId),
+    name: updated.details.name,
+    description,
+    price: Number(cafeFlow.price ?? input.price),
+    status: String(cafeFlow.status ?? input.status),
+    pausedAt: outPausedAt,
+    pauseReason: outPauseReason,
+    imageUrl: outImageUrl,
+    displayOrder: outDisplayOrder,
+    requiresStockLink: Boolean(cafeFlow.requiresStockLink ?? input.requiresStockLink),
+    updatedAt: String(cafeFlow.updatedAt ?? now),
   };
 }

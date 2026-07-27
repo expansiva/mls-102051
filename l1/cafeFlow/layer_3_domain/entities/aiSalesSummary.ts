@@ -15,46 +15,43 @@ export interface AiSalesSummary {
 }
 
 export function isValidAiSalesSummaryPeriod(
-  summary: Pick<AiSalesSummary, 'periodStart' | 'periodEnd'>,
-): boolean {
-  return summary.periodEnd >= summary.periodStart;
-}
-
-export function isSummaryDateWithinPeriod(
-  summary: Pick<AiSalesSummary, 'summaryDate' | 'periodStart' | 'periodEnd'>,
+  summary: Pick<AiSalesSummary, 'periodStart' | 'periodEnd' | 'summaryDate'>,
 ): boolean {
   return (
-    summary.summaryDate >= summary.periodStart &&
-    summary.summaryDate <= summary.periodEnd
+    summary.periodStart <= summary.periodEnd &&
+    summary.periodEnd <= summary.summaryDate
   );
 }
 
-export function hasNonEmptySummaryText(
+export function isNonEmptyAiSalesSummaryText(
   summary: Pick<AiSalesSummary, 'summaryText'>,
 ): boolean {
   return summary.summaryText.trim().length > 0;
 }
 
-export function hasValidPromptTokens(
-  summary: Pick<AiSalesSummary, 'promptTokens'>,
+export function hasValidAiSalesSummaryTokenCounts(
+  summary: Pick<AiSalesSummary, 'promptTokens' | 'completionTokens'>,
 ): boolean {
-  return summary.promptTokens === null || summary.promptTokens >= 0;
+  if (summary.promptTokens != null && summary.promptTokens < 0) return false;
+  if (summary.completionTokens != null && summary.completionTokens < 0) return false;
+  return true;
 }
 
-export function hasValidCompletionTokens(
-  summary: Pick<AiSalesSummary, 'completionTokens'>,
+export function aiSalesSummaryTokensRequireModelId(
+  summary: Pick<AiSalesSummary, 'promptTokens' | 'completionTokens' | 'modelId'>,
 ): boolean {
-  return summary.completionTokens === null || summary.completionTokens >= 0;
+  const hasTokens =
+    summary.promptTokens != null || summary.completionTokens != null;
+  if (!hasTokens) return true;
+  return summary.modelId != null && summary.modelId.trim().length > 0;
 }
 
-export function hasValidGeneratedAt(
-  summary: Pick<AiSalesSummary, 'generatedAt' | 'createdAt'>,
+export function hasValidAiSalesSummaryTimestamps(
+  summary: Pick<AiSalesSummary, 'createdAt' | 'updatedAt' | 'generatedAt'>,
 ): boolean {
-  return summary.generatedAt === null || summary.generatedAt >= summary.createdAt;
-}
-
-export function hasValidUpdatedAt(
-  summary: Pick<AiSalesSummary, 'updatedAt' | 'createdAt'>,
-): boolean {
-  return summary.updatedAt >= summary.createdAt;
+  if (summary.createdAt > summary.updatedAt) return false;
+  if (summary.generatedAt != null && summary.generatedAt > summary.updatedAt) {
+    return false;
+  }
+  return true;
 }

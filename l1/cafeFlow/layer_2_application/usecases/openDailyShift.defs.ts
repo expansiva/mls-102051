@@ -96,12 +96,12 @@ export const openDailyShiftUsecase = {
         "transactional": true,
         "steps": [
           "Resolve openedByUserId from ctx.sessionContext.actorId (actorSession)",
-          "Generate dailyShiftId via ctx.idGenerator and openedAt/createdAt/updatedAt via ctx.clock.now()",
-          "Set status to 'open' (systemDefault)",
-          "Load DailyShift port via resolveRepository",
-          "Query existing DailyShifts with status 'open'; if any found, reject with validation error referencing rule ordersRequireOpenDailyShift (only one open shift allowed)",
-          "Build DailyShift aggregate with shiftDate and optional notes from input plus resolved defaults",
-          "Persist new DailyShift through the port inside ctx.data transaction",
+          "Generate dailyShiftId via ctx.idGenerator and timestamps (openedAt, createdAt, updatedAt) via ctx.clock",
+          "Set status to 'open' as systemDefault",
+          "Load DailyShift port and list/find any DailyShift with status 'open'",
+          "Apply ordersRequireOpenDailyShift inline: if an open DailyShift already exists, reject with validation error (rule id in details) — only one open shift allowed",
+          "Build DailyShift aggregate with shiftDate, notes (optional), dailyShiftId, openedByUserId, status open, openedAt, createdAt, updatedAt",
+          "Persist new DailyShift via port.create inside ctx.data transaction wrapper",
           "Return dailyShiftId, shiftDate, status, openedByUserId, openedAt, notes, createdAt, updatedAt"
         ],
         "outputShape": {

@@ -1,48 +1,47 @@
 {
-  "savedAt": "2026-07-23T17:08:12.004Z",
+  "savedAt": "2026-07-27T18:49:35.880Z",
   "pageId": "posWorkspace",
   "genome": "page21",
   "objective": {
     "actor": "Atendente de café (e cozinheiro para acompanhamento de fila)",
-    "jobToBeDone": "Lançar novos pedidos de mesa ou takeout, acompanhar o andamento dos pedidos abertos do turno, atualizar status ao longo do ciclo de vida e registrar o pagamento básico ao fechar o atendimento.",
-    "primaryDecision": "Criar um novo pedido selecionando itens do cardápio e confirmando o envio à cozinha.",
+    "jobToBeDone": "Lançar pedidos de mesa ou takeout com itens do cardápio, acompanhar o andamento dos pedidos abertos do turno e registrar o pagamento básico ao fechar o atendimento.",
+    "primaryDecision": "Criar um novo pedido selecionando itens ativos do cardápio e confirmando o envio à cozinha.",
     "decisiveInfo": [
       "orderType (mesa ou takeout)",
       "tableNumber / customerName",
-      "menuItemId + quantity + observations (itens do cardápio ativo)",
-      "status atual do pedido (para transições contextuais)",
-      "totalAmount + paymentMethod (para fechamento)"
+      "menuItemId + quantity + observations (itens do cardápio)",
+      "status atual de cada pedido aberto",
+      "totalAmount + paymentMethod (fechamento)"
     ],
-    "usageFrequency": "Contínuo / mãos ocupadas — o atendente usa o POS durante todo o turno, com alta frequência de lançamentos e transições rápidas.",
+    "usageFrequency": "Contínuo / mãos ocupadas — o atendente usa esta tela durante todo o turno, com múltiplos lançamentos por hora; velocidade e clareza são críticos.",
     "criticalActions": [
       {
         "action": "cmdCreateOrder",
-        "presentation": "primary-button dentro do painel de composição do pedido, após seleção de itens do cardápio"
+        "presentation": "primary-button dentro do painel de composição do pedido, ativado após selecionar pelo menos um item do cardápio"
       },
       {
         "action": "cmdUpdateOrderStatus",
-        "presentation": "contextual-transition-actions — um botão por transição válida exibido no card/linha do pedido selecionado"
+        "presentation": "contextual-transition-actions — um botão por transição válida exibido no card/linha do pedido selecionado, nunca um <select> livre"
       },
       {
         "action": "cmdRecordBasicPayment",
-        "presentation": "inline-row-command ou painel lateral ativado ao selecionar pedido pronto para pagamento"
+        "presentation": "inline-row-command ou painel lateral ativado ao selecionar pedido totalizado pronto para fechamento"
       }
     ],
     "informationHierarchy": [
-      "1. Lista de pedidos abertos do turno (status, tipo, mesa/cliente, horário) — visão operacional imediata",
-      "2. Filtros de pedidos (status, tipo, mesa) — refinamento rápido da fila",
-      "3. Ações de transição de status contextuais ao pedido selecionado",
-      "4. Painel de criação de novo pedido com cardápio navegável por categoria",
-      "5. Painel de registro de pagamento básico para pedido selecionado"
+      "1. Fila de pedidos abertos do turno (status, tipo, mesa/cliente, horário)",
+      "2. Ações de transição de status contextuais ao pedido selecionado",
+      "3. Painel de criação de novo pedido com cardápio navegável por categoria",
+      "4. Painel de registro de pagamento básico para pedido selecionado"
     ],
-    "successCriteria": "O atendente consegue lançar um pedido completo, acompanhar a fila e registrar pagamento sem sair da tela, sem digitar IDs e sem ambiguidade sobre o estado atual de cada pedido.",
+    "successCriteria": "O atendente consegue lançar um pedido completo em menos de 30 segundos, avançar o status de um pedido com um único toque e registrar o pagamento sem sair da tela principal.",
     "antiPatterns": [
-      "Campo de status como <select> livre sobre todos os valores do enum",
-      "Campo orderId digitado manualmente",
-      "Formulário de criação de pedido separado em página diferente",
-      "Exibir campos de sistema (dailyShiftId, registeredAt, createdAt) como inputs editáveis",
-      "Seção de filtros isolada sem vínculo visual com a lista que filtra",
-      "Persuasão ou urgência artificial em tela operacional"
+      "Campo de orderId digitado manualmente em qualquer formulário",
+      "Status editável via <select> livre sobre todos os valores do enum",
+      "Formulário de criação de pedido sem cardápio visível ao lado",
+      "Seção separada de filtros desconectada da lista de pedidos",
+      "dailyShiftId exposto como input manual (deve vir do activeLifecycleInstance)",
+      "Tela de pagamento em página separada — deve ser painel contextual na mesma workspace"
     ]
   }
 }

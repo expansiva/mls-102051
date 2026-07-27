@@ -13,7 +13,7 @@ export const stockAdjustmentDomainEntity = {
   },
   "data": {
     "entityId": "StockAdjustment",
-    "title": "StockAdjustment",
+    "title": "Ajuste Manual de Estoque",
     "fields": [
       {
         "fieldId": "stockAdjustmentId",
@@ -25,7 +25,7 @@ export const stockAdjustmentDomainEntity = {
         "fieldId": "stockItemId",
         "type": "uuid",
         "required": true,
-        "description": "Identificador do insumo cujo saldo foi ajustado."
+        "description": "Identificador do insumo"
       },
       {
         "fieldId": "quantity",
@@ -117,11 +117,11 @@ export const stockAdjustmentDomainEntity = {
       }
     ],
     "valueObjects": [],
-    "invariants": [],
     "statusEnum": [
       "posted",
       "voided"
-    ]
+    ],
+    "invariants": []
   }
 } as const;
 

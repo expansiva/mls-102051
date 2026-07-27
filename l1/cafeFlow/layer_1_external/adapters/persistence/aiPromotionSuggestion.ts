@@ -15,7 +15,7 @@ export const aiPromotionSuggestionTableDef: TableDefinition = {
     { name: 'ai_promotion_suggestion_id', postgresType: 'UUID' },
     { name: 'operational_dashboard_id', postgresType: 'UUID' },
     { name: 'menu_item_id', postgresType: 'UUID' },
-    { name: 'menu_category_id', postgresType: 'UUID' },
+    { name: 'menu_category_id', postgresType: 'UUID', nullable: true },
     { name: 'status', postgresType: 'TEXT' },
     { name: 'reviewed_by_user_id', postgresType: 'UUID', nullable: true },
     { name: 'created_at', postgresType: 'TIMESTAMPTZ', defaultSql: 'NOW()' },

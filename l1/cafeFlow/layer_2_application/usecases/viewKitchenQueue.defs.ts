@@ -92,13 +92,12 @@ export const viewKitchenQueueUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "Resolve the single open DailyShift via DailyShift port (status === 'open'); this supplies dailyShiftId from activeLifecycleInstance — never accept it as public input",
-          "If no open DailyShift exists, apply ordersRequireOpenDailyShift and return an empty kitchen queue (no missing-input error)",
-          "Via Order port, list orders where dailyShiftId equals the open shift id and status is in ['confirmed', 'inPreparation'] (orderEntersKitchenQueueAfterAttendantConfirmation: exclude registered; completedOrdersLeaveKitchenQueue: exclude ready, served, cancelled)",
-          "Sort the matched orders by confirmedAt ascending to prioritize kitchen flow",
-          "For each order, project embedded OrderItems as prep reference (orderItemsArePrepReference): orderItemId, menuItemName, quantity, observations, status",
-          "Map each order to the canonical output shape: orderId, orderType, tableNumber, customerName, notes, status, confirmedAt, inPreparationAt, items (orderRequiresTableOrTakeout is reflected by orderType/tableNumber already on the aggregate)",
-          "Return the ordered list of kitchen-queue projections"
+          "Resolve the single open DailyShift (status=open) via DailyShift port; if none is open, return empty list per ordersRequireOpenDailyShift (do not require dailyShiftId from client)",
+          "Via Order port, list orders filtered by dailyShiftId of the open shift and status in [confirmed, inPreparation] (orderEntersKitchenQueueAfterAttendantConfirmation; exclude registered; completedOrdersLeaveKitchenQueue excludes ready/served/cancelled)",
+          "Sort orders by confirmedAt ascending to prioritize kitchen flow",
+          "For each order, project embedded OrderItem collection as prep reference (orderItemId, menuItemName, quantity, observations, status) — orderItemsArePrepReference",
+          "Map each order to output shape: orderId, orderType, tableNumber, customerName, notes, status, confirmedAt, inPreparationAt, items (orderRequiresTableOrTakeout is already enforced at order creation; surface tableNumber/customerName as stored)",
+          "Return the projected kitchen queue list"
         ],
         "outputShape": {
           "kind": "list",

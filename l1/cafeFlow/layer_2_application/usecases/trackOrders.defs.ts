@@ -28,29 +28,34 @@ export const trackOrdersUsecase = {
             "name": "status",
             "type": "string",
             "required": false,
+            "description": "Filtro opcional por status do pedido (ex.: ready para localizar o que já pode ser servido)",
             "fieldRef": "Order.status"
           },
           {
             "name": "orderType",
             "type": "string",
             "required": false,
+            "description": "Filtro opcional por origem do pedido: mesa (table) ou takeout",
             "fieldRef": "Order.orderType"
           },
           {
             "name": "tableNumber",
             "type": "string",
             "required": false,
+            "description": "Filtro opcional pelo número ou identificador da mesa",
             "fieldRef": "Order.tableNumber"
           },
           {
             "name": "page",
             "type": "number",
-            "required": false
+            "required": false,
+            "description": "Número da página para paginação da lista de pedidos"
           },
           {
             "name": "pageSize",
             "type": "number",
-            "required": false
+            "required": false,
+            "description": "Quantidade de pedidos por página"
           }
         ],
         "output": [
@@ -77,15 +82,14 @@ export const trackOrdersUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "Resolve the active open DailyShift via DailyShift port (list/find where status = 'open'); if none is open, apply ordersRequireOpenDailyShift and return empty orders with total 0 (or validation error per L4)",
-          "Use the resolved dailyShiftId as mandatory scope for Order queries — never accept dailyShiftId from the client",
-          "List Orders through Order port filtered by dailyShiftId and excluding status in ['served', 'cancelled'] (completedOrdersLeaveKitchenQueue: served/cancelled leave the open tracking queue)",
-          "Apply optional user filters: status, orderType, tableNumber when provided",
-          "Sort by Order.registeredAt ascending",
-          "Apply optional pagination (page, pageSize) and compute total matching count",
-          "For each order, project embedded OrderItems (orderItemId, menuItemName, quantity, observations, status) from the Order aggregate — do not use a child OrderItem repository",
-          "Map each order to the output shape including timestamps (registeredAt, confirmedAt, inPreparationAt, readyAt) and items array",
-          "Return { orders, total }"
+          "Resolve the active lifecycle DailyShift via DailyShift port: list/find where status equals 'open'; take its dailyShiftId. If none is open, apply ordersRequireOpenDailyShift and return empty orders with total 0 (or the documented validation error).",
+          "Load Orders through the Order port filtered by dailyShiftId equal to the open shift id.",
+          "Apply completedOrdersLeaveKitchenQueue inline: exclude orders whose status is 'served' or 'cancelled' from the default open-orders list.",
+          "Apply optional user filters when provided: status (Order.status), orderType (Order.orderType), tableNumber (Order.tableNumber).",
+          "Sort remaining orders by Order.registeredAt ascending.",
+          "Apply optional pagination (page, pageSize) and compute total as the count of orders matching filters before page slice.",
+          "Map each Order aggregate to the output shape: order fields plus embedded OrderItem collection as items (orderItemId, menuItemName, quantity, observations, status).",
+          "Return { orders, total }."
         ],
         "outputShape": {
           "kind": "paginated",

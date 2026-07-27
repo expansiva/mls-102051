@@ -74,7 +74,8 @@ export function createStockConsumptionRepositoryAdapter(
 
   return {
     async append(record) {
-      await (await getTable()).insert({ record: toRow(record) });
+      const repo = await getTable();
+      await repo.insert({ record: toRow(record) });
     },
 
     async listByOwnerId(ownerId) {
@@ -82,7 +83,7 @@ export function createStockConsumptionRepositoryAdapter(
         await getTable()
       ).findMany({
         where: { order_id: ownerId },
-        orderBy: { field: 'created_at', direction: 'desc' },
+        orderBy: { field: 'created_at', direction: 'asc' },
       });
       return rows.map(toDomain);
     },
@@ -91,7 +92,7 @@ export function createStockConsumptionRepositoryAdapter(
       const rows = await (
         await getTable()
       ).findMany({
-        orderBy: { field: 'created_at', direction: 'desc' },
+        orderBy: { field: 'created_at', direction: 'asc' },
       });
       return rows
         .filter((row) => row.created_at >= period.from && row.created_at <= period.to)
@@ -103,7 +104,7 @@ export function createStockConsumptionRepositoryAdapter(
         await getTable()
       ).findMany({
         where: { stock_item_id: productId },
-        orderBy: { field: 'created_at', direction: 'desc' },
+        orderBy: { field: 'created_at', direction: 'asc' },
       });
       return rows.map(toDomain);
     },

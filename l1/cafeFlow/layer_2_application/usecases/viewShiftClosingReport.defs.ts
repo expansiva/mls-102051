@@ -119,12 +119,12 @@ export const viewShiftClosingReportUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "Resolve shiftClosingReportId from route param input",
-          "Load ShiftClosingReport by id via ShiftClosingReport port",
-          "If not found, fail with not-found validation error",
-          "Apply shiftClosingReportContents: ensure report exposes shiftClosingReportId, dailyShiftId, shiftDate, totals, payment breakdown, stock signal counts, optional topSellingItemsSummary and closingNotes, and generatedAt",
-          "Apply shiftClosingRecordsBasicTotalsAndPayments: map totalSalesAmount, totalOrdersCount, totalItemsSold, cashPaymentsAmount and otherPaymentsAmount as basic totals without advanced reconciliation",
-          "Return the report projection matching outputShape"
+          "resolve ShiftClosingReport port via resolveRepository",
+          "load ShiftClosingReport by input.shiftClosingReportId",
+          "if not found, fail validation with shiftClosingReportContents detail",
+          "apply shiftClosingReportContents: ensure report exposes identity (shiftClosingReportId, dailyShiftId), shiftDate, totals (totalSalesAmount, totalOrdersCount, totalItemsSold), payment breakdown (cashPaymentsAmount, otherPaymentsAmount), optional topSellingItemsSummary, stock signal counts (lowStockSignalsCount, stockoutSignalsCount), optional closingNotes and generatedAt",
+          "apply shiftClosingRecordsBasicTotalsAndPayments: present cash and other payment amounts as basic totals without advanced reconciliation",
+          "map entity fields to outputShape and return the report projection"
         ],
         "outputShape": {
           "kind": "object",

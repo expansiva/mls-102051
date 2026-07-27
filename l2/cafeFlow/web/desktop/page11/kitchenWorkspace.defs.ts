@@ -94,7 +94,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "KitchenQueueBoard",
           "titleKey": "organism.kitchenWorkspace.fetchKitchenQueue.title",
-          "purpose": "Exibe todos os pedidos confirmados e em preparo do turno atual, agrupados por status, mostrando canal, mesa/cliente, itens, quantidades, observações e tempo desde a confirmação — é a superfície dominante que orienta o cozinheiro na priorização do preparo.",
+          "purpose": "Exibe todos os pedidos confirmados e em preparo do turno atual, agrupados por status (confirmed → inPreparation → ready), mostrando canal, mesa/cliente, itens, quantidades, observações e tempo desde a confirmação — superfície principal de trabalho do cozinheiro.",
           "userActions": [
             "fetchKitchenQueue"
           ],
@@ -124,7 +124,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "OrderStatusTransitionPanel",
           "titleKey": "organism.kitchenWorkspace.changeOrderStatus.title",
-          "purpose": "Permite ao cozinheiro avançar o status do pedido selecionado para o próximo estado válido (inPreparation, ready ou cancelled), exibindo o estado atual antes da ação e solicitando motivo apenas quando o destino for cancelamento.",
+          "purpose": "Permite ao cozinheiro avançar o status do pedido selecionado para o próximo estado válido (inPreparation, ready, cancelled) com um único toque, exibindo apenas as transições permitidas pelo estado atual e solicitando motivo de cancelamento somente quando necessário.",
           "userActions": [
             "changeOrderStatus"
           ],
@@ -154,7 +154,7 @@ export const definition = {
   "templateId": "workflow_queue",
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "layout": {
-    "id": "cfe-20260723170708.1000",
+    "id": "cfe-20260727184832.1000",
     "type": "page",
     "sections": [
       {
@@ -170,7 +170,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "KitchenQueueBoard",
             "titleKey": "organism.kitchenWorkspace.fetchKitchenQueue.title",
-            "purpose": "Exibe todos os pedidos confirmados e em preparo do turno atual, agrupados por status, mostrando canal, mesa/cliente, itens, quantidades, observações e tempo desde a confirmação — é a superfície dominante que orienta o cozinheiro na priorização do preparo.",
+            "purpose": "Exibe todos os pedidos confirmados e em preparo do turno atual, agrupados por status (confirmed → inPreparation → ready), mostrando canal, mesa/cliente, itens, quantidades, observações e tempo desde a confirmação — superfície principal de trabalho do cozinheiro.",
             "userActions": [
               "fetchKitchenQueue"
             ],
@@ -283,7 +283,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "OrderStatusTransitionPanel",
             "titleKey": "organism.kitchenWorkspace.changeOrderStatus.title",
-            "purpose": "Permite ao cozinheiro avançar o status do pedido selecionado para o próximo estado válido (inPreparation, ready ou cancelled), exibindo o estado atual antes da ação e solicitando motivo apenas quando o destino for cancelamento.",
+            "purpose": "Permite ao cozinheiro avançar o status do pedido selecionado para o próximo estado válido (inPreparation, ready, cancelled) com um único toque, exibindo apenas as transições permitidas pelo estado atual e solicitando motivo de cancelamento somente quando necessário.",
             "userActions": [
               "changeOrderStatus"
             ],

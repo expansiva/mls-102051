@@ -82,19 +82,19 @@ export const definition = {
   "navigationRefs": [],
   "sections": [
     {
-      "id": "section.kitchenWorkspace.kitchen-queue-section",
+      "id": "section.kitchenWorkspace.sec-kitchen-queue",
       "type": "section",
       "sectionName": "Fila da Cozinha",
-      "titleKey": "section.kitchenWorkspace.kitchen-queue-section.title",
+      "titleKey": "section.kitchenWorkspace.sec-kitchen-queue.title",
       "mode": "edit",
       "order": 10,
       "organisms": [
         {
-          "id": "kitchen-queue-board",
+          "id": "org-kitchen-queue-board",
           "type": "queryResult",
           "organismName": "KitchenQueueBoard",
           "titleKey": "organism.kitchenWorkspace.fetchKitchenQueue.title",
-          "purpose": "Exibe todos os pedidos confirmados e em preparo do turno ativo agrupados por status (confirmed / inPreparation), mostrando canal, mesa/cliente, itens com quantidades e observações, e tempo de espera; é a superfície principal de trabalho do cozinheiro.",
+          "purpose": "Exibe todos os pedidos confirmados e em preparo do turno atual agrupados por status (confirmed / inPreparation), mostrando canal, mesa/cliente, itens com quantidades e observações e tempo de espera — é a superfície dominante da página.",
           "userActions": [
             "fetchKitchenQueue"
           ],
@@ -120,11 +120,11 @@ export const definition = {
           ]
         },
         {
-          "id": "order-transition-panel",
+          "id": "org-order-transition-actions",
           "type": "commandForm",
-          "organismName": "OrderTransitionPanel",
+          "organismName": "OrderTransitionActions",
           "titleKey": "organism.kitchenWorkspace.changeOrderStatus.title",
-          "purpose": "Ao selecionar um pedido no board, exibe as transições de status permitidas como botões de ação contextual (ex: 'Iniciar Preparo', 'Marcar como Pronto', 'Cancelar') e, apenas quando o destino for cancelamento, revela o campo de motivo; confirma a atualização sem navegar para outra tela.",
+          "purpose": "Renderiza as transições de status permitidas para o pedido selecionado como botões de ação contextual (ex.: 'Iniciar Preparo', 'Marcar como Pronto', 'Cancelar'), com campo de motivo de cancelamento aparecendo condicionalmente apenas quando a transição destino for cancelled.",
           "userActions": [
             "changeOrderStatus"
           ],
@@ -155,61 +155,62 @@ export const definition = {
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "pageObjective": {
     "actor": "Cozinheiro (kitchen staff)",
-    "jobToBeDone": "Visualizar todos os pedidos confirmados e em preparo do turno atual e avançar o status de cada pedido conforme o andamento do preparo, sem sair da fila.",
-    "primaryDecision": "Qual pedido avançar agora e para qual status (inPreparation → ready, ou cancelar)?",
+    "jobToBeDone": "Visualizar todos os pedidos confirmados e em preparo do turno atual e avançar o status de cada pedido conforme o andamento do preparo, sem digitar IDs ou selecionar status manualmente.",
+    "primaryDecision": "Qual pedido avançar agora e para qual próximo status (inPreparation → ready, ou cancelar)?",
     "decisiveInfo": [
-      "orderType (mesa/takeout)",
+      "orderType (mesa ou takeout)",
       "tableNumber / customerName",
       "items (nome, quantidade, observações)",
       "status atual do pedido",
       "notes",
       "confirmedAt / inPreparationAt (tempo de espera)"
     ],
-    "usageFrequency": "Contínuo durante o turno — o cozinheiro mantém a tela aberta e atualiza pedidos em sequência, com alta frequência e mãos ocupadas.",
+    "usageFrequency": "Contínuo durante o turno — o cozinheiro mantém esta tela aberta e a consulta a cada novo pedido ou mudança de estado.",
     "criticalActions": [
       {
-        "action": "changeOrderStatus",
-        "presentation": "contextual-transition-actions — um botão por transição válida diretamente no card/linha do pedido selecionado (ex: 'Iniciar Preparo', 'Pronto', 'Cancelar'); nunca um <select> livre"
+        "action": "fetchKitchenQueue",
+        "presentation": "auto-load on mount + refresh trigger; dailyShiftId vem do contexto ativo (activeLifecycleInstance), nunca digitado"
       },
       {
-        "action": "fetchKitchenQueue",
-        "presentation": "auto-load ao abrir a página com dailyShiftId derivado do turno ativo; botão de refresh visível para atualização manual"
+        "action": "changeOrderStatus",
+        "presentation": "contextual-transition-actions — um botão por transição válida diretamente no card/linha do pedido selecionado; cancellationReason aparece apenas quando o destino for cancelled"
       }
     ],
     "informationHierarchy": [
-      "1. Fila de pedidos agrupada por status (confirmed → inPreparation) com contagem por grupo",
-      "2. Card do pedido: canal, mesa/cliente, tempo de espera, itens com quantidades e observações",
-      "3. Ações de transição contextual no pedido selecionado (botões de próximo estado válido)",
-      "4. Campo de motivo de cancelamento — aparece apenas quando a transição destino é 'cancelled'"
+      "1. Fila de pedidos agrupada por status (confirmed → inPreparation) com itens e observações visíveis",
+      "2. Identidade do pedido: canal, mesa/cliente, tempo de espera",
+      "3. Itens do pedido: nome, quantidade, observações",
+      "4. Ações de transição contextual no pedido selecionado",
+      "5. Feedback de sucesso/erro da última transição"
     ],
-    "successCriteria": "O cozinheiro consegue ver toda a fila do turno de relance, selecionar um pedido e avançar seu status em no máximo dois toques, sem digitar IDs ou navegar para outra tela.",
+    "successCriteria": "O cozinheiro consegue ver todos os pedidos pendentes do turno, identificar o próximo a preparar e avançar o status com um único toque/clique, sem navegar para outra tela ou digitar qualquer identificador.",
     "antiPatterns": [
-      "Campo de status como <select> livre sobre todos os valores do enum",
-      "Formulário separado de transição em seção própria abaixo da lista",
-      "Campo orderId como input manual",
-      "Campo dailyShiftId como input manual (deve vir do turno ativo)",
-      "Campo updatedAt como input manual (sistema preenche)",
-      "Exibir pedidos com status 'registered', 'served' ou 'cancelled' na fila ativa"
+      "Status como <select> livre sobre todos os valores do enum",
+      "orderId digitado manualmente",
+      "dailyShiftId como campo de formulário visível",
+      "updatedAt como input do usuário",
+      "Formulário de transição em seção separada abaixo da lista",
+      "Exibir pedidos já servidos ou cancelados na fila ativa"
     ]
   },
   "layout": {
-    "id": "page21",
+    "id": "page21-kitchen-queue-kanban",
     "type": "page",
     "sections": [
       {
-        "id": "section.kitchenWorkspace.kitchen-queue-section",
+        "id": "section.kitchenWorkspace.sec-kitchen-queue",
         "type": "section",
         "sectionName": "Fila da Cozinha",
-        "titleKey": "section.kitchenWorkspace.kitchen-queue-section.title",
+        "titleKey": "section.kitchenWorkspace.sec-kitchen-queue.title",
         "mode": "edit",
         "order": 10,
         "organisms": [
           {
-            "id": "kitchen-queue-board",
+            "id": "org-kitchen-queue-board",
             "type": "queryResult",
             "organismName": "KitchenQueueBoard",
             "titleKey": "organism.kitchenWorkspace.fetchKitchenQueue.title",
-            "purpose": "Exibe todos os pedidos confirmados e em preparo do turno ativo agrupados por status (confirmed / inPreparation), mostrando canal, mesa/cliente, itens com quantidades e observações, e tempo de espera; é a superfície principal de trabalho do cozinheiro.",
+            "purpose": "Exibe todos os pedidos confirmados e em preparo do turno atual agrupados por status (confirmed / inPreparation), mostrando canal, mesa/cliente, itens com quantidades e observações e tempo de espera — é a superfície dominante da página.",
             "userActions": [
               "fetchKitchenQueue"
             ],
@@ -318,11 +319,11 @@ export const definition = {
             "displayHint": "card-board"
           },
           {
-            "id": "order-transition-panel",
+            "id": "org-order-transition-actions",
             "type": "commandForm",
-            "organismName": "OrderTransitionPanel",
+            "organismName": "OrderTransitionActions",
             "titleKey": "organism.kitchenWorkspace.changeOrderStatus.title",
-            "purpose": "Ao selecionar um pedido no board, exibe as transições de status permitidas como botões de ação contextual (ex: 'Iniciar Preparo', 'Marcar como Pronto', 'Cancelar') e, apenas quando o destino for cancelamento, revela o campo de motivo; confirma a atualização sem navegar para outra tela.",
+            "purpose": "Renderiza as transições de status permitidas para o pedido selecionado como botões de ação contextual (ex.: 'Iniciar Preparo', 'Marcar como Pronto', 'Cancelar'), com campo de motivo de cancelamento aparecendo condicionalmente apenas quando a transição destino for cancelled.",
             "userActions": [
               "changeOrderStatus"
             ],

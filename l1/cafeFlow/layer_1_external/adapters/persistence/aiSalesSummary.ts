@@ -7,7 +7,7 @@ export const aiSalesSummaryTableDef: TableDefinition = {
   tableName: 'ai_sales_summary',
   purpose: 'transacao',
   description:
-    'Resumos de vendas gerados por IA. Campos não indexados e coleções embutidas em details (JSONB).',
+    'Resumos de vendas gerados por IA. Campos não indexados em details (JSONB).',
   backupHot: false,
   storageProfile: 'postgres',
   writeMode: 'sync',

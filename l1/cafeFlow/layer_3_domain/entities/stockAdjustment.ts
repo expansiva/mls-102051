@@ -1,8 +1,6 @@
 /// <mls fileReference="_102051_/l1/cafeFlow/layer_3_domain/entities/stockAdjustment.ts" enhancement="_blank"/>
 export type StockAdjustmentDirection = 'in' | 'out' | 'correction';
-
 export type StockAdjustmentReason = 'count' | 'loss' | 'expiration' | 'divergence' | 'other';
-
 export type StockAdjustmentStatus = 'posted' | 'voided';
 
 export interface StockAdjustment {

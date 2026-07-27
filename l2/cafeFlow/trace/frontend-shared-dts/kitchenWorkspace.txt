@@ -2,40 +2,40 @@ import { CollabLitElement } from '/_102029_/l2/collabLitElement.js';
 import type { FetchKitchenQueueOutput, ChangeOrderStatusOutput } from '/_102051_/l2/cafeFlow/web/contracts/kitchenWorkspace.js';
 export type { FetchKitchenQueueInput, FetchKitchenQueueOutput, ChangeOrderStatusInput, ChangeOrderStatusOutput, } from '/_102051_/l2/cafeFlow/web/contracts/kitchenWorkspace.js';
 declare const message_pt: {
-    'section.kitchenWorkspace.kitchenQueueSection.title': string;
-    'organism.kitchenWorkspace.fetchKitchenQueue.title': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.title': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.empty': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.orderId.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.orderType.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.tableNumber.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.customerName.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.notes.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.status.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.confirmedAt.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.inPreparationAt.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.column.items.label': string;
-    'intent.kitchenWorkspace.fetchKitchenQueue.list.filter.dailyShiftId.label': string;
-    'organism.kitchenWorkspace.changeOrderStatus.title': string;
-    'intent.kitchenWorkspace.changeOrderStatus.form.title': string;
-    'intent.kitchenWorkspace.changeOrderStatus.form.action.changeOrderStatus': string;
-    'intent.kitchenWorkspace.changeOrderStatus.form.field.status.label': string;
-    'intent.kitchenWorkspace.changeOrderStatus.form.field.cancellationReason.label': string;
-    'intent.kitchenWorkspace.changeOrderStatus.form.field.updatedAt.label': string;
-    'section.kitchenWorkspace.kitchen-queue-section.title': string;
+    "section.kitchenWorkspace.kitchenQueueSection.title": string;
+    "organism.kitchenWorkspace.fetchKitchenQueue.title": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.title": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.empty": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.orderId.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.orderType.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.tableNumber.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.customerName.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.notes.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.status.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.confirmedAt.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.inPreparationAt.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.column.items.label": string;
+    "intent.kitchenWorkspace.fetchKitchenQueue.list.filter.dailyShiftId.label": string;
+    "organism.kitchenWorkspace.changeOrderStatus.title": string;
+    "intent.kitchenWorkspace.changeOrderStatus.form.title": string;
+    "intent.kitchenWorkspace.changeOrderStatus.form.action.changeOrderStatus": string;
+    "intent.kitchenWorkspace.changeOrderStatus.form.field.status.label": string;
+    "intent.kitchenWorkspace.changeOrderStatus.form.field.cancellationReason.label": string;
+    "intent.kitchenWorkspace.changeOrderStatus.form.field.updatedAt.label": string;
+    "section.kitchenWorkspace.sec-kitchen-queue.title": string;
 };
 type MessageType = typeof message_pt;
 export declare class CafeFlowKitchenWorkspaceBase extends CollabLitElement {
     /** state status — pageStatus */
     status: string;
     /** state fetchKitchenQueueState — actionStatus, values: idle|loading|success|error */
-    fetchKitchenQueueState: 'idle' | 'loading' | 'success' | 'error';
+    fetchKitchenQueueState: "idle" | "loading" | "success" | "error";
     /** state fetchKitchenQueueDailyShiftId — input */
     fetchKitchenQueueDailyShiftId: string;
     /** state fetchKitchenQueueData — queryResult, outputShape: array */
     fetchKitchenQueueData: FetchKitchenQueueOutput[];
     /** state changeOrderStatusState — actionStatus, values: idle|loading|success|error */
-    changeOrderStatusState: 'idle' | 'loading' | 'success' | 'error';
+    changeOrderStatusState: "idle" | "loading" | "success" | "error";
     /** state changeOrderStatusOrderId — input */
     changeOrderStatusOrderId: string;
     /** state changeOrderStatusStatus — input */
@@ -48,13 +48,11 @@ export declare class CafeFlowKitchenWorkspaceBase extends CollabLitElement {
     changeOrderStatusOutput: ChangeOrderStatusOutput | null;
     /** state changeOrderStatusError — actionError */
     changeOrderStatusError: string;
-    private readonly subscribedKeys;
     /** i18n catalog — MessageType keys are the CLOSED msg vocabulary for page renders */
     protected get msg(): MessageType;
     connectedCallback(): void;
     disconnectedCallback(): void;
     handleIcaStateChange(key: string, value: unknown): void;
-    private initStateValue;
     /** action fetchKitchenQueue (query) — route cafeFlow.kitchenWorkspace.fetchKitchenQueue; inputs: dailyShiftId; writes ui.kitchenWorkspace.data.fetchKitchenQueue; status ui.kitchenWorkspace.action.fetchKitchenQueue.status */
     loadFetchKitchenQueue(): Promise<void>;
     /** handler for action fetchKitchenQueue — bind UI events here */

@@ -112,19 +112,19 @@ export const definition = {
   "navigationRefs": [],
   "sections": [
     {
-      "id": "section.stockManagement.sec-stock-overview",
+      "id": "section.stockManagement.sec-stock-master",
       "type": "section",
-      "sectionName": "Visão geral do estoque",
-      "titleKey": "section.stockManagement.sec-stock-overview.title",
-      "mode": "view",
+      "sectionName": "Controle de Estoque",
+      "titleKey": "section.stockManagement.sec-stock-master.title",
+      "mode": "edit",
       "order": 10,
       "organisms": [
         {
-          "id": "org-low-stock-summary",
+          "id": "org-stock-filter-toolbar",
           "type": "queryResult",
-          "organismName": "LowStockSummaryBanner",
+          "organismName": "StockItemFilterToolbar",
           "titleKey": "organism.stockManagement.listStockItems.title",
-          "purpose": "Exibe o número de insumos com saldo no ou abaixo do nível mínimo, permitindo ao gerente avaliar a criticidade do estoque antes de qualquer ação.",
+          "purpose": "Permite ao gerente filtrar a lista por nome e ativar o toggle 'somente estoque baixo', além de acionar a criação de novo insumo via botão primário na toolbar.",
           "userActions": [
             "listStockItems"
           ],
@@ -144,43 +144,13 @@ export const definition = {
               "order": 10
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "section.stockManagement.sec-stock-master-detail",
-      "type": "section",
-      "sectionName": "Controle de insumos",
-      "titleKey": "section.stockManagement.sec-stock-master-detail.title",
-      "mode": "edit",
-      "order": 20,
-      "organisms": [
-        {
-          "id": "org-stock-filter-toolbar",
-          "type": "content",
-          "organismName": "StockItemFilterToolbar",
-          "titleKey": "organism.stockManagement.inline-row-command10.title",
-          "purpose": "Barra de filtros embutida na superfície principal: campo de busca por nome e toggle de estoque baixo, mais botão primário 'Novo insumo' que expande o formulário de cadastro.",
-          "userActions": [],
-          "requiredEntities": [],
-          "readsFields": [],
-          "writesFields": [],
-          "rulesApplied": [],
-          "order": 10,
-          "intentionRefs": [
-            {
-              "id": "intent.stockManagement.inline-row-command10.content",
-              "intent": "inline-row-command",
-              "order": 10
-            }
-          ]
         },
         {
           "id": "org-stock-item-table",
           "type": "queryResult",
           "organismName": "StockItemTable",
           "titleKey": "organism.stockManagement.listStockItems.title",
-          "purpose": "Tabela paginada de insumos mostrando nome, unidade, saldo atual e nível mínimo; linhas com saldo crítico são destacadas visualmente. Seleção de linha abre o painel de detalhe/ação.",
+          "purpose": "Exibe a lista paginada de insumos com saldo atual, unidade e nível mínimo; destaca visualmente itens com estoque baixo (currentBalance ≤ minimumLevel); é a superfície primária de seleção para ações contextuais.",
           "userActions": [
             "listStockItems"
           ],
@@ -202,25 +172,31 @@ export const definition = {
           ]
         },
         {
-          "id": "org-stock-item-detail-panel",
+          "id": "org-stock-item-actions-panel",
           "type": "commandForm",
-          "organismName": "StockItemDetailPanel",
-          "titleKey": "organism.stockManagement.editStockItem.title",
-          "purpose": "Painel lateral/contextual ativado pela seleção de linha: exibe dados atuais do insumo e agrupa as ações contextuais — editar cadastro, registrar ajuste de saldo e excluir — sem abrir nova página.",
+          "organismName": "StockItemActionsPanel",
+          "titleKey": "organism.stockManagement.registerStockAdjustment.title",
+          "purpose": "Painel lateral contextual ativado ao selecionar um item na tabela; agrupa as ações de ajuste de saldo, edição de cadastro e remoção do item selecionado, eliminando a necessidade de seções separadas.",
           "userActions": [
+            "registerStockAdjustment",
             "editStockItem",
-            "removeStockItem",
-            "registerStockAdjustment"
+            "removeStockItem"
           ],
           "requiredEntities": [],
           "readsFields": [],
           "writesFields": [],
           "rulesApplied": [
-            "lowStockMustBeVisible",
-            "managerManualStockAdjustmentAllowed"
+            "managerManualStockAdjustmentAllowed",
+            "lowStockMustBeVisible"
           ],
           "order": 30,
           "intentionRefs": [
+            {
+              "id": "intent.stockManagement.registerStockAdjustment.form",
+              "intent": "commandForm",
+              "submitAction": "registerStockAdjustment",
+              "order": 10
+            },
             {
               "id": "intent.stockManagement.editStockItem.form",
               "intent": "commandForm",
@@ -232,31 +208,25 @@ export const definition = {
               "intent": "commandForm",
               "submitAction": "removeStockItem",
               "order": 10
-            },
-            {
-              "id": "intent.stockManagement.registerStockAdjustment.form",
-              "intent": "commandForm",
-              "submitAction": "registerStockAdjustment",
-              "order": 10
             }
           ]
         }
       ]
     },
     {
-      "id": "section.stockManagement.sec-add-stock-item",
+      "id": "section.stockManagement.sec-create-panel",
       "type": "section",
-      "sectionName": "Cadastrar novo insumo",
-      "titleKey": "section.stockManagement.sec-add-stock-item.title",
+      "sectionName": "Novo Insumo",
+      "titleKey": "section.stockManagement.sec-create-panel.title",
       "mode": "edit",
-      "order": 30,
+      "order": 20,
       "organisms": [
         {
           "id": "org-add-stock-item-form",
           "type": "commandForm",
           "organismName": "AddStockItemForm",
           "titleKey": "organism.stockManagement.addStockItem.title",
-          "purpose": "Formulário colapsável para cadastro de novo insumo (nome, unidade, saldo inicial e nível mínimo obrigatórios; descrição opcional). Visível apenas quando o gerente aciona 'Novo insumo' na toolbar.",
+          "purpose": "Formulário de criação de novo insumo com campos nome, unidade, saldo inicial e nível mínimo; acessível via botão primário na toolbar, mantendo a lista visível ao fundo.",
           "userActions": [
             "addStockItem"
           ],
@@ -283,71 +253,67 @@ export const definition = {
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "pageObjective": {
     "actor": "Gerente de café",
-    "jobToBeDone": "Manter o cadastro de insumos atualizado, identificar rapidamente itens com estoque baixo e registrar ajustes manuais de saldo sem sair da tela de controle.",
-    "primaryDecision": "Selecionar um insumo da lista para editar, excluir ou registrar um ajuste de saldo — ou cadastrar um novo insumo.",
+    "jobToBeDone": "Manter o cadastro de insumos atualizado, identificar rapidamente itens com estoque baixo e registrar ajustes manuais de saldo sem sair da mesma tela.",
+    "primaryDecision": "Qual insumo precisa de atenção agora — estoque baixo, edição de cadastro ou ajuste de saldo?",
     "decisiveInfo": [
       "name",
       "unit",
       "currentBalance",
       "minimumLevel",
-      "lowStockOnly (flag de alerta)"
+      "lowStockOnly (filtro rápido)"
     ],
-    "usageFrequency": "Ocasional / back-office — o gerente acessa diariamente para revisar alertas e registrar ajustes pontuais.",
+    "usageFrequency": "Ocasional / back-office — o gerente acessa diariamente para revisar alertas e registrar ajustes, não em fluxo contínuo de alta velocidade.",
     "criticalActions": [
       {
-        "action": "listStockItems",
-        "presentation": "primary-surface com filtros embutidos (nameFilter + lowStockOnly toggle)"
-      },
-      {
         "action": "registerStockAdjustment",
-        "presentation": "inline-row-command / painel contextual aberto ao selecionar linha"
+        "presentation": "inline-row-command — painel lateral contextual aberto ao selecionar um item, com campos quantidade, direção e motivo"
       },
       {
         "action": "editStockItem",
-        "presentation": "inline-row-command / painel contextual no master-detail"
+        "presentation": "inline-row-command — painel de edição contextual no item selecionado"
       },
       {
         "action": "removeStockItem",
-        "presentation": "inline-row-command com confirmação destrutiva"
+        "presentation": "inline-row-command com confirmação destrutiva no item selecionado"
       },
       {
         "action": "addStockItem",
-        "presentation": "primary-button na toolbar que abre formulário colapsável"
+        "presentation": "primary-button na toolbar que abre formulário de criação em painel lateral"
       }
     ],
     "informationHierarchy": [
-      "1. Resumo de alertas: total de itens com estoque baixo (summary-first)",
-      "2. Lista filtrável de insumos com saldo atual, unidade e indicador de alerta",
-      "3. Painel contextual do item selecionado: editar cadastro ou registrar ajuste",
-      "4. Formulário de cadastro de novo insumo (colapsável, acionado por toolbar)"
+      "1. Lista de insumos com saldo atual vs. nível mínimo (destaque visual para estoque baixo)",
+      "2. Filtros rápidos: busca por nome e toggle 'somente estoque baixo'",
+      "3. Ações contextuais por item: ajustar saldo, editar cadastro, remover",
+      "4. Formulário de criação de novo insumo (ação secundária, acessível via toolbar)"
     ],
-    "successCriteria": "O gerente identifica itens críticos em menos de 5 segundos, registra um ajuste de saldo em menos de 3 cliques e cadastra um novo insumo sem navegar para outra página.",
+    "successCriteria": "O gerente identifica itens críticos em menos de 5 segundos, registra um ajuste de saldo em menos de 3 cliques e cria um novo insumo sem navegar para outra página.",
     "antiPatterns": [
-      "Formulário de ajuste em página separada",
-      "Campo stockItemId como input manual",
-      "Status como <select> livre",
-      "Seção independente para cada operação CRUD",
-      "Timestamps e IDs técnicos expostos como campos editáveis"
+      "Campo de texto livre para stockItemId — deve ser derivado da seleção de linha",
+      "Select livre sobre todos os status do StockAdjustment — direção deve ser botões (entrada/saída)",
+      "Formulário de ajuste em seção separada abaixo da lista — deve ser painel contextual do item selecionado",
+      "Exibir campos de sistema (createdAt, updatedAt, managerUserId, shiftId) como inputs editáveis",
+      "Uma seção independente por operação CRUD"
     ]
   },
   "layout": {
-    "id": "page21-goal-first",
+    "id": "stockManagement-page21-goal-first",
     "type": "page",
     "sections": [
       {
-        "id": "section.stockManagement.sec-stock-overview",
+        "id": "section.stockManagement.sec-stock-master",
         "type": "section",
-        "sectionName": "Visão geral do estoque",
-        "titleKey": "section.stockManagement.sec-stock-overview.title",
-        "mode": "view",
+        "sectionName": "Controle de Estoque",
+        "titleKey": "section.stockManagement.sec-stock-master.title",
+        "mode": "edit",
         "order": 10,
         "organisms": [
           {
-            "id": "org-low-stock-summary",
+            "id": "org-stock-filter-toolbar",
             "type": "queryResult",
-            "organismName": "LowStockSummaryBanner",
+            "organismName": "StockItemFilterToolbar",
             "titleKey": "organism.stockManagement.listStockItems.title",
-            "purpose": "Exibe o número de insumos com saldo no ou abaixo do nível mínimo, permitindo ao gerente avaliar a criticidade do estoque antes de qualquer ação.",
+            "purpose": "Permite ao gerente filtrar a lista por nome e ativar o toggle 'somente estoque baixo', além de acionar a criação de novo insumo via botão primário na toolbar.",
             "userActions": [
               "listStockItems"
             ],
@@ -422,52 +388,13 @@ export const definition = {
               }
             ],
             "displayHint": "summary-first"
-          }
-        ]
-      },
-      {
-        "id": "section.stockManagement.sec-stock-master-detail",
-        "type": "section",
-        "sectionName": "Controle de insumos",
-        "titleKey": "section.stockManagement.sec-stock-master-detail.title",
-        "mode": "edit",
-        "order": 20,
-        "organisms": [
-          {
-            "id": "org-stock-filter-toolbar",
-            "type": "content",
-            "organismName": "StockItemFilterToolbar",
-            "titleKey": "organism.stockManagement.inline-row-command10.title",
-            "purpose": "Barra de filtros embutida na superfície principal: campo de busca por nome e toggle de estoque baixo, mais botão primário 'Novo insumo' que expande o formulário de cadastro.",
-            "userActions": [],
-            "requiredEntities": [],
-            "readsFields": [],
-            "writesFields": [],
-            "rulesApplied": [],
-            "order": 10,
-            "intentions": [
-              {
-                "id": "intent.stockManagement.inline-row-command10.content",
-                "intent": "inline-row-command",
-                "order": 10,
-                "titleKey": "intent.stockManagement.inline-row-command10.content.title",
-                "displayHint": "inline-row-command",
-                "fields": [],
-                "columns": [],
-                "filters": [],
-                "toolbar": [],
-                "rowActions": [],
-                "actions": []
-              }
-            ],
-            "displayHint": "inline-row-command"
           },
           {
             "id": "org-stock-item-table",
             "type": "queryResult",
             "organismName": "StockItemTable",
             "titleKey": "organism.stockManagement.listStockItems.title",
-            "purpose": "Tabela paginada de insumos mostrando nome, unidade, saldo atual e nível mínimo; linhas com saldo crítico são destacadas visualmente. Seleção de linha abre o painel de detalhe/ação.",
+            "purpose": "Exibe a lista paginada de insumos com saldo atual, unidade e nível mínimo; destaca visualmente itens com estoque baixo (currentBalance ≤ minimumLevel); é a superfície primária de seleção para ações contextuais.",
             "userActions": [
               "listStockItems"
             ],
@@ -544,25 +471,84 @@ export const definition = {
             "displayHint": "master-detail"
           },
           {
-            "id": "org-stock-item-detail-panel",
+            "id": "org-stock-item-actions-panel",
             "type": "commandForm",
-            "organismName": "StockItemDetailPanel",
-            "titleKey": "organism.stockManagement.editStockItem.title",
-            "purpose": "Painel lateral/contextual ativado pela seleção de linha: exibe dados atuais do insumo e agrupa as ações contextuais — editar cadastro, registrar ajuste de saldo e excluir — sem abrir nova página.",
+            "organismName": "StockItemActionsPanel",
+            "titleKey": "organism.stockManagement.registerStockAdjustment.title",
+            "purpose": "Painel lateral contextual ativado ao selecionar um item na tabela; agrupa as ações de ajuste de saldo, edição de cadastro e remoção do item selecionado, eliminando a necessidade de seções separadas.",
             "userActions": [
+              "registerStockAdjustment",
               "editStockItem",
-              "removeStockItem",
-              "registerStockAdjustment"
+              "removeStockItem"
             ],
             "requiredEntities": [],
             "readsFields": [],
             "writesFields": [],
             "rulesApplied": [
-              "lowStockMustBeVisible",
-              "managerManualStockAdjustmentAllowed"
+              "managerManualStockAdjustmentAllowed",
+              "lowStockMustBeVisible"
             ],
             "order": 30,
             "intentions": [
+              {
+                "id": "intent.stockManagement.registerStockAdjustment.form",
+                "intent": "commandForm",
+                "order": 10,
+                "titleKey": "intent.stockManagement.registerStockAdjustment.form.title",
+                "source": "bff.registerStockAdjustment",
+                "binding": "binding.stockManagement.registerStockAdjustment",
+                "submitAction": "registerStockAdjustment",
+                "fields": [
+                  {
+                    "id": "intent.stockManagement.registerStockAdjustment.form.field.stockItemId",
+                    "field": "stockItemId",
+                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.stockItemId.label",
+                    "order": 10,
+                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.stockItemId"
+                  },
+                  {
+                    "id": "intent.stockManagement.registerStockAdjustment.form.field.quantity",
+                    "field": "quantity",
+                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.quantity.label",
+                    "order": 20,
+                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.quantity"
+                  },
+                  {
+                    "id": "intent.stockManagement.registerStockAdjustment.form.field.direction",
+                    "field": "direction",
+                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.direction.label",
+                    "order": 30,
+                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.direction"
+                  },
+                  {
+                    "id": "intent.stockManagement.registerStockAdjustment.form.field.reason",
+                    "field": "reason",
+                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.reason.label",
+                    "order": 40,
+                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.reason"
+                  },
+                  {
+                    "id": "intent.stockManagement.registerStockAdjustment.form.field.notes",
+                    "field": "notes",
+                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.notes.label",
+                    "order": 50,
+                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.notes"
+                  }
+                ],
+                "columns": [],
+                "filters": [],
+                "toolbar": [],
+                "rowActions": [],
+                "actions": [
+                  {
+                    "id": "intent.stockManagement.registerStockAdjustment.form.action.registerStockAdjustment",
+                    "action": "registerStockAdjustment",
+                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.action.registerStockAdjustment",
+                    "order": 10,
+                    "actionKey": "registerStockAdjustment"
+                  }
+                ]
+              },
               {
                 "id": "intent.stockManagement.editStockItem.form",
                 "intent": "commandForm",
@@ -637,85 +623,26 @@ export const definition = {
                     "actionKey": "removeStockItem"
                   }
                 ]
-              },
-              {
-                "id": "intent.stockManagement.registerStockAdjustment.form",
-                "intent": "commandForm",
-                "order": 10,
-                "titleKey": "intent.stockManagement.registerStockAdjustment.form.title",
-                "source": "bff.registerStockAdjustment",
-                "binding": "binding.stockManagement.registerStockAdjustment",
-                "submitAction": "registerStockAdjustment",
-                "fields": [
-                  {
-                    "id": "intent.stockManagement.registerStockAdjustment.form.field.stockItemId",
-                    "field": "stockItemId",
-                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.stockItemId.label",
-                    "order": 10,
-                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.stockItemId"
-                  },
-                  {
-                    "id": "intent.stockManagement.registerStockAdjustment.form.field.quantity",
-                    "field": "quantity",
-                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.quantity.label",
-                    "order": 20,
-                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.quantity"
-                  },
-                  {
-                    "id": "intent.stockManagement.registerStockAdjustment.form.field.direction",
-                    "field": "direction",
-                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.direction.label",
-                    "order": 30,
-                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.direction"
-                  },
-                  {
-                    "id": "intent.stockManagement.registerStockAdjustment.form.field.reason",
-                    "field": "reason",
-                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.reason.label",
-                    "order": 40,
-                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.reason"
-                  },
-                  {
-                    "id": "intent.stockManagement.registerStockAdjustment.form.field.notes",
-                    "field": "notes",
-                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.field.notes.label",
-                    "order": 50,
-                    "stateKey": "ui.stockManagement.input.registerStockAdjustment.notes"
-                  }
-                ],
-                "columns": [],
-                "filters": [],
-                "toolbar": [],
-                "rowActions": [],
-                "actions": [
-                  {
-                    "id": "intent.stockManagement.registerStockAdjustment.form.action.registerStockAdjustment",
-                    "action": "registerStockAdjustment",
-                    "labelKey": "intent.stockManagement.registerStockAdjustment.form.action.registerStockAdjustment",
-                    "order": 10,
-                    "actionKey": "registerStockAdjustment"
-                  }
-                ]
               }
             ],
-            "displayHint": "master-detail"
+            "displayHint": "inline-row-command"
           }
         ]
       },
       {
-        "id": "section.stockManagement.sec-add-stock-item",
+        "id": "section.stockManagement.sec-create-panel",
         "type": "section",
-        "sectionName": "Cadastrar novo insumo",
-        "titleKey": "section.stockManagement.sec-add-stock-item.title",
+        "sectionName": "Novo Insumo",
+        "titleKey": "section.stockManagement.sec-create-panel.title",
         "mode": "edit",
-        "order": 30,
+        "order": 20,
         "organisms": [
           {
             "id": "org-add-stock-item-form",
             "type": "commandForm",
             "organismName": "AddStockItemForm",
             "titleKey": "organism.stockManagement.addStockItem.title",
-            "purpose": "Formulário colapsável para cadastro de novo insumo (nome, unidade, saldo inicial e nível mínimo obrigatórios; descrição opcional). Visível apenas quando o gerente aciona 'Novo insumo' na toolbar.",
+            "purpose": "Formulário de criação de novo insumo com campos nome, unidade, saldo inicial e nível mínimo; acessível via botão primário na toolbar, mantendo a lista visível ao fundo.",
             "userActions": [
               "addStockItem"
             ],

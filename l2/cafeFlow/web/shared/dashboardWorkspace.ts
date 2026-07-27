@@ -51,7 +51,7 @@ const message_pt = {
   "intent.dashboardWorkspace.getDashboard.list.filter.dailyShiftId.label": "Daily Shift Id",
   "section.dashboardWorkspace.sec-top-selling.title": "Itens Mais Vendidos",
   "section.dashboardWorkspace.sec-stock-alerts.title": "Alertas de Estoque",
-  "section.dashboardWorkspace.sec-ai-sales-summary.title": "Resumo de Vendas (IA)",
+  "section.dashboardWorkspace.sec-ai-sales-summary.title": "Resumo de Vendas por IA",
   "organism.dashboardWorkspace.getAiSalesSummary.title": "Gerar resumo de vendas do dia (IA)",
   "intent.dashboardWorkspace.getAiSalesSummary.list.title": "Gerar resumo de vendas do dia (IA)",
   "intent.dashboardWorkspace.getAiSalesSummary.list.empty": "Nenhum registro encontrado",
@@ -65,7 +65,7 @@ const message_pt = {
   "intent.dashboardWorkspace.getAiSalesSummary.list.column.promptTokens.label": "Prompt Tokens",
   "intent.dashboardWorkspace.getAiSalesSummary.list.column.completionTokens.label": "Completion Tokens",
   "intent.dashboardWorkspace.getAiSalesSummary.list.column.generatedAt.label": "Generated At",
-  "section.dashboardWorkspace.sec-ai-promotion-suggestions.title": "Sugestões de Promoção (IA)",
+  "section.dashboardWorkspace.sec-ai-promotion-suggestions.title": "Sugestões de Promoção por IA",
   "organism.dashboardWorkspace.getAiPromotionSuggestions.title": "Gerar sugestões de itens a promover (IA)",
   "intent.dashboardWorkspace.getAiPromotionSuggestions.list.title": "Gerar sugestões de itens a promover (IA)",
   "intent.dashboardWorkspace.getAiPromotionSuggestions.list.empty": "Nenhum registro encontrado",
@@ -104,31 +104,22 @@ const SUBSCRIBED_STATE_KEYS: string[] = [
 export class CafeFlowDashboardWorkspaceBase extends CollabLitElement {
   /** state status — pageStatus */
   @property() status: string = '';
-
   /** state getDashboardState — actionStatus, values: idle|loading|success|error */
-  @property() getDashboardState: 'idle' | 'loading' | 'success' | 'error' = 'idle';
-
+  @property() getDashboardState: "idle" | "loading" | "success" | "error" = 'idle';
   /** state getDashboardDailyShiftId — input */
   @property() getDashboardDailyShiftId: string = '';
-
   /** state getDashboardData — queryResult, outputShape: object */
   @property() getDashboardData: GetDashboardOutput | null = null;
-
   /** state getAiSalesSummaryState — actionStatus, values: idle|loading|success|error */
-  @property() getAiSalesSummaryState: 'idle' | 'loading' | 'success' | 'error' = 'idle';
-
+  @property() getAiSalesSummaryState: "idle" | "loading" | "success" | "error" = 'idle';
   /** state getAiSalesSummaryOperationalDashboardId — input */
   @property() getAiSalesSummaryOperationalDashboardId: string = '';
-
   /** state getAiSalesSummaryData — queryResult, outputShape: object */
   @property() getAiSalesSummaryData: GetAiSalesSummaryOutput | null = null;
-
   /** state getAiPromotionSuggestionsState — actionStatus, values: idle|loading|success|error */
-  @property() getAiPromotionSuggestionsState: 'idle' | 'loading' | 'success' | 'error' = 'idle';
-
+  @property() getAiPromotionSuggestionsState: "idle" | "loading" | "success" | "error" = 'idle';
   /** state getAiPromotionSuggestionsOperationalDashboardId — input */
   @property() getAiPromotionSuggestionsOperationalDashboardId: string = '';
-
   /** state getAiPromotionSuggestionsData — queryResult, outputShape: array */
   @property() getAiPromotionSuggestionsData: GetAiPromotionSuggestionsOutput[] = [];
 
@@ -141,16 +132,15 @@ export class CafeFlowDashboardWorkspaceBase extends CollabLitElement {
   connectedCallback(): void {
     super.connectedCallback();
     this.status = (getState('ui.dashboardWorkspace.status') as string | undefined) ?? '';
-    this.getDashboardState = (getState('ui.dashboardWorkspace.action.getDashboard.status') as 'idle' | 'loading' | 'success' | 'error' | undefined) ?? 'idle';
+    this.getDashboardState = (getState('ui.dashboardWorkspace.action.getDashboard.status') as "idle" | "loading" | "success" | "error" | undefined) ?? 'idle';
     this.getDashboardDailyShiftId = (getState('ui.dashboardWorkspace.input.getDashboard.dailyShiftId') as string | undefined) ?? '';
     this.getDashboardData = (getState('ui.dashboardWorkspace.data.getDashboard') as GetDashboardOutput | null | undefined) ?? null;
-    this.getAiSalesSummaryState = (getState('ui.dashboardWorkspace.action.getAiSalesSummary.status') as 'idle' | 'loading' | 'success' | 'error' | undefined) ?? 'idle';
+    this.getAiSalesSummaryState = (getState('ui.dashboardWorkspace.action.getAiSalesSummary.status') as "idle" | "loading" | "success" | "error" | undefined) ?? 'idle';
     this.getAiSalesSummaryOperationalDashboardId = (getState('ui.dashboardWorkspace.input.getAiSalesSummary.operationalDashboardId') as string | undefined) ?? '';
     this.getAiSalesSummaryData = (getState('ui.dashboardWorkspace.data.getAiSalesSummary') as GetAiSalesSummaryOutput | null | undefined) ?? null;
-    this.getAiPromotionSuggestionsState = (getState('ui.dashboardWorkspace.action.getAiPromotionSuggestions.status') as 'idle' | 'loading' | 'success' | 'error' | undefined) ?? 'idle';
+    this.getAiPromotionSuggestionsState = (getState('ui.dashboardWorkspace.action.getAiPromotionSuggestions.status') as "idle" | "loading" | "success" | "error" | undefined) ?? 'idle';
     this.getAiPromotionSuggestionsOperationalDashboardId = (getState('ui.dashboardWorkspace.input.getAiPromotionSuggestions.operationalDashboardId') as string | undefined) ?? '';
-    const promotionData = getState('ui.dashboardWorkspace.data.getAiPromotionSuggestions') as GetAiPromotionSuggestionsOutput[] | undefined;
-    this.getAiPromotionSuggestionsData = promotionData ?? [];
+    this.getAiPromotionSuggestionsData = (getState('ui.dashboardWorkspace.data.getAiPromotionSuggestions') as GetAiPromotionSuggestionsOutput[] | undefined) ?? [];
     subscribe(SUBSCRIBED_STATE_KEYS, this);
   }
 
@@ -159,14 +149,13 @@ export class CafeFlowDashboardWorkspaceBase extends CollabLitElement {
     super.disconnectedCallback();
   }
 
-  /** handleIcaStateChange — collabState notify contract */
   handleIcaStateChange(key: string, value: unknown): void {
     switch (key) {
       case 'ui.dashboardWorkspace.status':
         this.status = (value as string) ?? '';
         break;
       case 'ui.dashboardWorkspace.action.getDashboard.status':
-        this.getDashboardState = (value as 'idle' | 'loading' | 'success' | 'error') ?? 'idle';
+        this.getDashboardState = (value as "idle" | "loading" | "success" | "error") ?? 'idle';
         break;
       case 'ui.dashboardWorkspace.input.getDashboard.dailyShiftId':
         this.getDashboardDailyShiftId = (value as string) ?? '';
@@ -175,7 +164,7 @@ export class CafeFlowDashboardWorkspaceBase extends CollabLitElement {
         this.getDashboardData = (value as GetDashboardOutput | null) ?? null;
         break;
       case 'ui.dashboardWorkspace.action.getAiSalesSummary.status':
-        this.getAiSalesSummaryState = (value as 'idle' | 'loading' | 'success' | 'error') ?? 'idle';
+        this.getAiSalesSummaryState = (value as "idle" | "loading" | "success" | "error") ?? 'idle';
         break;
       case 'ui.dashboardWorkspace.input.getAiSalesSummary.operationalDashboardId':
         this.getAiSalesSummaryOperationalDashboardId = (value as string) ?? '';
@@ -184,7 +173,7 @@ export class CafeFlowDashboardWorkspaceBase extends CollabLitElement {
         this.getAiSalesSummaryData = (value as GetAiSalesSummaryOutput | null) ?? null;
         break;
       case 'ui.dashboardWorkspace.action.getAiPromotionSuggestions.status':
-        this.getAiPromotionSuggestionsState = (value as 'idle' | 'loading' | 'success' | 'error') ?? 'idle';
+        this.getAiPromotionSuggestionsState = (value as "idle" | "loading" | "success" | "error") ?? 'idle';
         break;
       case 'ui.dashboardWorkspace.input.getAiPromotionSuggestions.operationalDashboardId':
         this.getAiPromotionSuggestionsOperationalDashboardId = (value as string) ?? '';

@@ -19,8 +19,14 @@ export const shiftClosingReportTableDef: TableDefinition = {
   ],
   primaryKey: ['shift_closing_report_id'],
   indexes: [
-    { name: 'idx_shift_closing_report_daily_shift_id', columns: ['daily_shift_id'] },
-    { name: 'idx_shift_closing_report_created_at', columns: ['created_at'] },
+    {
+      name: 'idx_shift_closing_report_daily_shift_id',
+      columns: ['daily_shift_id'],
+    },
+    {
+      name: 'idx_shift_closing_report_created_at',
+      columns: ['created_at'],
+    },
   ],
   version: 1,
 };

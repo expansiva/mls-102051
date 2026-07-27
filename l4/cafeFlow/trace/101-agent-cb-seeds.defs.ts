@@ -1,9 +1,9 @@
 {
-  "savedAt": "2026-07-22T21:30:49.183Z",
+  "savedAt": "2026-07-25T03:58:40.061Z",
   "agentName": "agentCbSeeds",
   "stepId": 101,
   "planning": {
-    "planId": "cb-gen-seeds-w2-r2-1784755805489",
+    "planId": "cb-gen-seeds-w2-r2-1784951882093",
     "dependsOn": [],
     "executionMode": "sequential",
     "executionHost": "client"
@@ -16,13 +16,13 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "summary": "Wave 2 seeds active/paused menu items across prior categories, two closed daily shifts with matching closing reports, and one open shift for ongoing orders.",
+          "summary": "Wave 2: menu items across categories (active/paused), daily shifts open and closed, closing reports for closed shifts.",
           "localTables": [
             {
               "tableId": "DailyShift",
               "rows": [
                 {
-                  "key": "shiftJuly5Closed",
+                  "key": "shift-july1",
                   "columns": [
                     {
                       "name": "daily_shift_id",
@@ -46,33 +46,21 @@
                     },
                     {
                       "name": "created_at",
-                      "value": "2026-07-05T07:55:00.000Z"
+                      "value": "2026-07-01T07:55:00.000Z"
                     }
                   ],
                   "details": [
                     {
                       "name": "shiftDate",
-                      "value": "2026-07-05T00:00:00.000Z"
-                    },
-                    {
-                      "name": "openedByUserId",
-                      "value": {
-                        "ref": "actor:atendente.u1"
-                      }
-                    },
-                    {
-                      "name": "closedByUserId",
-                      "value": {
-                        "ref": "actor:gerente.u1"
-                      }
+                      "value": "2026-07-01T00:00:00.000Z"
                     },
                     {
                       "name": "openedAt",
-                      "value": "2026-07-05T08:00:00.000Z"
+                      "value": "2026-07-01T08:00:00.000Z"
                     },
                     {
                       "name": "closedAt",
-                      "value": "2026-07-05T20:05:00.000Z"
+                      "value": "2026-07-01T18:05:00.000Z"
                     },
                     {
                       "name": "totalOrders",
@@ -80,37 +68,33 @@
                     },
                     {
                       "name": "totalSalesAmount",
-                      "value": 1860.5
+                      "value": 1250.5
                     },
                     {
                       "name": "totalItemsSold",
-                      "value": 95
+                      "value": 98
                     },
                     {
                       "name": "cashTotal",
-                      "value": 720
+                      "value": 480
                     },
                     {
                       "name": "otherPaymentsTotal",
-                      "value": 1140.5
+                      "value": 770.5
                     },
                     {
                       "name": "notes",
-                      "value": "Busy Saturday brunch and afternoon rush."
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-05T07:55:00.000Z"
+                      "value": "Steady morning rush, quiet afternoon."
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-05T20:05:00.000Z"
+                      "value": "2026-07-01T18:05:00.000Z"
                     }
                   ],
                   "children": []
                 },
                 {
-                  "key": "shiftJuly6Closed",
+                  "key": "shift-july2",
                   "columns": [
                     {
                       "name": "daily_shift_id",
@@ -129,76 +113,60 @@
                     {
                       "name": "closed_by_user_id",
                       "value": {
-                        "ref": "actor:gerente.u2"
+                        "ref": "actor:gerente.u1"
                       }
                     },
                     {
                       "name": "created_at",
-                      "value": "2026-07-06T07:50:00.000Z"
+                      "value": "2026-07-02T07:50:00.000Z"
                     }
                   ],
                   "details": [
                     {
                       "name": "shiftDate",
-                      "value": "2026-07-06T00:00:00.000Z"
-                    },
-                    {
-                      "name": "openedByUserId",
-                      "value": {
-                        "ref": "actor:atendente.u2"
-                      }
-                    },
-                    {
-                      "name": "closedByUserId",
-                      "value": {
-                        "ref": "actor:gerente.u2"
-                      }
+                      "value": "2026-07-02T00:00:00.000Z"
                     },
                     {
                       "name": "openedAt",
-                      "value": "2026-07-06T08:00:00.000Z"
+                      "value": "2026-07-02T08:00:00.000Z"
                     },
                     {
                       "name": "closedAt",
-                      "value": "2026-07-06T19:45:00.000Z"
+                      "value": "2026-07-02T18:10:00.000Z"
                     },
                     {
                       "name": "totalOrders",
-                      "value": 31
+                      "value": 55
                     },
                     {
                       "name": "totalSalesAmount",
-                      "value": 1245.75
+                      "value": 1680.75
                     },
                     {
                       "name": "totalItemsSold",
-                      "value": 68
+                      "value": 132
                     },
                     {
                       "name": "cashTotal",
-                      "value": 410.25
+                      "value": 620.25
                     },
                     {
                       "name": "otherPaymentsTotal",
-                      "value": 835.5
+                      "value": 1060.5
                     },
                     {
                       "name": "notes",
-                      "value": "Quieter Sunday; soup sold out mid-afternoon."
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-06T07:50:00.000Z"
+                      "value": "Busy lunch; specials sold well."
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-06T19:45:00.000Z"
+                      "value": "2026-07-02T18:10:00.000Z"
                     }
                   ],
                   "children": []
                 },
                 {
-                  "key": "shiftJuly7Open",
+                  "key": "shift-july7-open",
                   "columns": [
                     {
                       "name": "daily_shift_id",
@@ -229,16 +197,6 @@
                       "value": "2026-07-07T00:00:00.000Z"
                     },
                     {
-                      "name": "openedByUserId",
-                      "value": {
-                        "ref": "actor:atendente.u1"
-                      }
-                    },
-                    {
-                      "name": "closedByUserId",
-                      "value": null
-                    },
-                    {
                       "name": "openedAt",
                       "value": "2026-07-07T08:00:00.000Z"
                     },
@@ -252,31 +210,27 @@
                     },
                     {
                       "name": "totalSalesAmount",
-                      "value": 642
+                      "value": 412
                     },
                     {
                       "name": "totalItemsSold",
-                      "value": 39
+                      "value": 41
                     },
                     {
                       "name": "cashTotal",
-                      "value": 215
+                      "value": 150
                     },
                     {
                       "name": "otherPaymentsTotal",
-                      "value": 427
+                      "value": 262
                     },
                     {
                       "name": "notes",
-                      "value": "Current open shift for live POS orders."
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-07T07:58:00.000Z"
+                      "value": "Current open shift."
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-07T14:30:00.000Z"
+                      "value": "2026-07-07T12:30:00.000Z"
                     }
                   ],
                   "children": []
@@ -287,7 +241,7 @@
               "tableId": "ShiftClosingReport",
               "rows": [
                 {
-                  "key": "closeJuly5",
+                  "key": "close-july1",
                   "columns": [
                     {
                       "name": "shift_closing_report_id",
@@ -296,28 +250,22 @@
                     {
                       "name": "daily_shift_id",
                       "value": {
-                        "ref": "local:DailyShift.shiftJuly5Closed"
+                        "ref": "local:DailyShift.shift-july1"
                       }
                     },
                     {
                       "name": "created_at",
-                      "value": "2026-07-05T20:06:00.000Z"
+                      "value": "2026-07-01T18:06:00.000Z"
                     }
                   ],
                   "details": [
                     {
-                      "name": "dailyShiftId",
-                      "value": {
-                        "ref": "local:DailyShift.shiftJuly5Closed"
-                      }
-                    },
-                    {
                       "name": "shiftDate",
-                      "value": "2026-07-05T00:00:00.000Z"
+                      "value": "2026-07-01T00:00:00.000Z"
                     },
                     {
                       "name": "totalSalesAmount",
-                      "value": 1860.5
+                      "value": 1250.5
                     },
                     {
                       "name": "totalOrdersCount",
@@ -325,23 +273,23 @@
                     },
                     {
                       "name": "totalItemsSold",
-                      "value": 95
+                      "value": 98
                     },
                     {
                       "name": "cashPaymentsAmount",
-                      "value": 720
+                      "value": 480
                     },
                     {
                       "name": "otherPaymentsAmount",
-                      "value": 1140.5
+                      "value": 770.5
                     },
                     {
                       "name": "topSellingItemsSummary",
-                      "value": "Espresso, Croissant, Caprese Sandwich"
+                      "value": "Espresso, Cappuccino, Cheese croissant"
                     },
                     {
                       "name": "lowStockSignalsCount",
-                      "value": 1
+                      "value": 2
                     },
                     {
                       "name": "stockoutSignalsCount",
@@ -349,25 +297,21 @@
                     },
                     {
                       "name": "closingNotes",
-                      "value": "Strong card volume; bakery restock recommended."
+                      "value": "Balanced drawer; restock milk tomorrow."
                     },
                     {
                       "name": "generatedAt",
-                      "value": "2026-07-05T20:06:00.000Z"
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-05T20:06:00.000Z"
+                      "value": "2026-07-01T18:06:00.000Z"
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-05T20:06:00.000Z"
+                      "value": "2026-07-01T18:06:00.000Z"
                     }
                   ],
                   "children": []
                 },
                 {
-                  "key": "closeJuly6",
+                  "key": "close-july2",
                   "columns": [
                     {
                       "name": "shift_closing_report_id",
@@ -376,52 +320,46 @@
                     {
                       "name": "daily_shift_id",
                       "value": {
-                        "ref": "local:DailyShift.shiftJuly6Closed"
+                        "ref": "local:DailyShift.shift-july2"
                       }
                     },
                     {
                       "name": "created_at",
-                      "value": "2026-07-06T19:46:00.000Z"
+                      "value": "2026-07-02T18:12:00.000Z"
                     }
                   ],
                   "details": [
                     {
-                      "name": "dailyShiftId",
-                      "value": {
-                        "ref": "local:DailyShift.shiftJuly6Closed"
-                      }
-                    },
-                    {
                       "name": "shiftDate",
-                      "value": "2026-07-06T00:00:00.000Z"
+                      "value": "2026-07-02T00:00:00.000Z"
                     },
                     {
                       "name": "totalSalesAmount",
-                      "value": 1245.75
+                      "value": 1680.75
                     },
                     {
                       "name": "totalOrdersCount",
-                      "value": 31
+                      "value": 55
                     },
                     {
                       "name": "totalItemsSold",
-                      "value": 68
+                      "value": 132
                     },
                     {
                       "name": "cashPaymentsAmount",
-                      "value": 410.25
+                      "value": 620.25
                     },
                     {
                       "name": "otherPaymentsAmount",
-                      "value": 835.5
+                      "value": 1060.5
                     },
                     {
                       "name": "topSellingItemsSummary",
-                      "value": "Latte, Daily Soup, Blueberry Muffin"
+                      "value": "Latte, Brownie, Club sandwich"
                     },
                     {
                       "name": "lowStockSignalsCount",
-                      "value": 2
+                      "value": 1
                     },
                     {
                       "name": "stockoutSignalsCount",
@@ -429,19 +367,15 @@
                     },
                     {
                       "name": "closingNotes",
-                      "value": "Soup base stockout after lunch; milk running low."
+                      "value": "Sugar stockout mid-afternoon; reordered."
                     },
                     {
                       "name": "generatedAt",
-                      "value": "2026-07-06T19:46:00.000Z"
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-06T19:46:00.000Z"
+                      "value": "2026-07-02T18:12:00.000Z"
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-06T19:46:00.000Z"
+                      "value": "2026-07-02T18:12:00.000Z"
                     }
                   ],
                   "children": []
@@ -462,7 +396,7 @@
                     },
                     {
                       "name": "description",
-                      "value": "Single-shot house espresso."
+                      "value": "Single shot of house blend."
                     },
                     {
                       "name": "price",
@@ -496,32 +430,32 @@
                       "value": true
                     },
                     {
-                      "name": "menuCategoryId",
-                      "value": {
-                        "ref": "mdm:MenuCategory.beverages"
-                      }
-                    },
-                    {
                       "name": "createdAt",
                       "value": "2026-07-01T09:00:00.000Z"
                     },
                     {
                       "name": "updatedAt",
                       "value": "2026-07-01T09:00:00.000Z"
+                    },
+                    {
+                      "name": "menuCategoryId",
+                      "value": {
+                        "ref": "mdm:MenuCategory.beverages"
+                      }
                     }
                   ],
                   "relationships": []
                 },
                 {
-                  "key": "latte",
+                  "key": "cappuccino",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Latte"
+                      "value": "Cappuccino"
                     },
                     {
                       "name": "description",
-                      "value": "Espresso with steamed whole milk."
+                      "value": "Espresso with steamed milk foam."
                     },
                     {
                       "name": "price",
@@ -542,7 +476,7 @@
                     {
                       "name": "imageUrl",
                       "value": {
-                        "asset": "MenuItem/latte",
+                        "asset": "MenuItem/cappuccino",
                         "kind": "image"
                       }
                     },
@@ -555,36 +489,36 @@
                       "value": true
                     },
                     {
+                      "name": "createdAt",
+                      "value": "2026-07-01T09:05:00.000Z"
+                    },
+                    {
+                      "name": "updatedAt",
+                      "value": "2026-07-01T09:05:00.000Z"
+                    },
+                    {
                       "name": "menuCategoryId",
                       "value": {
                         "ref": "mdm:MenuCategory.beverages"
                       }
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-01T09:05:00.000Z"
-                    },
-                    {
-                      "name": "updatedAt",
-                      "value": "2026-07-01T09:05:00.000Z"
                     }
                   ],
                   "relationships": []
                 },
                 {
-                  "key": "croissant",
+                  "key": "cheese-croissant",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Butter Croissant"
+                      "value": "Cheese croissant"
                     },
                     {
                       "name": "description",
-                      "value": "Flaky baked croissant."
+                      "value": "Buttery croissant with melted cheese."
                     },
                     {
                       "name": "price",
-                      "value": 5
+                      "value": 7
                     },
                     {
                       "name": "status",
@@ -601,7 +535,7 @@
                     {
                       "name": "imageUrl",
                       "value": {
-                        "asset": "MenuItem/croissant",
+                        "asset": "MenuItem/cheese-croissant",
                         "kind": "image"
                       }
                     },
@@ -614,91 +548,32 @@
                       "value": true
                     },
                     {
-                      "name": "menuCategoryId",
-                      "value": {
-                        "ref": "mdm:MenuCategory.bakery"
-                      }
-                    },
-                    {
                       "name": "createdAt",
                       "value": "2026-07-01T09:10:00.000Z"
                     },
                     {
                       "name": "updatedAt",
                       "value": "2026-07-01T09:10:00.000Z"
-                    }
-                  ],
-                  "relationships": []
-                },
-                {
-                  "key": "capreseSandwich",
-                  "fields": [
-                    {
-                      "name": "name",
-                      "value": "Caprese Sandwich"
-                    },
-                    {
-                      "name": "description",
-                      "value": "Tomato, mozzarella, and basil on ciabatta."
-                    },
-                    {
-                      "name": "price",
-                      "value": 12.5
-                    },
-                    {
-                      "name": "status",
-                      "value": "active"
-                    },
-                    {
-                      "name": "pausedAt",
-                      "value": null
-                    },
-                    {
-                      "name": "pauseReason",
-                      "value": null
-                    },
-                    {
-                      "name": "imageUrl",
-                      "value": {
-                        "asset": "MenuItem/capreseSandwich",
-                        "kind": "image"
-                      }
-                    },
-                    {
-                      "name": "displayOrder",
-                      "value": 1
-                    },
-                    {
-                      "name": "requiresStockLink",
-                      "value": true
                     },
                     {
                       "name": "menuCategoryId",
                       "value": {
-                        "ref": "mdm:MenuCategory.meals"
+                        "ref": "mdm:MenuCategory.food"
                       }
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-01T09:15:00.000Z"
-                    },
-                    {
-                      "name": "updatedAt",
-                      "value": "2026-07-01T09:15:00.000Z"
                     }
                   ],
                   "relationships": []
                 },
                 {
-                  "key": "summerLemonade",
+                  "key": "brownie",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Summer Lemonade"
+                      "value": "Chocolate brownie"
                     },
                     {
                       "name": "description",
-                      "value": "Seasonal fresh lemonade; paused pending citrus restock."
+                      "value": "Dense cocoa brownie square."
                     },
                     {
                       "name": "price",
@@ -706,20 +581,20 @@
                     },
                     {
                       "name": "status",
-                      "value": "paused"
+                      "value": "active"
                     },
                     {
                       "name": "pausedAt",
-                      "value": "2026-07-06T11:00:00.000Z"
+                      "value": null
                     },
                     {
                       "name": "pauseReason",
-                      "value": "Citrus supply delay"
+                      "value": null
                     },
                     {
                       "name": "imageUrl",
                       "value": {
-                        "asset": "MenuItem/summerLemonade",
+                        "asset": "MenuItem/brownie",
                         "kind": "image"
                       }
                     },
@@ -732,10 +607,63 @@
                       "value": false
                     },
                     {
+                      "name": "createdAt",
+                      "value": "2026-07-01T09:15:00.000Z"
+                    },
+                    {
+                      "name": "updatedAt",
+                      "value": "2026-07-01T09:15:00.000Z"
+                    },
+                    {
                       "name": "menuCategoryId",
                       "value": {
-                        "ref": "mdm:MenuCategory.seasonal"
+                        "ref": "mdm:MenuCategory.desserts"
                       }
+                    }
+                  ],
+                  "relationships": []
+                },
+                {
+                  "key": "seasonal-latte",
+                  "fields": [
+                    {
+                      "name": "name",
+                      "value": "Seasonal spice latte"
+                    },
+                    {
+                      "name": "description",
+                      "value": "Limited spice latte; paused for ingredient shortage."
+                    },
+                    {
+                      "name": "price",
+                      "value": 8
+                    },
+                    {
+                      "name": "status",
+                      "value": "paused"
+                    },
+                    {
+                      "name": "pausedAt",
+                      "value": "2026-07-03T11:00:00.000Z"
+                    },
+                    {
+                      "name": "pauseReason",
+                      "value": "Spice blend out of stock"
+                    },
+                    {
+                      "name": "imageUrl",
+                      "value": {
+                        "asset": "MenuItem/seasonal-latte",
+                        "kind": "image"
+                      }
+                    },
+                    {
+                      "name": "displayOrder",
+                      "value": 1
+                    },
+                    {
+                      "name": "requiresStockLink",
+                      "value": true
                     },
                     {
                       "name": "createdAt",
@@ -743,7 +671,13 @@
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-06T11:00:00.000Z"
+                      "value": "2026-07-03T11:00:00.000Z"
+                    },
+                    {
+                      "name": "menuCategoryId",
+                      "value": {
+                        "ref": "mdm:MenuCategory.specials"
+                      }
                     }
                   ],
                   "relationships": []
@@ -754,16 +688,13 @@
         },
         "questions": [],
         "trace": [
-          "Fixed shiftDate and report shiftDate to full ISO-8601 UTC datetimes within window",
-          "Open shift closed_by_user_id and closedByUserId set to null (no invented ref)",
-          "Closed shifts keep actor refs for opened/closed by",
-          "MenuItems link to wave-1 MenuCategory refs with price and active/paused states",
-          "Closing reports only for closed shifts with sales/payment/stock signal totals"
+          "Fixed shiftDate on all DailyShift and ShiftClosingReport rows to full ISO 8601 UTC within window.",
+          "DailyShift: 2 closed + 1 open; ShiftClosingReport only for closed shifts; MenuItem 4 active + 1 paused across prior categories."
         ]
       }
     },
     "status": "completed",
-    "stepId": 6,
+    "stepId": 7,
     "interaction": null,
     "nextSteps": null
   }

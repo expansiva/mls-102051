@@ -15,13 +15,13 @@ export const stockConsumptionRepositoryAdapter = {
     "entityId": "StockConsumption",
     "className": "StockConsumptionRepositoryAdapter",
     "portRef": "IStockConsumptionRepository",
-    "tableRef": "stock_consumption",
+    "tableRef": "cafe_flow_stock_consumptions",
     "mdmReads": [],
     "notes": [
-      "append-only event adapter: append (insert one row) + read finders; no update/delete",
+      "append-only event adapter: insert one row on append; no update/delete",
       "columns: stock_consumption_id, order_id, stock_item_id, status, created_at",
       "details JSONB: quantity, occurredAt, voidedAt, voidReason",
-      "map domain StockConsumption <-> row via ctx.data.moduleData; no mdmRefs"
+      "implements append + read finders via ctx.data.moduleData only"
     ]
   }
 } as const;

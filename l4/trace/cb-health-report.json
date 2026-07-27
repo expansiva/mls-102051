@@ -1,10 +1,2424 @@
 {
-  "savedAt": "2026-07-22T21:31:26.959Z",
+  "savedAt": "2026-07-26T20:23:42.465Z",
   "outcome": "passed",
   "l1Defs": 58,
   "findings": [],
   "warnings": [],
-  "repairHistory": [],
-  "globalAttempts": 0,
-  "judgeRuns": 0
+  "repairHistory": [
+    "2026-07-26T20:07:58.385Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/dailyshift.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.387Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockadjustment.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.388Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.391Z :: _102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/aisalessummaryrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.392Z :: _102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/operationaldashboardrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.393Z :: _102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/shiftclosingreportrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.394Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockadjustmentrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockconsumptionrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_3_domain/entities/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+    "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+    "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+    "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'.",
+    "2026-07-26T20:07:58.397Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+    "2026-07-26T20:10:13.281Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts :: attempt 1 :: repository method misuse -> orders.filter() is not declared on IOrderRepository; use one of: findByDailyShiftId, findByStatus, findOpenByTable, getById, list, save",
+    "2026-07-26T20:12:20.693Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts :: attempt 1 :: handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract",
+    "2026-07-26T20:13:11.340Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts :: validate-all g2 :: compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'.",
+    "2026-07-26T20:18:32.537Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+    "2026-07-26T20:18:32.537Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+    "2026-07-26T20:18:32.538Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+    "2026-07-26T20:18:32.538Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+    "2026-07-26T20:22:52.731Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts :: attempt 1 :: handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract"
+  ],
+  "globalAttempts": 3,
+  "judgeRuns": 0,
+  "costByPhase": {
+    "gen-domain": {
+      "cost": 0.1101,
+      "calls": 12,
+      "inputTokens": 24602,
+      "outputTokens": 4418
+    },
+    "gen-port": {
+      "cost": 0.032100000000000004,
+      "calls": 2,
+      "inputTokens": 1834,
+      "outputTokens": 3569
+    },
+    "gen-table": {
+      "cost": 0.0545,
+      "calls": 2,
+      "inputTokens": 5004,
+      "outputTokens": 5060
+    },
+    "gen-adapter": {
+      "cost": 0.0313,
+      "calls": 2,
+      "inputTokens": 4134,
+      "outputTokens": 2614
+    },
+    "gen-usecase": {
+      "cost": 1.0092000000000003,
+      "calls": 42,
+      "inputTokens": 221899,
+      "outputTokens": 40215
+    },
+    "judge": {
+      "cost": 0.2954,
+      "calls": 4,
+      "inputTokens": 94226,
+      "outputTokens": 851
+    },
+    "materialize": {
+      "cost": 10.174599999999996,
+      "calls": 278,
+      "inputTokens": 2633675,
+      "outputTokens": 314595
+    },
+    "seeds": {
+      "cost": 1.1082999999999998,
+      "calls": 28,
+      "inputTokens": 177246,
+      "outputTokens": 72881
+    }
+  },
+  "costSummary": {
+    "totalCost": 12.815499999999997,
+    "totalCalls": 370,
+    "topPhase": "materialize",
+    "topPhaseCost": 10.174599999999996
+  },
+  "rounds": [
+    {
+      "savedAt": "2026-07-26T20:07:59.138Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestion.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/order.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiPromotionSuggestionRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/dailyshift.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockadjustment.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/aisalessummaryrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/operationaldashboardrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/shiftclosingreportrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/stockadjustmentrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/stockconsumptionrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_3_domain/entities/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 0,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 5.863100000000001,
+          "calls": 156,
+          "inputTokens": 1504197,
+          "outputTokens": 172211
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 8.504000000000001,
+        "totalCalls": 248,
+        "topPhase": "materialize",
+        "topPhaseCost": 5.863100000000001
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:08:06.681Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestion.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/order.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumptionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiPromotionSuggestionRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/dailyshift.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockadjustment.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/aisalessummaryrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/operationaldashboardrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/shiftclosingreportrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/stockadjustmentrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_2_application/ports/stockconsumptionrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 1,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 5.8732000000000015,
+          "calls": 157,
+          "inputTokens": 1507618,
+          "outputTokens": 172352
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 8.514100000000003,
+        "totalCalls": 249,
+        "topPhase": "materialize",
+        "topPhaseCost": 5.8732000000000015
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:08:26.352Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestion.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/order.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumptionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/dailyshift.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockadjustment.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 2,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 5.9843,
+          "calls": 165,
+          "inputTokens": 1537830,
+          "outputTokens": 174336
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 8.6252,
+        "totalCalls": 257,
+        "topPhase": "materialize",
+        "topPhaseCost": 5.9843
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:08:47.001Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumptionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 3,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 6.1231,
+          "calls": 173,
+          "inputTokens": 1581834,
+          "outputTokens": 178134
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 8.764,
+        "totalCalls": 265,
+        "topPhase": "materialize",
+        "topPhaseCost": 6.1231
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:09:26.988Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'index' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 4,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 6.404999999999999,
+          "calls": 181,
+          "inputTokens": 1656643,
+          "outputTokens": 188704
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 9.0459,
+        "totalCalls": 273,
+        "topPhase": "materialize",
+        "topPhaseCost": 6.404999999999999
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:10:45.981Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+          "attempts": 1,
+          "findings": [
+            "repository method misuse -> orders.filter() is not declared on IOrderRepository; use one of: findByDailyShiftId, findByStatus, findOpenByTable, getById, list, save"
+          ]
+        }
+      ],
+      "minRank": 5,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 6.9676,
+          "calls": 193,
+          "inputTokens": 1791718,
+          "outputTokens": 210544
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 9.6085,
+        "totalCalls": 285,
+        "topPhase": "materialize",
+        "topPhaseCost": 6.9676
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:11:34.809Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts"
+      ],
+      "pendingRepairs": [],
+      "minRank": 5,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 7.0283,
+          "calls": 194,
+          "inputTokens": 1807765,
+          "outputTokens": 213185
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 9.6692,
+        "totalCalls": 286,
+        "topPhase": "materialize",
+        "topPhaseCost": 7.0283
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:13:11.341Z",
+      "outcome": "repair-round",
+      "round": 2,
+      "globalAttempts": 2,
+      "repairTargets": [
+        {
+          "defRef": "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+          "findings": 1,
+          "first": "compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'."
+        }
+      ],
+      "targetCount": 1,
+      "flakyCompilerSuppressed": 0,
+      "cascadeCompilerSuppressed": 0,
+      "l1Defs": 58,
+      "findings": [
+        "compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'."
+      ],
+      "warnings": [],
+      "repairHistory": [
+        "2026-07-26T20:07:58.385Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/dailyshift.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.387Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockadjustment.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.388Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.391Z :: _102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/aisalessummaryrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.392Z :: _102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/operationaldashboardrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.393Z :: _102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/shiftclosingreportrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.394Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockadjustmentrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockconsumptionrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_3_domain/entities/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'.",
+        "2026-07-26T20:07:58.397Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:10:13.281Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts :: attempt 1 :: repository method misuse -> orders.filter() is not declared on IOrderRepository; use one of: findByDailyShiftId, findByStatus, findOpenByTable, getById, list, save",
+        "2026-07-26T20:12:20.693Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts :: attempt 1 :: handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract",
+        "2026-07-26T20:13:11.340Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts :: validate-all g2 :: compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'."
+      ],
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 7.336599999999999,
+          "calls": 200,
+          "inputTokens": 1897007,
+          "outputTokens": 223018
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 9.9775,
+        "totalCalls": 292,
+        "topPhase": "materialize",
+        "topPhaseCost": 7.336599999999999
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:13:12.428Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestion.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/order.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiPromotionSuggestionRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+          "attempts": 1,
+          "findings": [
+            "handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        }
+      ],
+      "minRank": 0,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 7.336599999999999,
+          "calls": 200,
+          "inputTokens": 1897007,
+          "outputTokens": 223018
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 9.9775,
+        "totalCalls": 292,
+        "topPhase": "materialize",
+        "topPhaseCost": 7.336599999999999
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:13:40.378Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestion.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/order.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+          "attempts": 1,
+          "findings": [
+            "handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        }
+      ],
+      "minRank": 2,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 7.443999999999999,
+          "calls": 207,
+          "inputTokens": 1922699,
+          "outputTokens": 224680
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 10.0849,
+        "totalCalls": 299,
+        "topPhase": "materialize",
+        "topPhaseCost": 7.443999999999999
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:14:02.756Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+          "attempts": 1,
+          "findings": [
+            "handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        }
+      ],
+      "minRank": 3,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 7.564899999999999,
+          "calls": 214,
+          "inputTokens": 1960378,
+          "outputTokens": 228030
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 10.2058,
+        "totalCalls": 306,
+        "topPhase": "materialize",
+        "topPhaseCost": 7.564899999999999
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:14:45.005Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+          "attempts": 1,
+          "findings": [
+            "handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract"
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'."
+          ]
+        }
+      ],
+      "minRank": 4,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 7.8180999999999985,
+          "calls": 221,
+          "inputTokens": 2026505,
+          "outputTokens": 237677
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 10.459,
+        "totalCalls": 313,
+        "topPhase": "materialize",
+        "topPhaseCost": 7.8180999999999985
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:16:38.951Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+          "attempts": 1,
+          "findings": [
+            "handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract"
+          ]
+        }
+      ],
+      "minRank": 5,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 8.518699999999995,
+          "calls": 233,
+          "inputTokens": 2191984,
+          "outputTokens": 259487
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 11.159599999999996,
+        "totalCalls": 325,
+        "topPhase": "materialize",
+        "topPhaseCost": 8.518699999999995
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:18:32.539Z",
+      "outcome": "rescue-round",
+      "round": 3,
+      "globalAttempts": 3,
+      "repairTargets": [
+        {
+          "defRef": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "findings": 2,
+          "first": "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'."
+        },
+        {
+          "defRef": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "findings": 4,
+          "first": "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+        },
+        {
+          "defRef": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "findings": 4,
+          "first": "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+        },
+        {
+          "defRef": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "findings": 2,
+          "first": "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+        }
+      ],
+      "targetCount": 4,
+      "flakyCompilerSuppressed": 0,
+      "cascadeCompilerSuppressed": 0,
+      "l1Defs": 58,
+      "findings": [
+        "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+        "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'menuItemName' does not exist on type 'unknown'.",
+        "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'mdmId' does not exist on type 'unknown'.",
+        "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'version' does not exist on type 'unknown'.",
+        "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+      ],
+      "warnings": [],
+      "repairHistory": [
+        "2026-07-26T20:07:58.385Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/dailyshift.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.387Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockadjustment.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.388Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.391Z :: _102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/aisalessummaryrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.392Z :: _102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/operationaldashboardrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.393Z :: _102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/shiftclosingreportrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.394Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockadjustmentrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockconsumptionrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_3_domain/entities/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'.",
+        "2026-07-26T20:07:58.397Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:10:13.281Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts :: attempt 1 :: repository method misuse -> orders.filter() is not declared on IOrderRepository; use one of: findByDailyShiftId, findByStatus, findOpenByTable, getById, list, save",
+        "2026-07-26T20:12:20.693Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts :: attempt 1 :: handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract",
+        "2026-07-26T20:13:11.340Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts :: validate-all g2 :: compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'.",
+        "2026-07-26T20:18:32.537Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+        "2026-07-26T20:18:32.537Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:18:32.538Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:18:32.538Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+      ],
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 8.827799999999996,
+          "calls": 239,
+          "inputTokens": 2281801,
+          "outputTokens": 269408
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 11.468699999999997,
+        "totalCalls": 331,
+        "topPhase": "materialize",
+        "topPhaseCost": 8.827799999999996
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:18:33.921Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestion.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/order.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiPromotionSuggestionRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'menuItemName' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'mdmId' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 0,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 8.827799999999996,
+          "calls": 239,
+          "inputTokens": 2281801,
+          "outputTokens": 269408
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 11.468699999999997,
+        "totalCalls": 331,
+        "topPhase": "materialize",
+        "topPhaseCost": 8.827799999999996
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:19:01.596Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestion.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/order.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReport.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'menuItemName' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'mdmId' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 2,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 8.937999999999995,
+          "calls": 246,
+          "inputTokens": 2307493,
+          "outputTokens": 271041
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 11.578899999999996,
+        "totalCalls": 338,
+        "topPhase": "materialize",
+        "topPhaseCost": 8.937999999999995
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:19:26.422Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiSalesSummaryRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShiftRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/operationalDashboardRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/orderRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/shiftClosingReportRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustmentRepositoryAdapter.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'menuItemName' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'mdmId' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 3,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 9.057699999999995,
+          "calls": 253,
+          "inputTokens": 2345172,
+          "outputTokens": 274401
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 11.698599999999995,
+        "totalCalls": 345,
+        "topPhase": "materialize",
+        "topPhaseCost": 9.057699999999995
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:20:09.399Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/closeDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/openDailyShift.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/recordBasicPayment.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/trackOrders.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewKitchenQueue.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+        "_102051_/l1/cafeFlow/layer_2_application/usecases/viewShiftClosingReport.defs.ts"
+      ],
+      "pendingRepairs": [
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'menuItemName' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'mdmId' does not exist on type 'unknown'."
+          ]
+        },
+        {
+          "target": "_102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts",
+          "attempts": 0,
+          "findings": [
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+            "compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'."
+          ]
+        }
+      ],
+      "minRank": 4,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 9.309399999999995,
+          "calls": 260,
+          "inputTokens": 2411284,
+          "outputTokens": 283944
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 11.950299999999995,
+        "totalCalls": 352,
+        "topPhase": "materialize",
+        "topPhaseCost": 9.309399999999995
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:21:50.524Z",
+      "outcome": "materialize-dispatch",
+      "stale": [
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/dashboardWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/kitchenWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/menuManagement.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/shiftWorkspace.defs.ts",
+        "_102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/stockManagement.defs.ts"
+      ],
+      "pendingRepairs": [],
+      "minRank": 5,
+      "repairMode": true,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 9.873999999999995,
+          "calls": 272,
+          "inputTokens": 2545727,
+          "outputTokens": 304732
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 12.514899999999995,
+        "totalCalls": 364,
+        "topPhase": "materialize",
+        "topPhaseCost": 9.873999999999995
+      }
+    },
+    {
+      "savedAt": "2026-07-26T20:23:42.465Z",
+      "outcome": "passed",
+      "l1Defs": 58,
+      "findings": [],
+      "warnings": [],
+      "repairHistory": [
+        "2026-07-26T20:07:58.385Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/dailyShift.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/dailyshift.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.387Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockAdjustment.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockadjustment.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.388Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/persistence/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_1_external/adapters/persistence/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.391Z :: _102051_/l1/cafeFlow/layer_2_application/ports/aiSalesSummaryRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/aisalessummaryrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.392Z :: _102051_/l1/cafeFlow/layer_2_application/ports/operationalDashboardRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/operationaldashboardrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.393Z :: _102051_/l1/cafeFlow/layer_2_application/ports/shiftClosingReportRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/shiftclosingreportrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.394Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockadjustmentrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_2_application/ports/stockconsumptionrepository.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.395Z :: _102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.defs.ts :: validate-all g1 :: materialization stale -> cafeFlow/layer_3_domain/entities/stockconsumption.ts is older than its .defs.ts (failed worker masked by a previous run's output)",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:07:58.396Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'patch' does not exist on type '{}'.",
+        "2026-07-26T20:07:58.397Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts :: validate-all g1 :: compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:10:13.281Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiSalesSummary.defs.ts :: attempt 1 :: repository method misuse -> orders.filter() is not declared on IOrderRepository; use one of: findByDailyShiftId, findByStatus, findOpenByTable, getById, list, save",
+        "2026-07-26T20:12:20.693Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts :: attempt 1 :: handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract",
+        "2026-07-26T20:13:11.340Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts :: validate-all g2 :: compiler -> cafeFlow/layer_2_application/usecases/createStockAdjustment.ts: TS2339: Property 'patch' does not exist on type '{}'.",
+        "2026-07-26T20:18:32.537Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/createOrder.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/createOrder.ts: TS2339: Property 'unitPrice' does not exist on type 'unknown'.",
+        "2026-07-26T20:18:32.537Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/generateAiPromotionSuggestions.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:18:32.538Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/updateOrderStatus.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/updateOrderStatus.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:18:32.538Z :: _102051_/l1/cafeFlow/layer_2_application/usecases/viewOperationalDashboard.defs.ts :: validate-all g3 :: compiler -> cafeFlow/layer_2_application/usecases/viewOperationalDashboard.ts: TS2339: Property 'details' does not exist on type 'unknown'.",
+        "2026-07-26T20:22:52.731Z :: _102051_/l1/cafeFlow/layer_1_external/adapters/http/controllers/posWorkspace.defs.ts :: attempt 1 :: handler posWorkspaceCmdCreateOrderHandler requires 'items' outside l4 inputContract"
+      ],
+      "globalAttempts": 3,
+      "judgeRuns": 0,
+      "costByPhase": {
+        "gen-domain": {
+          "cost": 0.1101,
+          "calls": 12,
+          "inputTokens": 24602,
+          "outputTokens": 4418
+        },
+        "gen-port": {
+          "cost": 0.032100000000000004,
+          "calls": 2,
+          "inputTokens": 1834,
+          "outputTokens": 3569
+        },
+        "gen-table": {
+          "cost": 0.0545,
+          "calls": 2,
+          "inputTokens": 5004,
+          "outputTokens": 5060
+        },
+        "gen-adapter": {
+          "cost": 0.0313,
+          "calls": 2,
+          "inputTokens": 4134,
+          "outputTokens": 2614
+        },
+        "gen-usecase": {
+          "cost": 1.0092000000000003,
+          "calls": 42,
+          "inputTokens": 221899,
+          "outputTokens": 40215
+        },
+        "judge": {
+          "cost": 0.2954,
+          "calls": 4,
+          "inputTokens": 94226,
+          "outputTokens": 851
+        },
+        "materialize": {
+          "cost": 10.174599999999996,
+          "calls": 278,
+          "inputTokens": 2633675,
+          "outputTokens": 314595
+        },
+        "seeds": {
+          "cost": 1.1082999999999998,
+          "calls": 28,
+          "inputTokens": 177246,
+          "outputTokens": 72881
+        }
+      },
+      "costSummary": {
+        "totalCost": 12.815499999999997,
+        "totalCalls": 370,
+        "topPhase": "materialize",
+        "topPhaseCost": 10.174599999999996
+      }
+    }
+  ]
 }

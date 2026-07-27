@@ -13,7 +13,7 @@ export const aiPromotionSuggestionDomainEntity = {
   },
   "data": {
     "entityId": "AiPromotionSuggestion",
-    "title": "AiPromotionSuggestion",
+    "title": "Sugestão de Itens a Promover (IA)",
     "fields": [
       {
         "fieldId": "aiPromotionSuggestionId",
@@ -137,24 +137,30 @@ export const aiPromotionSuggestionDomainEntity = {
       }
     ],
     "valueObjects": [],
-    "invariants": [
-      "confidenceScore deve estar entre 0 e 100 (inclusive).",
-      "suggestedDiscountPercent, quando presente, deve estar entre 0 e 100 (inclusive).",
-      "salesLast7Days deve ser maior ou igual a zero.",
-      "salesToday, quando presente, deve ser maior ou igual a zero.",
-      "currentStockLevel, quando presente, deve ser maior ou igual a zero.",
-      "Quando status = 'accepted' ou status = 'rejected', reviewedAt e reviewedByUserId devem estar preenchidos.",
-      "Quando status = 'pending', reviewedAt e reviewedByUserId devem ser nulos.",
-      "expiresAt, quando presente, deve ser maior que generatedAt.",
-      "reviewedAt, quando presente, deve ser maior ou igual a generatedAt.",
-      "updatedAt deve ser maior ou igual a createdAt.",
-      "reason deve ser um texto não vazio."
-    ],
     "statusEnum": [
       "pending",
       "accepted",
       "rejected",
       "expired"
+    ],
+    "invariants": [
+      "status lifecycle: pending → accepted | rejected | expired; accepted, rejected and expired are terminal",
+      "reviewedAt and reviewedByUserId are required when status is accepted or rejected",
+      "reviewedAt and reviewedByUserId must be absent when status is pending or expired",
+      "reviewNotes may only be set when status is accepted or rejected",
+      "generatedAt must be <= createdAt and <= updatedAt",
+      "reviewedAt, when present, must be >= generatedAt and >= createdAt",
+      "expiresAt, when present, must be > generatedAt",
+      "status may become expired only when expiresAt is set and current time >= expiresAt; a pending suggestion past expiresAt must transition to expired",
+      "accepted or rejected suggestions cannot transition to expired",
+      "salesLast7Days must be >= 0",
+      "salesToday, when present, must be >= 0",
+      "currentStockLevel, when present, must be >= 0",
+      "confidenceScore must be between 0 and 100 inclusive",
+      "suggestedDiscountPercent, when present, must be > 0 and <= 100",
+      "updatedAt must be >= createdAt",
+      "reason must be non-empty",
+      "menuItemName must be non-empty"
     ]
   }
 } as const;

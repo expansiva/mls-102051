@@ -6,7 +6,13 @@ import type { IOperationalDashboardRepository } from '/_102051_/l1/cafeFlow/laye
 import type { IDailyShiftRepository } from '/_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.js';
 import type { IOrderRepository } from '/_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.js';
 import type { AiSalesSummary } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/aiSalesSummary.js';
-import { hasNonEmptySummaryText } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/aiSalesSummary.js';
+import {
+  isValidAiSalesSummaryPeriod,
+  isNonEmptyAiSalesSummaryText,
+  hasValidAiSalesSummaryTokenCounts,
+  aiSalesSummaryTokensRequireModelId,
+  hasValidAiSalesSummaryTimestamps,
+} from '/_102051_/l1/cafeFlow/layer_3_domain/entities/aiSalesSummary.js';
 import type { OperationalDashboard } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/operationalDashboard.js';
 import type { DailyShift } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/dailyShift.js';
 import type { Order } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
@@ -28,17 +34,17 @@ export interface GenerateAiSalesSummaryOutput {
   generatedAt?: string;
 }
 
-function toLocalDate(iso: string): string {
+function toCalendarDate(iso: string): string {
   return iso.slice(0, 10);
 }
 
-function addDays(localDate: string, days: number): string {
-  const date = new Date(`${localDate}T00:00:00.000Z`);
-  date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().slice(0, 10);
+function addDays(calendarDate: string, days: number): string {
+  const d = new Date(`${calendarDate}T00:00:00.000Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
 }
 
-function mapToOutput(summary: AiSalesSummary): GenerateAiSalesSummaryOutput {
+function toOutput(summary: AiSalesSummary): GenerateAiSalesSummaryOutput {
   return {
     aiSalesSummaryId: summary.aiSalesSummaryId,
     operationalDashboardId: summary.operationalDashboardId,
@@ -46,116 +52,91 @@ function mapToOutput(summary: AiSalesSummary): GenerateAiSalesSummaryOutput {
     periodStart: summary.periodStart,
     periodEnd: summary.periodEnd,
     summaryText: summary.summaryText,
-    modelId: summary.modelId ?? undefined,
-    promptTokens: summary.promptTokens ?? undefined,
-    completionTokens: summary.completionTokens ?? undefined,
-    generatedAt: summary.generatedAt ?? undefined,
+    ...(summary.modelId != null ? { modelId: summary.modelId } : {}),
+    ...(summary.promptTokens != null ? { promptTokens: summary.promptTokens } : {}),
+    ...(summary.completionTokens != null ? { completionTokens: summary.completionTokens } : {}),
+    ...(summary.generatedAt != null ? { generatedAt: summary.generatedAt } : {}),
   };
 }
 
-interface AggregatedSalesMetrics {
-  totalSales: number;
-  totalOrders: number;
-  totalItemsSold: number;
-  servedOrders: number;
-  cancelledOrders: number;
-  topItems: Array<{ menuItemId: string; menuItemName: string; quantity: number; sales: number }>;
-}
+/**
+ * Builds a non-empty narrative exclusively from already-persisted operational metrics.
+ * rule: aiSummaryUsesExistingOperationalData
+ */
+function buildSummaryTextFromOperationalData(params: {
+  dashboard: OperationalDashboard;
+  shifts: DailyShift[];
+  orders: Order[];
+  periodStart: string;
+  periodEnd: string;
+  summaryDate: string;
+}): string {
+  const { dashboard, shifts, orders, periodStart, periodEnd, summaryDate } = params;
 
-function aggregateOrders(orders: Order[]): AggregatedSalesMetrics {
-  let totalSales = 0;
-  let totalOrders = 0;
-  let totalItemsSold = 0;
-  let servedOrders = 0;
-  let cancelledOrders = 0;
-  const itemMap = new Map<string, { menuItemId: string; menuItemName: string; quantity: number; sales: number }>();
+  let periodSales = 0;
+  let periodOrders = 0;
+  let periodItems = 0;
+  for (const shift of shifts) {
+    periodSales += shift.totalSalesAmount ?? 0;
+    periodOrders += shift.totalOrders ?? 0;
+    periodItems += shift.totalItemsSold ?? 0;
+  }
 
-  for (const order of orders) {
-    // rule: aiSummaryUsesExistingOperationalData
-    totalOrders += 1;
-    if (order.status === 'cancelled') {
-      cancelledOrders += 1;
-      continue;
-    }
-    totalSales += order.totalAmount;
-    if (order.status === 'served') {
-      servedOrders += 1;
-    }
-    for (const item of order.items ?? []) {
-      if (item.status === 'cancelled') {
-        continue;
-      }
-      totalItemsSold += item.quantity;
-      const existing = itemMap.get(item.menuItemId);
-      if (existing) {
-        existing.quantity += item.quantity;
-        existing.sales += item.subtotal;
-      } else {
-        itemMap.set(item.menuItemId, {
-          menuItemId: item.menuItemId,
-          menuItemName: item.menuItemName,
-          quantity: item.quantity,
-          sales: item.subtotal,
-        });
+  // Prefer shift totals; fall back to order aggregates when shift totals are absent.
+  if (periodOrders === 0 && orders.length > 0) {
+    periodOrders = orders.length;
+    periodSales = 0;
+    periodItems = 0;
+    for (const order of orders) {
+      if (order.status === 'cancelled') continue;
+      periodSales += order.totalAmount;
+      for (const item of order.items) {
+        if (item.status === 'cancelled') continue;
+        periodItems += item.quantity;
       }
     }
   }
 
-  const topItems = [...itemMap.values()]
-    .sort((a, b) => b.quantity - a.quantity || b.sales - a.sales)
-    .slice(0, 5);
+  const lines: string[] = [];
+  lines.push(
+    `Resumo de vendas de ${summaryDate} (janela ${periodStart} a ${periodEnd}).`,
+  );
+  lines.push(
+    `Hoje: vendas R$ ${dashboard.todaySalesTotal.toFixed(2)}, ` +
+      `${dashboard.todayOrdersCount} pedido(s), ${dashboard.todayItemsSold} item(ns) vendido(s).`,
+  );
+  lines.push(
+    `Período de 7 dias: vendas R$ ${periodSales.toFixed(2)}, ` +
+      `${periodOrders} pedido(s) em ${shifts.length} turno(s), ${periodItems} item(ns).`,
+  );
 
-  return {
-    totalSales,
-    totalOrders,
-    totalItemsSold,
-    servedOrders,
-    cancelledOrders,
-    topItems,
-  };
-}
+  if (dashboard.topMenuItemId != null && dashboard.topMenuItemQuantity != null) {
+    lines.push(
+      `Item mais vendido do dia: ${dashboard.topMenuItemId} ` +
+        `(${dashboard.topMenuItemQuantity} un.; top sellers: ${dashboard.topSellingItemsCount}).`,
+    );
+  } else {
+    lines.push('Sem item destaque de vendas no dia.');
+  }
 
-function buildNarrativeSummaryText(params: {
-  summaryDate: string;
-  periodStart: string;
-  periodEnd: string;
-  dashboard: OperationalDashboard;
-  currentShift: DailyShift | null;
-  periodShifts: DailyShift[];
-  metrics: AggregatedSalesMetrics;
-}): string {
-  const { summaryDate, periodStart, periodEnd, dashboard, currentShift, periodShifts, metrics } = params;
-  // rule: aiSummaryUsesExistingOperationalData — narrative built only from loaded operational aggregates
-  const shiftSales = periodShifts.reduce((sum, s) => sum + (s.totalSalesAmount ?? 0), 0);
-  const shiftOrders = periodShifts.reduce((sum, s) => sum + (s.totalOrders ?? 0), 0);
-  const shiftItems = periodShifts.reduce((sum, s) => sum + (s.totalItemsSold ?? 0), 0);
+  if (dashboard.hasLowStockAlert) {
+    lines.push(
+      `Alerta de estoque: ${dashboard.lowStockItemsCount} item(ns) baixo(s), ` +
+        `${dashboard.outOfStockItemsCount} esgotado(s)` +
+        (dashboard.lowStockItemIds != null && dashboard.lowStockItemIds.trim().length > 0
+          ? ` (ids: ${dashboard.lowStockItemIds}).`
+          : '.'),
+    );
+  } else {
+    lines.push('Sem alertas de estoque baixo ou esgotado.');
+  }
 
-  const topItemsText =
-    metrics.topItems.length > 0
-      ? metrics.topItems
-          .map((item, index) => `${index + 1}. ${item.menuItemName} (${item.quantity} un., R$ ${item.sales.toFixed(2)})`)
-          .join('; ')
-      : dashboard.topMenuItemId
-        ? `item líder do dia: ${dashboard.topMenuItemId} (${dashboard.topMenuItemQuantity ?? 0} un.)`
-        : 'sem itens em destaque no período';
+  lines.push(
+    `Dashboard ${dashboard.operationalDashboardId} (turno ${dashboard.dailyShiftId}), ` +
+      `última computação em ${dashboard.lastComputedAt}.`,
+  );
 
-  const stockAlert = dashboard.hasLowStockAlert
-    ? `Alerta de estoque: ${dashboard.lowStockItemsCount} item(ns) em baixo estoque e ${dashboard.outOfStockItemsCount} sem estoque.`
-    : 'Sem alertas de estoque baixo ou esgotado no painel atual.';
-
-  const currentShiftLine = currentShift
-    ? `Turno atual (${currentShift.shiftDate}, status ${currentShift.status}): ${currentShift.totalOrders ?? 0} pedidos, R$ ${(currentShift.totalSalesAmount ?? 0).toFixed(2)} em vendas.`
-    : 'Turno atual não encontrado para o painel.';
-
-  return [
-    `Resumo de vendas de ${summaryDate} (período ${periodStart} a ${periodEnd}).`,
-    `Painel do dia: R$ ${dashboard.todaySalesTotal.toFixed(2)} em vendas, ${dashboard.todayOrdersCount} pedidos e ${dashboard.todayItemsSold} itens vendidos.`,
-    currentShiftLine,
-    `Janela dos últimos turnos (${periodShifts.length} turno(s)): R$ ${shiftSales.toFixed(2)} em vendas agregadas de turno, ${shiftOrders} pedidos e ${shiftItems} itens (totais de turno).`,
-    `Pedidos no período (fonte Order): ${metrics.totalOrders} pedidos, R$ ${metrics.totalSales.toFixed(2)} em vendas, ${metrics.totalItemsSold} itens; ${metrics.servedOrders} servidos e ${metrics.cancelledOrders} cancelados.`,
-    `Itens mais vendidos: ${topItemsText}.`,
-    stockAlert,
-  ].join(' ');
+  return lines.join(' ');
 }
 
 export async function generateAiSalesSummary(
@@ -163,14 +144,17 @@ export async function generateAiSalesSummary(
   input: GenerateAiSalesSummaryInput,
 ): Promise<GenerateAiSalesSummaryOutput> {
   const aiSalesSummaries = resolveRepository<IAiSalesSummaryRepository>(ctx, 'AiSalesSummary');
-  const operationalDashboards = resolveRepository<IOperationalDashboardRepository>(ctx, 'OperationalDashboard');
+  const operationalDashboards = resolveRepository<IOperationalDashboardRepository>(
+    ctx,
+    'OperationalDashboard',
+  );
   const dailyShifts = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
-  const orders = resolveRepository<IOrderRepository>(ctx, 'Order');
+  const ordersRepo = resolveRepository<IOrderRepository>(ctx, 'Order');
 
   const now = ctx.clock.nowIso();
-  const summaryDate = toLocalDate(now);
+  const summaryDate = toCalendarDate(now);
   const periodEnd = summaryDate;
-  const periodStart = addDays(summaryDate, -6);
+  const periodStart = addDays(summaryDate, -7);
 
   const dashboard = await operationalDashboards.getById(input.operationalDashboardId);
   if (!dashboard) {
@@ -182,42 +166,52 @@ export async function generateAiSalesSummary(
     );
   }
 
-  const currentShift = await dailyShifts.getById(dashboard.dailyShiftId);
-
-  const periodShifts = await dailyShifts.findByPeriod({ from: periodStart, to: periodEnd });
-
-  // rule: aiSummaryUsesExistingOperationalData
-  const ordersInPeriod: Order[] = [];
-  for (const shift of periodShifts) {
-    const shiftOrders = await orders.findByDailyShiftId(shift.dailyShiftId);
-    ordersInPeriod.push(...shiftOrders);
-  }
-
-  const metrics = aggregateOrders(ordersInPeriod);
-
   const existingList = await aiSalesSummaries.list({
     operationalDashboardId: input.operationalDashboardId,
     summaryDate,
   });
-  const existing = existingList.find((row) => hasNonEmptySummaryText(row)) ?? null;
+  const existing = existingList.find((s) => isNonEmptyAiSalesSummaryText(s)) ?? null;
   if (existing) {
-    return mapToOutput(existing);
+    return toOutput(existing);
   }
 
-  const summaryText = buildNarrativeSummaryText({
-    summaryDate,
-    periodStart,
-    periodEnd,
-    dashboard,
-    currentShift,
-    periodShifts,
-    metrics,
+  const linkedShift = await dailyShifts.getById(dashboard.dailyShiftId);
+  if (!linkedShift) {
+    throw new AppError(
+      'NOT_FOUND',
+      `DailyShift not found for dashboard: ${dashboard.dailyShiftId}`,
+      404,
+      { dailyShiftId: dashboard.dailyShiftId },
+    );
+  }
+
+  const shiftsInPeriod = await dailyShifts.findByPeriod({
+    from: periodStart,
+    to: periodEnd,
   });
 
-  const modelId = 'cafeFlow.local-narrative-v1';
-  const promptTokens = 0;
-  const completionTokens = summaryText.length;
-  const generatedAt = now;
+  const orders: Order[] = [];
+  for (const shift of shiftsInPeriod) {
+    const shiftOrders = await ordersRepo.findByDailyShiftId(shift.dailyShiftId);
+    for (const order of shiftOrders) {
+      orders.push(order);
+    }
+  }
+
+  // rule: aiSummaryUsesExistingOperationalData
+  const summaryText = buildSummaryTextFromOperationalData({
+    dashboard,
+    shifts: shiftsInPeriod,
+    orders,
+    periodStart,
+    periodEnd,
+    summaryDate,
+  });
+
+  const modelId: string | null = 'cafeFlow.ruleBasedSalesSummary';
+  const promptTokens: number | null = null;
+  const completionTokens: number | null = null;
+  const generatedAt: string | null = now;
 
   const summary: AiSalesSummary = {
     aiSalesSummaryId: ctx.idGenerator.newId(),
@@ -234,7 +228,50 @@ export async function generateAiSalesSummary(
     updatedAt: now,
   };
 
-  await aiSalesSummaries.save(summary);
+  if (!isValidAiSalesSummaryPeriod(summary)) {
+    throw new AppError(
+      'VALIDATION_ERROR',
+      'Invalid AiSalesSummary period: periodStart <= periodEnd <= summaryDate required.',
+      400,
+      { ruleId: 'isValidAiSalesSummaryPeriod', periodStart, periodEnd, summaryDate },
+    );
+  }
+  if (!isNonEmptyAiSalesSummaryText(summary)) {
+    throw new AppError(
+      'VALIDATION_ERROR',
+      'AiSalesSummary summaryText must be non-empty.',
+      400,
+      { ruleId: 'isNonEmptyAiSalesSummaryText' },
+    );
+  }
+  if (!hasValidAiSalesSummaryTokenCounts(summary)) {
+    throw new AppError(
+      'VALIDATION_ERROR',
+      'AiSalesSummary token counts must be non-negative when present.',
+      400,
+      { ruleId: 'hasValidAiSalesSummaryTokenCounts' },
+    );
+  }
+  if (!aiSalesSummaryTokensRequireModelId(summary)) {
+    throw new AppError(
+      'VALIDATION_ERROR',
+      'AiSalesSummary token metadata requires a non-empty modelId.',
+      400,
+      { ruleId: 'aiSalesSummaryTokensRequireModelId' },
+    );
+  }
+  if (!hasValidAiSalesSummaryTimestamps(summary)) {
+    throw new AppError(
+      'VALIDATION_ERROR',
+      'AiSalesSummary timestamps are inconsistent.',
+      400,
+      { ruleId: 'hasValidAiSalesSummaryTimestamps' },
+    );
+  }
 
-  return mapToOutput(summary);
+  await ctx.data.runInTransaction(async () => {
+    await aiSalesSummaries.save(summary);
+  });
+
+  return toOutput(summary);
 }

@@ -5,35 +5,43 @@ export interface BrowseMenuForPosInput {
   menuCategoryId?: string;
 }
 
-export interface BrowseMenuForPosItem {
+export interface BrowseMenuForPosMenuItem {
   menuItemId: string;
   menuCategoryId: string;
   name: string;
-  description?: string;
+  description?: string | null;
   price: number;
   status: string;
-  imageUrl?: string;
-  displayOrder?: number;
+  imageUrl?: string | null;
+  displayOrder?: number | null;
 }
 
 export interface BrowseMenuForPosOutput {
-  items: BrowseMenuForPosItem[];
+  menuItems: BrowseMenuForPosMenuItem[];
 }
 
-interface MenuItemModuleDetails {
-  menuCategoryId?: string | null;
-  description?: string | null;
-  price?: number | null;
-  status?: string | null;
-  imageUrl?: string | null;
-  displayOrder?: number | null;
-  name?: string | null;
-}
-
-function readMenuItemModuleDetails(details: unknown): MenuItemModuleDetails {
+function readModuleDetails(details: unknown): Record<string, unknown> {
   const root = (details ?? {}) as unknown as Record<string, unknown>;
-  const nested = (root.cafeFlow ?? root) as unknown as MenuItemModuleDetails;
-  return nested;
+  const nested = root.cafeFlow;
+  if (nested && typeof nested === 'object') {
+    return nested as Record<string, unknown>;
+  }
+  return root;
+}
+
+function asOptionalString(value: unknown): string | null {
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+  return String(value);
+}
+
+function asOptionalNumber(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n : null;
 }
 
 export async function browseMenuForPos(
@@ -42,36 +50,36 @@ export async function browseMenuForPos(
 ): Promise<BrowseMenuForPosOutput> {
   const listed = await ctx.mdm.collection.listByType({
     type: 'cafeFlow.MenuItem',
+    status: 'Active',
   });
-
   const mdmIds = listed.items.map((item) => item.mdmId);
   const entities = await ctx.mdm.collection.getMany({ mdmIds });
 
-  const items: BrowseMenuForPosItem[] = [];
+  const menuItems: BrowseMenuForPosMenuItem[] = [];
 
   for (const entity of entities) {
-    const root = entity.details as unknown as Record<string, unknown>;
-    const mod = readMenuItemModuleDetails(entity.details);
-    const name = String(root.name ?? entity.index.name ?? mod.name ?? '');
-    const menuCategoryId = mod.menuCategoryId ?? null;
-    const price = mod.price;
-    const status = String(mod.status ?? root.status ?? '');
-    const description = mod.description ?? undefined;
-    const imageUrl = mod.imageUrl ?? undefined;
-    const displayOrder = typeof mod.displayOrder === 'number' ? mod.displayOrder : undefined;
+    const details = entity.details as unknown as Record<string, unknown>;
+    const moduleDetails = readModuleDetails(entity.details);
+
+    const name = asOptionalString(details.name) ?? asOptionalString(moduleDetails.name) ?? '';
+    const menuCategoryId =
+      asOptionalString(moduleDetails.menuCategoryId) ?? asOptionalString(details.menuCategoryId);
+    const price = asOptionalNumber(moduleDetails.price) ?? asOptionalNumber(details.price);
+    const status =
+      asOptionalString(moduleDetails.status) ?? asOptionalString(details.status) ?? '';
+    const description =
+      asOptionalString(moduleDetails.description) ?? asOptionalString(details.description);
+    const imageUrl = asOptionalString(moduleDetails.imageUrl) ?? asOptionalString(details.imageUrl);
+    const displayOrder =
+      asOptionalNumber(moduleDetails.displayOrder) ?? asOptionalNumber(details.displayOrder);
 
     // rule: onlyActiveMenuItemsCanBeOrdered
-    if (String(status).toLowerCase() !== 'active') {
+    if (status !== 'active') {
       continue;
     }
 
     // rule: menuItemNeedsCategoryAndPrice
-    if (
-      menuCategoryId == null ||
-      menuCategoryId === '' ||
-      price == null ||
-      typeof price !== 'number'
-    ) {
+    if (!menuCategoryId || price === null) {
       continue;
     }
 
@@ -79,26 +87,19 @@ export async function browseMenuForPos(
       continue;
     }
 
-    const item: BrowseMenuForPosItem = {
+    menuItems.push({
       menuItemId: entity.mdmId,
       menuCategoryId,
       name,
+      description,
       price,
       status,
-    };
-    if (description != null && description !== undefined) {
-      item.description = description;
-    }
-    if (imageUrl != null && imageUrl !== undefined) {
-      item.imageUrl = imageUrl;
-    }
-    if (displayOrder !== undefined) {
-      item.displayOrder = displayOrder;
-    }
-    items.push(item);
+      imageUrl,
+      displayOrder,
+    });
   }
 
-  items.sort((a, b) => {
+  menuItems.sort((a, b) => {
     const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
     const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
     if (orderA !== orderB) {
@@ -107,5 +108,5 @@ export async function browseMenuForPos(
     return a.name.localeCompare(b.name);
   });
 
-  return { items };
+  return { menuItems };
 }

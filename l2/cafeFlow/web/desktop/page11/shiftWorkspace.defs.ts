@@ -111,7 +111,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "OpenShiftForm",
           "titleKey": "organism.shiftWorkspace.openDailyShiftCmd.title",
-          "purpose": "Permite ao gerente preencher a data do turno e observações opcionais para abrir o turno diário; openedByUserId é derivado da sessão e não exibido como input manual.",
+          "purpose": "Permite ao gerente informar a data do turno e observações opcionais para abrir o turno diário; o responsável é derivado da sessão e não requer entrada manual.",
           "userActions": [
             "openDailyShiftCmd"
           ],
@@ -146,7 +146,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "CloseShiftForm",
           "titleKey": "organism.shiftWorkspace.closeDailyShiftCmd.title",
-          "purpose": "Exibe o estado atual do turno aberto e permite ao gerente informar totais de caixa e outros pagamentos para confirmar o encerramento; dailyShiftId, closedByUserId e closedAt são derivados do contexto e não editáveis.",
+          "purpose": "Exibe o turno aberto atual e permite ao gerente informar os totais de caixa e outros pagamentos para confirmar o encerramento do turno; dailyShiftId, closedByUserId e closedAt são derivados do contexto e da sessão.",
           "userActions": [
             "closeDailyShiftCmd"
           ],
@@ -172,7 +172,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "ShiftClosingReportPanel",
           "titleKey": "organism.shiftWorkspace.getShiftClosingReport.title",
-          "purpose": "Exibe o relatório de fechamento gerado após o encerramento do turno, com totais de vendas, pedidos, itens vendidos, formas de pagamento, itens mais vendidos e alertas de estoque baixo/ruptura.",
+          "purpose": "Exibe o relatório de fechamento do turno após o encerramento, com totais de vendas, pedidos, itens vendidos, formas de pagamento, itens mais vendidos e sinais de ruptura de estoque.",
           "userActions": [
             "getShiftClosingReport"
           ],
@@ -200,7 +200,7 @@ export const definition = {
   "templateId": "mobile_cards",
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "layout": {
-    "id": "cfe-20260723170708.1000",
+    "id": "cfe-20260727184832.1000",
     "type": "page",
     "sections": [
       {
@@ -216,7 +216,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "OpenShiftForm",
             "titleKey": "organism.shiftWorkspace.openDailyShiftCmd.title",
-            "purpose": "Permite ao gerente preencher a data do turno e observações opcionais para abrir o turno diário; openedByUserId é derivado da sessão e não exibido como input manual.",
+            "purpose": "Permite ao gerente informar a data do turno e observações opcionais para abrir o turno diário; o responsável é derivado da sessão e não requer entrada manual.",
             "userActions": [
               "openDailyShiftCmd"
             ],
@@ -291,7 +291,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "CloseShiftForm",
             "titleKey": "organism.shiftWorkspace.closeDailyShiftCmd.title",
-            "purpose": "Exibe o estado atual do turno aberto e permite ao gerente informar totais de caixa e outros pagamentos para confirmar o encerramento; dailyShiftId, closedByUserId e closedAt são derivados do contexto e não editáveis.",
+            "purpose": "Exibe o turno aberto atual e permite ao gerente informar os totais de caixa e outros pagamentos para confirmar o encerramento do turno; dailyShiftId, closedByUserId e closedAt são derivados do contexto e da sessão.",
             "userActions": [
               "closeDailyShiftCmd"
             ],
@@ -378,7 +378,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "ShiftClosingReportPanel",
             "titleKey": "organism.shiftWorkspace.getShiftClosingReport.title",
-            "purpose": "Exibe o relatório de fechamento gerado após o encerramento do turno, com totais de vendas, pedidos, itens vendidos, formas de pagamento, itens mais vendidos e alertas de estoque baixo/ruptura.",
+            "purpose": "Exibe o relatório de fechamento do turno após o encerramento, com totais de vendas, pedidos, itens vendidos, formas de pagamento, itens mais vendidos e sinais de ruptura de estoque.",
             "userActions": [
               "getShiftClosingReport"
             ],

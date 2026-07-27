@@ -13,7 +13,7 @@ export const aiSalesSummaryDomainEntity = {
   },
   "data": {
     "entityId": "AiSalesSummary",
-    "title": "AiSalesSummary",
+    "title": "Resumo de Vendas do Dia (IA)",
     "fields": [
       {
         "fieldId": "aiSalesSummaryId",
@@ -89,16 +89,18 @@ export const aiSalesSummaryDomainEntity = {
       }
     ],
     "valueObjects": [],
+    "statusEnum": [],
     "invariants": [
-      "periodEnd deve ser maior ou igual a periodStart.",
-      "summaryDate deve estar dentro do intervalo [periodStart, periodEnd].",
-      "summaryText deve ser um texto não vazio.",
-      "promptTokens, quando presente, deve ser maior ou igual a zero.",
-      "completionTokens, quando presente, deve ser maior ou igual a zero.",
-      "generatedAt, quando presente, deve ser maior ou igual a createdAt.",
-      "updatedAt deve ser maior ou igual a createdAt."
-    ],
-    "statusEnum": []
+      "periodStart must be on or before periodEnd",
+      "periodEnd must be on or before summaryDate",
+      "periodStart is normally summaryDate minus 7 days (period covers up to the reference day)",
+      "summaryText must be non-empty when the summary is persisted as generated",
+      "promptTokens and completionTokens, when present, must be >= 0",
+      "if promptTokens or completionTokens is set, modelId should be present",
+      "generatedAt, when present, must be on or after createdAt's calendar instant context and not after updatedAt unreasonably; generatedAt <= updatedAt",
+      "createdAt must be on or before updatedAt",
+      "aiSalesSummaryId, operationalDashboardId, summaryDate, periodStart, periodEnd, summaryText, createdAt, updatedAt are always required"
+    ]
   }
 } as const;
 

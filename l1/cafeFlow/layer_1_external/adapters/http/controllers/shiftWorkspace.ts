@@ -82,7 +82,9 @@ export const shiftWorkspaceGetShiftClosingReportHandler: BffHandler = async ({ r
 
   const params = (request.params ?? {}) as { shiftClosingReportId?: string };
   if (!params.shiftClosingReportId) {
-    throw new AppError('VALIDATION_ERROR', 'shiftClosingReportId is required', 400, { field: 'shiftClosingReportId' });
+    throw new AppError('VALIDATION_ERROR', 'shiftClosingReportId is required', 400, {
+      field: 'shiftClosingReportId',
+    });
   }
 
   const input: ViewShiftClosingReportInput = {

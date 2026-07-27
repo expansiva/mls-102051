@@ -31,33 +31,22 @@ export interface CreateStockAdjustmentOutput {
   createdAt: string;
 }
 
-const VALID_DIRECTIONS: readonly StockAdjustmentDirection[] = ['in', 'out', 'correction'];
-const VALID_REASONS: readonly StockAdjustmentReason[] = [
+const VALID_DIRECTIONS: ReadonlySet<string> = new Set(['in', 'out', 'correction']);
+const VALID_REASONS: ReadonlySet<string> = new Set([
   'count',
   'loss',
   'expiration',
   'divergence',
   'other',
-];
-
-function isStockAdjustmentDirection(value: string): value is StockAdjustmentDirection {
-  return (VALID_DIRECTIONS as readonly string[]).includes(value);
-}
-
-function isStockAdjustmentReason(value: string): value is StockAdjustmentReason {
-  return (VALID_REASONS as readonly string[]).includes(value);
-}
+]);
 
 function readCurrentBalance(details: unknown): number {
-  const root = (details ?? {}) as unknown as {
-    currentBalance?: unknown;
-    cafeFlow?: { currentBalance?: unknown };
-  };
-  const nested = root.cafeFlow?.currentBalance;
-  if (typeof nested === 'number' && Number.isFinite(nested)) {
-    return nested;
+  const root = (details ?? {}) as unknown as Record<string, unknown>;
+  const cafeFlow = (root.cafeFlow ?? {}) as unknown as Record<string, unknown>;
+  if (typeof cafeFlow.currentBalance === 'number') {
+    return cafeFlow.currentBalance;
   }
-  if (typeof root.currentBalance === 'number' && Number.isFinite(root.currentBalance)) {
+  if (typeof root.currentBalance === 'number') {
     return root.currentBalance;
   }
   return 0;
@@ -74,7 +63,7 @@ function computeResultingBalance(
   if (direction === 'out') {
     return currentBalance - quantity;
   }
-  // correction: set absolute balance to quantity
+  // correction: inventory count sets absolute balance
   return quantity;
 }
 
@@ -85,84 +74,72 @@ export async function createStockAdjustment(
   const dailyShifts = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
   const stockAdjustments = resolveRepository<IStockAdjustmentRepository>(ctx, 'StockAdjustment');
 
-  const managerUserId = ctx.sessionContext.actorId ?? ctx.sessionContext.actorSession?.actorId;
+  const managerUserId = ctx.sessionContext.actorId;
+  // rule: managerManualStockAdjustmentAllowed
   if (!managerUserId) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'managerUserId is required from the active actor session.',
+      'managerManualStockAdjustmentAllowed: only an authenticated manager may perform manual stock adjustments.',
       400,
-      { field: 'managerUserId' },
+      { ruleId: 'managerManualStockAdjustmentAllowed' },
     );
   }
 
-  // rule: managerManualStockAdjustmentAllowed
-  if (!isStockAdjustmentDirection(input.direction)) {
+  if (!VALID_DIRECTIONS.has(input.direction)) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'managerManualStockAdjustmentAllowed: direction must be one of in, out, correction.',
+      'direction must be one of in|out|correction.',
       400,
-      {
-        ruleId: 'managerManualStockAdjustmentAllowed',
-        field: 'direction',
-        value: input.direction,
-        allowed: VALID_DIRECTIONS,
-      },
+      { direction: input.direction },
     );
   }
-  if (!isStockAdjustmentReason(input.reason)) {
+  if (!VALID_REASONS.has(input.reason)) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'managerManualStockAdjustmentAllowed: reason must be one of count, loss, expiration, divergence, other.',
+      'reason must be one of count|loss|expiration|divergence|other.',
       400,
-      {
-        ruleId: 'managerManualStockAdjustmentAllowed',
-        field: 'reason',
-        value: input.reason,
-        allowed: VALID_REASONS,
-      },
+      { reason: input.reason },
     );
   }
   if (!(typeof input.quantity === 'number') || !(input.quantity > 0)) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'managerManualStockAdjustmentAllowed: quantity must be greater than zero.',
+      'quantity must be greater than 0.',
       400,
-      {
-        ruleId: 'managerManualStockAdjustmentAllowed',
-        field: 'quantity',
-        value: input.quantity,
-      },
+      { quantity: input.quantity },
     );
   }
 
-  const direction = input.direction;
-  const reason = input.reason;
+  const direction = input.direction as StockAdjustmentDirection;
+  const reason = input.reason as StockAdjustmentReason;
 
   const openShifts = await dailyShifts.list({ status: 'open' });
   const openShift = openShifts[0] ?? null;
-  const shiftId = openShift?.dailyShiftId;
+  const shiftId = openShift?.dailyShiftId ?? null;
 
-  const stockItemEntity = await ctx.mdm.entity.get({ mdmId: input.stockItemId });
+  let stockItemEntity;
+  try {
+    stockItemEntity = await ctx.mdm.entity.get({ mdmId: input.stockItemId });
+  } catch {
+    throw new AppError('NOT_FOUND', `MDM record not found: ${input.stockItemId}`, 404, {
+      mdmId: input.stockItemId,
+    });
+  }
+
   const currentBalance = readCurrentBalance(stockItemEntity.details);
   const resultingBalance = computeResultingBalance(currentBalance, direction, input.quantity);
-
-  if (resultingBalance < 0) {
+  if (direction === 'out' && resultingBalance < 0) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'managerManualStockAdjustmentAllowed: resulting balance cannot be negative.',
+      'resultingBalance would be negative for out adjustment.',
       400,
-      {
-        ruleId: 'managerManualStockAdjustmentAllowed',
-        currentBalance,
-        quantity: input.quantity,
-        direction,
-        resultingBalance,
-      },
+      { currentBalance, quantity: input.quantity, resultingBalance },
     );
   }
 
   const now = ctx.clock.nowIso();
   const stockAdjustmentId = ctx.idGenerator.newId();
+  const notes = input.notes ?? null;
 
   const adjustment: StockAdjustment = {
     stockAdjustmentId,
@@ -171,59 +148,49 @@ export async function createStockAdjustment(
     direction,
     reason,
     managerUserId,
-    shiftId: shiftId ?? null,
+    shiftId,
     resultingBalance,
-    notes: input.notes ?? null,
+    notes,
     status: 'posted',
+    createdAt: now,
     voidedAt: null,
     voidedByUserId: null,
     compensatingAdjustmentId: null,
-    createdAt: now,
   };
 
-  await ctx.data.runInTransaction(async (tx) => {
-    const txCtx: RequestContext = { ...ctx, data: tx };
-    const txStockAdjustments = resolveRepository<IStockAdjustmentRepository>(
-      txCtx,
-      'StockAdjustment',
-    );
-    await txStockAdjustments.append(adjustment);
+  const detailsRoot = (stockItemEntity.details ?? {}) as unknown as Record<string, unknown>;
+  const existingCafeFlow = (detailsRoot.cafeFlow ?? {}) as unknown as Record<string, unknown>;
 
-    const details = stockItemEntity.details as unknown as {
-      cafeFlow?: Record<string, unknown>;
-      currentBalance?: unknown;
-      [key: string]: unknown;
-    };
-    const cafeFlowDetails =
-      details.cafeFlow && typeof details.cafeFlow === 'object'
-        ? { ...details.cafeFlow, currentBalance: resultingBalance }
-        : { currentBalance: resultingBalance };
-
+  await ctx.data.runInTransaction(async () => {
+    await stockAdjustments.append(adjustment);
     await ctx.mdm.entity.update({
       mdmId: input.stockItemId,
       expectedVersion: stockItemEntity.version,
       patch: {
-        ...details,
-        cafeFlow: cafeFlowDetails,
-        currentBalance: resultingBalance,
-      } as unknown as Partial<typeof stockItemEntity.details>,
+        cafeFlow: {
+          ...existingCafeFlow,
+          currentBalance: resultingBalance,
+        },
+      } as unknown as Partial<import('/_102034_/l1/mdm/module.js').MdmDetailRecord>,
     });
   });
 
-  // silence unused binding when only used for type resolution outside tx
-  void stockAdjustments;
-
-  return {
+  const output: CreateStockAdjustmentOutput = {
     stockAdjustmentId: adjustment.stockAdjustmentId,
     stockItemId: adjustment.stockItemId,
     quantity: adjustment.quantity,
     direction: adjustment.direction,
     reason: adjustment.reason,
     managerUserId: adjustment.managerUserId,
-    shiftId: adjustment.shiftId ?? undefined,
     resultingBalance: adjustment.resultingBalance,
-    notes: adjustment.notes ?? undefined,
     status: adjustment.status,
     createdAt: adjustment.createdAt,
   };
+  if (adjustment.shiftId != null) {
+    output.shiftId = adjustment.shiftId;
+  }
+  if (adjustment.notes != null) {
+    output.notes = adjustment.notes;
+  }
+  return output;
 }

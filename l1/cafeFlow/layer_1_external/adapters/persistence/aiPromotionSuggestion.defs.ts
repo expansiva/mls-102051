@@ -33,7 +33,7 @@ export const aiPromotionSuggestionTableDefinition = {
       {
         "name": "menu_category_id",
         "type": "uuid",
-        "nullable": false
+        "nullable": true
       },
       {
         "name": "status",

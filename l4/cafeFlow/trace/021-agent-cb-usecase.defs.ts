@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:52.189Z",
+  "savedAt": "2026-07-25T23:28:37.995Z",
   "agentName": "agentCbUsecase",
   "stepId": 21,
   "planning": null,
@@ -11,307 +11,174 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "viewOperationalDashboard",
-          "ports": [
-            "OperationalDashboard",
-            "DailyShift",
-            "Order",
-            "StockConsumption"
-          ],
+          "usecaseId": "updateStockItem",
+          "ports": [],
           "functions": [
             {
-              "functionName": "viewOperationalDashboard",
-              "inputTypeName": "ViewOperationalDashboardInput",
-              "outputTypeName": "ViewOperationalDashboardOutput",
-              "input": [],
-              "output": [
+              "functionName": "updateStockItem",
+              "inputTypeName": "UpdateStockItemInput",
+              "outputTypeName": "UpdateStockItemOutput",
+              "input": [
                 {
-                  "name": "operationalDashboardId",
+                  "name": "stockItemId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OperationalDashboard"
+                  "ofEntity": "StockItem",
+                  "fieldRef": "StockItem.stockItemId"
                 },
                 {
-                  "name": "dailyShiftId",
+                  "name": "name",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OperationalDashboard"
+                  "ofEntity": "StockItem",
+                  "fieldRef": "StockItem.name"
                 },
                 {
-                  "name": "referenceDate",
+                  "name": "unit",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "OperationalDashboard"
+                  "ofEntity": "StockItem",
+                  "fieldRef": "StockItem.unit"
                 },
                 {
-                  "name": "todaySalesTotal",
+                  "name": "minimumLevel",
                   "type": "number",
                   "required": true,
-                  "ofEntity": "OperationalDashboard"
+                  "ofEntity": "StockItem",
+                  "fieldRef": "StockItem.minimumLevel"
                 },
                 {
-                  "name": "todayOrdersCount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "todayItemsSold",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "topMenuItemId",
+                  "name": "description",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "topMenuItemQuantity",
-                  "type": "number",
-                  "required": false,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "topSellingItemsCount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "lowStockItemsCount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "outOfStockItemsCount",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "hasLowStockAlert",
-                  "type": "boolean",
-                  "required": true,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "lastComputedAt",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "OperationalDashboard"
-                },
-                {
-                  "name": "topSellingItems",
-                  "type": "array",
-                  "required": true
-                },
-                {
-                  "name": "lowStockAlerts",
-                  "type": "array",
-                  "required": true
+                  "ofEntity": "StockItem",
+                  "fieldRef": "StockItem.description"
                 }
               ],
-              "ports": [
-                "OperationalDashboard",
-                "DailyShift",
-                "Order"
+              "output": [
+                {
+                  "name": "stockItemId",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "StockItem"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "StockItem"
+                },
+                {
+                  "name": "unit",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "StockItem"
+                },
+                {
+                  "name": "currentBalance",
+                  "type": "number",
+                  "required": true,
+                  "ofEntity": "StockItem"
+                },
+                {
+                  "name": "minimumLevel",
+                  "type": "number",
+                  "required": true,
+                  "ofEntity": "StockItem"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "StockItem"
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "StockItem"
+                }
               ],
+              "ports": [],
               "rulesApplied": [
-                "lowStockMustBeVisible",
-                "dashboardHighlightsCoreMetrics"
+                "lowStockMustBeVisible"
               ],
-              "transactional": false,
+              "transactional": true,
               "steps": [
-                "Resolve the single open DailyShift (status 'open') via DailyShift port; if none is open, return validation error or empty dashboard per L4 (never treat dailyShiftId as missing client input)",
-                "Load OperationalDashboard for the resolved dailyShiftId via OperationalDashboard port (lookup by dailyShiftId)",
-                "List Orders for the open dailyShiftId via Order port; aggregate non-cancelled orders for todaySalesTotal, todayOrdersCount and todayItemsSold from order totals and embedded OrderItems",
-                "Aggregate OrderItems by menuItemId to rank top sellers; collect distinct menuItemIds and bulk-read MenuItem via ctx.mdm.collection.getMany",
-                "Build topSellingItems (menuItemId, name, quantitySold, unitPrice) and set topMenuItemId, topMenuItemQuantity, topSellingItemsCount (dashboardHighlightsCoreMetrics)",
-                "List StockItem via ctx.mdm.collection.listByType; select items where currentBalance <= minimumLevel (lowStockMustBeVisible); count lowStockItemsCount and outOfStockItemsCount (currentBalance <= 0); set hasLowStockAlert when any alert exists",
-                "Build lowStockAlerts with stockItemId, name, currentBalance, minimumLevel, unit, isOutOfStock",
-                "Compose output from OperationalDashboard snapshot fields plus computed topSellingItems and lowStockAlerts; expose lastComputedAt as the aggregation timestamp"
+                "Resolve updatedAt from ctx.clock.now() (systemDefault); do not accept it from the client",
+                "Load existing StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); if not found, fail with not-found",
+                "Validate name is non-empty; unit is one of kg|liter|portion|unit; minimumLevel is a finite number >= 0",
+                "Apply lowStockMustBeVisible inline: after update, when currentBalance < minimumLevel the item remains eligible for low-stock highlight in stock control and dashboard (no extra persistence flag; visibility is derived from balance vs minimumLevel). Do not mutate currentBalance",
+                "Update StockItem via ctx.mdm.entity.update with name, unit, minimumLevel, description and updatedAt; preserve currentBalance and createdAt",
+                "Return stockItemId, name, unit, currentBalance, minimumLevel, description, updatedAt"
               ],
               "outputShape": {
                 "kind": "object",
                 "fields": [
                   {
-                    "name": "operationalDashboardId",
+                    "name": "stockItemId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OperationalDashboard.operationalDashboardId"
+                    "fieldRef": "StockItem.stockItemId"
                   },
                   {
-                    "name": "dailyShiftId",
+                    "name": "name",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OperationalDashboard.dailyShiftId"
+                    "fieldRef": "StockItem.name"
                   },
                   {
-                    "name": "referenceDate",
+                    "name": "unit",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OperationalDashboard.referenceDate"
+                    "fieldRef": "StockItem.unit"
                   },
                   {
-                    "name": "todaySalesTotal",
+                    "name": "currentBalance",
                     "type": "number",
                     "required": true,
-                    "fieldRef": "OperationalDashboard.todaySalesTotal"
+                    "fieldRef": "StockItem.currentBalance"
                   },
                   {
-                    "name": "todayOrdersCount",
+                    "name": "minimumLevel",
                     "type": "number",
                     "required": true,
-                    "fieldRef": "OperationalDashboard.todayOrdersCount"
+                    "fieldRef": "StockItem.minimumLevel"
                   },
                   {
-                    "name": "todayItemsSold",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "OperationalDashboard.todayItemsSold"
-                  },
-                  {
-                    "name": "topMenuItemId",
+                    "name": "description",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "OperationalDashboard.topMenuItemId"
+                    "fieldRef": "StockItem.description"
                   },
                   {
-                    "name": "topMenuItemQuantity",
-                    "type": "number",
-                    "required": false,
-                    "fieldRef": "OperationalDashboard.topMenuItemQuantity"
-                  },
-                  {
-                    "name": "topSellingItemsCount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "OperationalDashboard.topSellingItemsCount"
-                  },
-                  {
-                    "name": "lowStockItemsCount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "OperationalDashboard.lowStockItemsCount"
-                  },
-                  {
-                    "name": "outOfStockItemsCount",
-                    "type": "number",
-                    "required": true,
-                    "fieldRef": "OperationalDashboard.outOfStockItemsCount"
-                  },
-                  {
-                    "name": "hasLowStockAlert",
-                    "type": "boolean",
-                    "required": true,
-                    "fieldRef": "OperationalDashboard.hasLowStockAlert"
-                  },
-                  {
-                    "name": "lastComputedAt",
+                    "name": "updatedAt",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "OperationalDashboard.lastComputedAt"
-                  },
-                  {
-                    "name": "topSellingItems",
-                    "type": "array",
-                    "required": true,
-                    "item": {
-                      "fields": [
-                        {
-                          "name": "menuItemId",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "MenuItem.menuItemId"
-                        },
-                        {
-                          "name": "name",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "MenuItem.name"
-                        },
-                        {
-                          "name": "quantitySold",
-                          "type": "number",
-                          "required": true
-                        },
-                        {
-                          "name": "unitPrice",
-                          "type": "number",
-                          "required": true,
-                          "fieldRef": "MenuItem.price"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "name": "lowStockAlerts",
-                    "type": "array",
-                    "required": true,
-                    "item": {
-                      "fields": [
-                        {
-                          "name": "stockItemId",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "StockItem.stockItemId"
-                        },
-                        {
-                          "name": "name",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "StockItem.name"
-                        },
-                        {
-                          "name": "currentBalance",
-                          "type": "number",
-                          "required": true,
-                          "fieldRef": "StockItem.currentBalance"
-                        },
-                        {
-                          "name": "minimumLevel",
-                          "type": "number",
-                          "required": true,
-                          "fieldRef": "StockItem.minimumLevel"
-                        },
-                        {
-                          "name": "unit",
-                          "type": "string",
-                          "required": true,
-                          "fieldRef": "StockItem.unit"
-                        },
-                        {
-                          "name": "isOutOfStock",
-                          "type": "boolean",
-                          "required": true
-                        }
-                      ]
-                    }
+                    "fieldRef": "StockItem.updatedAt"
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "lowStockMustBeVisible",
-            "dashboardHighlightsCoreMetrics"
+            "lowStockMustBeVisible"
           ],
           "mdmRefs": [
-            "MenuItem",
             "StockItem"
           ]
         },
         "questions": [],
         "trace": [
-          "viewOperationalDashboard: lookup by active open DailyShift; public input empty; output pinned to outputShape; MDM MenuItem/StockItem via ctx.mdm; ports OperationalDashboard+DailyShift+Order"
+          "StockItem is mdmRef-only: no repository port; mutate via ctx.mdm.entity",
+          "Public inputs from userInput/routeParam only; updatedAt from ctx.clock",
+          "output[] matches outputShape top-level fields",
+          "lowStockMustBeVisible applied inline; currentBalance unchanged"
         ]
       }
     },
     "status": "completed",
-    "stepId": 23,
+    "stepId": 11,
     "interaction": null,
     "nextSteps": null
   }

@@ -5,225 +5,232 @@ import type { IOperationalDashboardRepository } from '/_102051_/l1/cafeFlow/laye
 import type { IDailyShiftRepository } from '/_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.js';
 import type { IOrderRepository } from '/_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.js';
 import type { Order } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
-
 export interface ViewOperationalDashboardInput {}
-
-export interface DashboardTopSellingItem {
-  menuItemId: string;
-  name: string;
-  quantitySold: number;
-  unitPrice: number;
+export interface TopSellingItem {
+menuItemId: string;
+name: string;
+quantitySold: number;
+unitPrice: number;
 }
-
-export interface DashboardLowStockAlert {
-  stockItemId: string;
-  name: string;
-  currentBalance: number;
-  minimumLevel: number;
-  unit: string;
-  isOutOfStock: boolean;
+export interface LowStockAlert {
+stockItemId: string;
+name: string;
+currentBalance: number;
+minimumLevel: number;
+unit: string;
+isOutOfStock: boolean;
 }
-
 export interface ViewOperationalDashboardOutput {
-  operationalDashboardId: string;
-  dailyShiftId: string;
-  referenceDate: string;
-  todaySalesTotal: number;
-  todayOrdersCount: number;
-  todayItemsSold: number;
-  topMenuItemId?: string;
-  topMenuItemQuantity?: number;
-  topSellingItemsCount: number;
-  lowStockItemsCount: number;
-  outOfStockItemsCount: number;
-  hasLowStockAlert: boolean;
-  lastComputedAt: string;
-  topSellingItems: DashboardTopSellingItem[];
-  lowStockAlerts: DashboardLowStockAlert[];
+operationalDashboardId: string;
+dailyShiftId: string;
+referenceDate: string;
+todaySalesTotal: number;
+todayOrdersCount: number;
+todayItemsSold: number;
+topMenuItemId?: string;
+topMenuItemQuantity?: number;
+topSellingItemsCount: number;
+lowStockItemsCount: number;
+outOfStockItemsCount: number;
+hasLowStockAlert: boolean;
+lastComputedAt: string;
+topSellingItems: TopSellingItem[];
+lowStockAlerts: LowStockAlert[];
 }
-
-interface MenuItemDetails {
-  name?: string;
-  price?: number;
-  cafeFlow?: {
-    name?: string;
-    price?: number;
-  };
+interface MenuItemQtyAgg {
+quantitySold: number;
+unitPrice: number;
+name: string;
 }
-
-interface StockItemDetails {
-  name?: string;
-  currentBalance?: number;
-  minimumLevel?: number;
-  unit?: string;
-  cafeFlow?: {
-    name?: string;
-    currentBalance?: number;
-    minimumLevel?: number;
-    unit?: string;
-  };
+function asRecord(value: unknown): Record<string, unknown> {
+return (value ?? {}) as unknown as Record<string, unknown>;
 }
-
-function isNonCancelledOrder(order: Order): boolean {
-  return String(order.status) !== 'cancelled';
+function moduleDetails(details: unknown): Record<string, unknown> {
+const root = asRecord(details);
+const nested = root.cafeFlow;
+if (nested && typeof nested === 'object') {
+return asRecord(nested);
 }
-
-function isNonCancelledItem(status: string): boolean {
-  return String(status) !== 'cancelled';
+return root;
 }
-
+function readNumber(value: unknown, fallback = 0): number {
+const n = typeof value === 'number' ? value : Number(value);
+return Number.isFinite(n) ? n : fallback;
+}
+function readString(value: unknown, fallback = ''): string {
+return typeof value === 'string' ? value : fallback;
+}
+function aggregateFromOrders(orders: Order[]): {
+todaySalesTotal: number;
+todayOrdersCount: number;
+todayItemsSold: number;
+qtyByMenuItem: Map<string, MenuItemQtyAgg>;
+} {
+const activeOrders = orders.filter((order) => String(order.status) !== 'cancelled');
+let todaySalesTotal = 0;
+let todayItemsSold = 0;
+const qtyByMenuItem = new Map<string, MenuItemQtyAgg>();
+for (const order of activeOrders) {
+todaySalesTotal += order.totalAmount;
+for (const item of order.items ?? []) {
+if (String(item.status) === 'cancelled') {
+continue;
+}
+todayItemsSold += item.quantity;
+const existing = qtyByMenuItem.get(item.menuItemId);
+if (existing) {
+existing.quantitySold += item.quantity;
+existing.unitPrice = item.unitPrice;
+if (!existing.name && item.menuItemName) {
+existing.name = item.menuItemName;
+}
+} else {
+qtyByMenuItem.set(item.menuItemId, {
+quantitySold: item.quantity,
+unitPrice: item.unitPrice,
+name: item.menuItemName ?? '',
+});
+}
+}
+}
+return {
+todaySalesTotal,
+todayOrdersCount: activeOrders.length,
+todayItemsSold,
+qtyByMenuItem,
+};
+}
 export async function viewOperationalDashboard(
-  ctx: RequestContext,
-  _input: ViewOperationalDashboardInput,
+ctx: RequestContext,
+_input: ViewOperationalDashboardInput,
 ): Promise<ViewOperationalDashboardOutput> {
-  const dailyShifts = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
-  const dashboards = resolveRepository<IOperationalDashboardRepository>(ctx, 'OperationalDashboard');
-  const ordersRepo = resolveRepository<IOrderRepository>(ctx, 'Order');
-
-  const openShifts = await dailyShifts.list({ status: 'open' });
-  const openShift = openShifts[0] ?? null;
-  if (!openShift) {
-    throw new AppError(
-      'VALIDATION_ERROR',
-      'Nenhum turno diário aberto para compor o dashboard operacional.',
-      400,
-      { ruleId: 'dashboardHighlightsCoreMetrics' },
-    );
-  }
-
-  const now = ctx.clock.nowIso();
-  const existing = await dashboards.findByDailyShiftId(openShift.dailyShiftId);
-
-  const orders = await ordersRepo.findByDailyShiftId(openShift.dailyShiftId);
-  const activeOrders = orders.filter(isNonCancelledOrder);
-
-  let todaySalesTotal = 0;
-  let todayItemsSold = 0;
-  const quantityByMenuItemId = new Map<string, { quantitySold: number; unitPrice: number }>();
-
-  for (const order of activeOrders) {
-    todaySalesTotal += order.totalAmount ?? 0;
-    for (const item of order.items ?? []) {
-      if (!isNonCancelledItem(item.status)) {
-        continue;
-      }
-      todayItemsSold += item.quantity;
-      const prev = quantityByMenuItemId.get(item.menuItemId);
-      if (prev) {
-        prev.quantitySold += item.quantity;
-        // keep latest known unit price
-        prev.unitPrice = item.unitPrice;
-      } else {
-        quantityByMenuItemId.set(item.menuItemId, {
-          quantitySold: item.quantity,
-          unitPrice: item.unitPrice,
-        });
-      }
-    }
-  }
-
-  const todayOrdersCount = activeOrders.length;
-
-  const ranked = [...quantityByMenuItemId.entries()]
-    .map(([menuItemId, agg]) => ({
-      menuItemId,
-      quantitySold: agg.quantitySold,
-      unitPrice: agg.unitPrice,
-    }))
-    .sort((a, b) => b.quantitySold - a.quantitySold);
-
-  const topMenuItemIds = ranked.map((r) => r.menuItemId);
-  const menuEntities =
-    topMenuItemIds.length > 0
-      ? await ctx.mdm.collection.getMany({ mdmIds: topMenuItemIds })
-      : [];
-  const menuById = new Map(menuEntities.map((e) => [e.mdmId, e]));
-
-  // rule: dashboardHighlightsCoreMetrics
-  const topSellingItems: DashboardTopSellingItem[] = ranked.map((r) => {
-    const entity = menuById.get(r.menuItemId);
-    const details = (entity?.details ?? {}) as unknown as MenuItemDetails;
-    const name =
-      details.cafeFlow?.name ??
-      details.name ??
-      (entity?.details as { name?: string } | undefined)?.name ??
-      r.menuItemId;
-    const unitPrice =
-      details.cafeFlow?.price ?? details.price ?? r.unitPrice;
-    return {
-      menuItemId: r.menuItemId,
-      name: String(name),
-      quantitySold: r.quantitySold,
-      unitPrice: Number(unitPrice),
-    };
-  });
-
-  const topSeller = topSellingItems[0];
-  const topMenuItemId = topSeller?.menuItemId;
-  const topMenuItemQuantity = topSeller?.quantitySold;
-  const topSellingItemsCount = topSellingItems.length;
-
-  const stockList = await ctx.mdm.collection.listByType({
-    type: 'cafeFlow.StockItem',
-  });
-  const stockMdmIds = stockList.items.map((item) => item.mdmId);
-  const stockEntities =
-    stockMdmIds.length > 0
-      ? await ctx.mdm.collection.getMany({ mdmIds: stockMdmIds })
-      : [];
-
-  // rule: lowStockMustBeVisible
-  const lowStockAlerts: DashboardLowStockAlert[] = [];
-  for (const entity of stockEntities) {
-    const details = (entity.details ?? {}) as unknown as StockItemDetails;
-    const name =
-      details.cafeFlow?.name ??
-      details.name ??
-      entity.index.name ??
-      entity.mdmId;
-    const currentBalance = Number(
-      details.cafeFlow?.currentBalance ?? details.currentBalance ?? 0,
-    );
-    const minimumLevel = Number(
-      details.cafeFlow?.minimumLevel ?? details.minimumLevel ?? 0,
-    );
-    const unit = String(details.cafeFlow?.unit ?? details.unit ?? '');
-    if (currentBalance <= minimumLevel) {
-      lowStockAlerts.push({
-        stockItemId: entity.mdmId,
-        name: String(name),
-        currentBalance,
-        minimumLevel,
-        unit,
-        isOutOfStock: currentBalance <= 0,
-      });
-    }
-  }
-
-  const lowStockItemsCount = lowStockAlerts.length;
-  const outOfStockItemsCount = lowStockAlerts.filter((a) => a.isOutOfStock).length;
-  const hasLowStockAlert = lowStockItemsCount > 0 || outOfStockItemsCount > 0;
-
-  const operationalDashboardId =
-    existing?.operationalDashboardId ?? ctx.idGenerator.newId();
-  const referenceDate = existing?.referenceDate ?? openShift.shiftDate;
-  const lastComputedAt = now;
-
-  return {
-    operationalDashboardId,
-    dailyShiftId: openShift.dailyShiftId,
-    referenceDate,
-    todaySalesTotal,
-    todayOrdersCount,
-    todayItemsSold,
-    ...(topMenuItemId !== undefined ? { topMenuItemId } : {}),
-    ...(topMenuItemQuantity !== undefined ? { topMenuItemQuantity } : {}),
-    topSellingItemsCount,
-    lowStockItemsCount,
-    outOfStockItemsCount,
-    hasLowStockAlert,
-    lastComputedAt,
-    topSellingItems,
-    lowStockAlerts,
-  };
+const dailyShifts = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
+const dashboards = resolveRepository<IOperationalDashboardRepository>(ctx, 'OperationalDashboard');
+const ordersRepo = resolveRepository<IOrderRepository>(ctx, 'Order');
+const openShifts = await dailyShifts.list({ status: 'open' });
+const openShift = openShifts[0] ?? null;
+if (!openShift) {
+throw new AppError(
+'VALIDATION_ERROR',
+'Nenhum turno diário aberto encontrado para o dashboard operacional.',
+400,
+{ ruleId: 'activeLifecycleInstance' },
+);
+}
+const dailyShiftId = openShift.dailyShiftId;
+const referenceDate = openShift.shiftDate;
+const now = ctx.clock.nowIso();
+const existing = await dashboards.findByDailyShiftId(dailyShiftId);
+const shiftOrders = await ordersRepo.findByDailyShiftId(dailyShiftId);
+const live = aggregateFromOrders(shiftOrders);
+const ranked = [...live.qtyByMenuItem.entries()]
+.map(([menuItemId, agg]) => ({ menuItemId, ...agg }))
+.sort((a, b) => b.quantitySold - a.quantitySold);
+const topMenuItemIds = ranked.map((row) => row.menuItemId);
+const menuEntities =
+topMenuItemIds.length > 0
+? await ctx.mdm.collection.getMany({ mdmIds: topMenuItemIds })
+: [];
+const menuById = new Map(menuEntities.map((entity) => [entity.mdmId, entity]));
+const topSellingItems: TopSellingItem[] = ranked.map((row) => {
+const entity = menuById.get(row.menuItemId);
+const entityRec = entity ? asRecord(entity) : {};
+const details = moduleDetails(entityRec.details);
+const root = asRecord(entityRec.details);
+const name =
+readString(root.name) ||
+readString(details.name) ||
+row.name ||
+row.menuItemId;
+const unitPrice = readNumber(details.price, row.unitPrice);
+return {
+menuItemId: row.menuItemId,
+name,
+quantitySold: row.quantitySold,
+unitPrice,
+};
+});
+const topRanked = ranked[0];
+const liveTopMenuItemId = topRanked?.menuItemId;
+const liveTopMenuItemQuantity = topRanked?.quantitySold;
+// rule: lowStockMustBeVisible
+const stockIndex = await ctx.mdm.collection.listByType({
+type: 'cafeFlow.StockItem',
+page: 1,
+pageSize: 1000,
+});
+const stockMdmIds = stockIndex.items.map((item) => item.mdmId);
+const stockEntities =
+stockMdmIds.length > 0
+? await ctx.mdm.collection.getMany({ mdmIds: stockMdmIds })
+: [];
+const lowStockAlerts: LowStockAlert[] = [];
+let lowStockItemsCount = 0;
+let outOfStockItemsCount = 0;
+for (const entity of stockEntities) {
+const root = asRecord(entity.details);
+const details = moduleDetails(entity.details);
+const currentBalance = readNumber(
+details.currentBalance ?? root.currentBalance,
+0,
+);
+const minimumLevel = readNumber(
+details.minimumLevel ?? root.minimumLevel,
+0,
+);
+const isOutOfStock = currentBalance <= 0;
+const isLowStock = currentBalance <= minimumLevel;
+if (!isLowStock && !isOutOfStock) {
+continue;
+}
+if (isLowStock) {
+lowStockItemsCount += 1;
+}
+if (isOutOfStock) {
+outOfStockItemsCount += 1;
+}
+lowStockAlerts.push({
+stockItemId: entity.mdmId,
+name: readString(root.name) || readString(details.name) || entity.mdmId,
+currentBalance,
+minimumLevel,
+unit: readString(details.unit ?? root.unit, 'un'),
+isOutOfStock,
+});
+}
+const hasLowStockAlert = lowStockItemsCount > 0 || outOfStockItemsCount > 0;
+// Prefer persisted snapshot scalars when present; always attach live projections.
+const todaySalesTotal = existing?.todaySalesTotal ?? live.todaySalesTotal;
+const todayOrdersCount = existing?.todayOrdersCount ?? live.todayOrdersCount;
+const todayItemsSold = existing?.todayItemsSold ?? live.todayItemsSold;
+const topMenuItemId =
+existing?.topMenuItemId ?? liveTopMenuItemId ?? undefined;
+const topMenuItemQuantity =
+existing?.topMenuItemQuantity ?? liveTopMenuItemQuantity ?? undefined;
+const topSellingItemsCount =
+existing?.topSellingItemsCount ?? topSellingItems.length;
+// rule: dashboardHighlightsCoreMetrics
+const output: ViewOperationalDashboardOutput = {
+operationalDashboardId:
+existing?.operationalDashboardId ?? ctx.idGenerator.newId(),
+dailyShiftId,
+referenceDate: existing?.referenceDate ?? referenceDate,
+todaySalesTotal,
+todayOrdersCount,
+todayItemsSold,
+topSellingItemsCount,
+lowStockItemsCount: existing ? lowStockItemsCount : lowStockItemsCount,
+outOfStockItemsCount: existing ? outOfStockItemsCount : outOfStockItemsCount,
+hasLowStockAlert,
+lastComputedAt: existing?.lastComputedAt ?? now,
+topSellingItems,
+lowStockAlerts,
+};
+if (topMenuItemId !== undefined && topMenuItemId !== null) {
+output.topMenuItemId = topMenuItemId;
+}
+if (topMenuItemQuantity !== undefined && topMenuItemQuantity !== null) {
+output.topMenuItemQuantity = topMenuItemQuantity;
+}
+return output;
 }

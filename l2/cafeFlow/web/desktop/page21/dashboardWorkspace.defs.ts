@@ -90,11 +90,11 @@ export const definition = {
       "order": 10,
       "organisms": [
         {
-          "id": "org-kpi-summary-cards",
+          "id": "org-kpi-cards",
           "type": "queryResult",
-          "organismName": "ShiftKpiSummaryCards",
+          "organismName": "ShiftKpiCards",
           "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-          "purpose": "Exibe os indicadores-chave do turno corrente (total de vendas, pedidos, itens vendidos, alertas de estoque) em cards de leitura rápida, carregados automaticamente a partir do turno ativo.",
+          "purpose": "Exibe os indicadores-chave do turno corrente (total de vendas, pedidos, itens vendidos, alertas de estoque) como cartões de métricas carregados automaticamente via getDashboard com o dailyShiftId do turno ativo.",
           "userActions": [
             "getDashboard"
           ],
@@ -127,11 +127,11 @@ export const definition = {
       "order": 20,
       "organisms": [
         {
-          "id": "org-stock-alerts-list",
+          "id": "org-stock-alert-list",
           "type": "queryResult",
-          "organismName": "StockAlertsPanel",
+          "organismName": "StockAlertList",
           "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-          "purpose": "Lista os itens com estoque baixo ou em ruptura (slice lowStockAlerts do getDashboard) para que o gerente identifique exceções críticas e tome ação imediata.",
+          "purpose": "Lista os itens com estoque baixo ou em ruptura (lowStockAlerts) extraídos do resultado do getDashboard, destacando exceções que exigem ação imediata do gerente.",
           "userActions": [
             "getDashboard"
           ],
@@ -164,11 +164,11 @@ export const definition = {
       "order": 30,
       "organisms": [
         {
-          "id": "org-top-selling-list",
+          "id": "org-top-selling-table",
           "type": "queryResult",
-          "organismName": "TopSellingItemsList",
+          "organismName": "TopSellingItemsTable",
           "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-          "purpose": "Exibe o ranking dos itens mais vendidos no turno (slice topSellingItems do getDashboard) em ordem decrescente de quantidade, permitindo ao gerente avaliar o desempenho do cardápio.",
+          "purpose": "Exibe o ranking dos itens mais vendidos no turno (topSellingItems) em ordem decrescente de quantidade, fornecendo contexto para as sugestões de promoção da IA.",
           "userActions": [
             "getDashboard"
           ],
@@ -201,11 +201,11 @@ export const definition = {
       "order": 40,
       "organisms": [
         {
-          "id": "org-ai-sales-summary-panel",
+          "id": "org-ai-sales-trigger",
           "type": "queryResult",
           "organismName": "AiSalesSummaryPanel",
           "titleKey": "organism.dashboardWorkspace.getAiSalesSummary.title",
-          "purpose": "Permite ao gerente solicitar e ler o resumo narrativo de vendas do dia gerado pela IA, exibindo o texto gerado (summaryText) com metadados de período e data de geração.",
+          "purpose": "Permite ao gerente solicitar com um clique o resumo narrativo de vendas do dia gerado pela IA e exibe o texto resultante; operationalDashboardId é derivado automaticamente do dashboard carregado.",
           "userActions": [
             "getAiSalesSummary"
           ],
@@ -237,11 +237,11 @@ export const definition = {
       "order": 50,
       "organisms": [
         {
-          "id": "org-ai-promotion-suggestions-panel",
+          "id": "org-ai-promotion-cards",
           "type": "queryResult",
-          "organismName": "AiPromotionSuggestionsPanel",
+          "organismName": "AiPromotionSuggestionsBoard",
           "titleKey": "organism.dashboardWorkspace.getAiPromotionSuggestions.title",
-          "purpose": "Permite ao gerente solicitar e revisar as sugestões de itens a promover geradas pela IA, exibindo menuItemName, reason, confidenceScore e suggestedDiscountPercent para apoio à decisão.",
+          "purpose": "Permite ao gerente solicitar sugestões de itens a promover geradas pela IA e exibe cada sugestão como cartão com menuItemName, reason, confidenceScore e suggestedDiscountPercent para apoio à decisão.",
           "userActions": [
             "getAiPromotionSuggestions"
           ],
@@ -270,7 +270,7 @@ export const definition = {
   "pageObjective": {
     "actor": "Gerente de operações do café",
     "jobToBeDone": "Acompanhar em tempo real os indicadores do turno corrente, identificar alertas de estoque e obter insights gerados por IA (resumo de vendas e sugestões de promoção) para tomar decisões operacionais rápidas.",
-    "primaryDecision": "O gerente decide se a operação do turno está saudável e quais ações imediatas tomar com base nos KPIs, alertas de estoque e recomendações da IA.",
+    "primaryDecision": "Avaliar a saúde do turno corrente (vendas, pedidos, estoque) e decidir se aciona os assistentes de IA para aprofundar a análise.",
     "decisiveInfo": [
       "todaySalesTotal",
       "todayOrdersCount",
@@ -282,43 +282,44 @@ export const definition = {
       "lowStockAlerts",
       "summaryText",
       "menuItemName",
-      "reason",
       "confidenceScore",
-      "suggestedDiscountPercent"
+      "suggestedDiscountPercent",
+      "reason"
     ],
-    "usageFrequency": "Contínuo durante o turno operacional; o gerente consulta o dashboard várias vezes ao dia para monitorar a operação.",
+    "usageFrequency": "Contínuo durante o turno — o gerente consulta o dashboard várias vezes ao dia, especialmente em picos de movimento e ao final do turno.",
     "criticalActions": [
       {
-        "action": "Carregar dashboard do turno corrente",
-        "presentation": "summary-first — KPIs exibidos automaticamente ao abrir a página, sem interação manual"
+        "action": "getDashboard",
+        "presentation": "summary-first — KPIs carregados automaticamente ao abrir a página com o dailyShiftId do turno ativo; sem input manual."
       },
       {
-        "action": "Gerar resumo de vendas por IA",
-        "presentation": "primary-button contextual ao painel de IA de vendas, acionado pelo gerente quando desejar o resumo narrativo"
+        "action": "getAiSalesSummary",
+        "presentation": "primary-button contextual ao painel de KPIs — 'Gerar resumo IA'; resultado exibido como richText narrativo abaixo do botão."
       },
       {
-        "action": "Gerar sugestões de promoção por IA",
-        "presentation": "primary-button contextual ao painel de sugestões, acionado pelo gerente para obter recomendações de itens a promover"
+        "action": "getAiPromotionSuggestions",
+        "presentation": "primary-button contextual ao painel de sugestões — 'Sugerir promoções'; resultado exibido como card-board com confiança e desconto sugerido."
       }
     ],
     "informationHierarchy": [
-      "1. KPIs do turno (vendas totais, pedidos, itens vendidos) — visão imediata ao abrir",
-      "2. Alertas de estoque baixo/ruptura — exceções que exigem ação imediata",
-      "3. Itens mais vendidos — contexto de desempenho do cardápio",
-      "4. Resumo narrativo de vendas gerado por IA — insight qualitativo sob demanda",
-      "5. Sugestões de promoção geradas por IA — recomendações táticas sob demanda"
+      "1. KPIs do turno: total de vendas, pedidos, itens vendidos (resposta imediata à pergunta 'como está o turno?')",
+      "2. Alertas de estoque baixo/ruptura (exceções que exigem ação imediata)",
+      "3. Itens mais vendidos (contexto para decisões de promoção)",
+      "4. Resumo narrativo de vendas gerado por IA (análise aprofundada sob demanda)",
+      "5. Sugestões de promoção geradas por IA (recomendações táticas sob demanda)"
     ],
-    "successCriteria": "O gerente visualiza todos os indicadores críticos do turno em menos de 5 segundos, identifica alertas de estoque sem precisar navegar para outra tela, e obtém insights de IA com um único clique sem sair do dashboard.",
+    "successCriteria": "O gerente consegue avaliar a saúde do turno em menos de 10 segundos, identificar alertas críticos de estoque sem navegar para outra tela, e acionar os assistentes de IA com um clique sem precisar informar nenhum identificador manualmente.",
     "antiPatterns": [
-      "Exigir que o gerente digite manualmente o dailyShiftId ou operationalDashboardId",
-      "Exibir status como <select> editável",
-      "Separar KPIs em páginas distintas ou abas que exijam navegação",
-      "Mostrar formulários CRUD como experiência primária",
-      "Exibir tokens de IA (promptTokens, completionTokens, modelId) como informação principal"
+      "Campo de input manual para dailyShiftId ou operationalDashboardId — ambos são contexto derivado do turno ativo.",
+      "Status como <select> editável — o dashboard é somente leitura.",
+      "Formulário CRUD separado para cada query.",
+      "Seção de filtro de data independente — o turno corrente é o contexto implícito.",
+      "Exibir tokens de IA (promptTokens, completionTokens, modelId) como informação primária.",
+      "Botões de IA sempre visíveis e ativos antes do dashboard carregar."
     ]
   },
   "layout": {
-    "id": "goal_first_page21_dashboardWorkspace",
+    "id": "page21-goal-first",
     "type": "page",
     "sections": [
       {
@@ -330,11 +331,11 @@ export const definition = {
         "order": 10,
         "organisms": [
           {
-            "id": "org-kpi-summary-cards",
+            "id": "org-kpi-cards",
             "type": "queryResult",
-            "organismName": "ShiftKpiSummaryCards",
+            "organismName": "ShiftKpiCards",
             "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-            "purpose": "Exibe os indicadores-chave do turno corrente (total de vendas, pedidos, itens vendidos, alertas de estoque) em cards de leitura rápida, carregados automaticamente a partir do turno ativo.",
+            "purpose": "Exibe os indicadores-chave do turno corrente (total de vendas, pedidos, itens vendidos, alertas de estoque) como cartões de métricas carregados automaticamente via getDashboard com o dailyShiftId do turno ativo.",
             "userActions": [
               "getDashboard"
             ],
@@ -492,11 +493,11 @@ export const definition = {
         "order": 20,
         "organisms": [
           {
-            "id": "org-stock-alerts-list",
+            "id": "org-stock-alert-list",
             "type": "queryResult",
-            "organismName": "StockAlertsPanel",
+            "organismName": "StockAlertList",
             "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-            "purpose": "Lista os itens com estoque baixo ou em ruptura (slice lowStockAlerts do getDashboard) para que o gerente identifique exceções críticas e tome ação imediata.",
+            "purpose": "Lista os itens com estoque baixo ou em ruptura (lowStockAlerts) extraídos do resultado do getDashboard, destacando exceções que exigem ação imediata do gerente.",
             "userActions": [
               "getDashboard"
             ],
@@ -641,7 +642,7 @@ export const definition = {
                 "stateKey": "ui.dashboardWorkspace.data.getDashboard"
               }
             ],
-            "displayHint": "summary-first"
+            "displayHint": "inline-row-command"
           }
         ]
       },
@@ -654,11 +655,11 @@ export const definition = {
         "order": 30,
         "organisms": [
           {
-            "id": "org-top-selling-list",
+            "id": "org-top-selling-table",
             "type": "queryResult",
-            "organismName": "TopSellingItemsList",
+            "organismName": "TopSellingItemsTable",
             "titleKey": "organism.dashboardWorkspace.getDashboard.title",
-            "purpose": "Exibe o ranking dos itens mais vendidos no turno (slice topSellingItems do getDashboard) em ordem decrescente de quantidade, permitindo ao gerente avaliar o desempenho do cardápio.",
+            "purpose": "Exibe o ranking dos itens mais vendidos no turno (topSellingItems) em ordem decrescente de quantidade, fornecendo contexto para as sugestões de promoção da IA.",
             "userActions": [
               "getDashboard"
             ],
@@ -803,7 +804,7 @@ export const definition = {
                 "stateKey": "ui.dashboardWorkspace.data.getDashboard"
               }
             ],
-            "displayHint": "inline-row-command"
+            "displayHint": "summary-first"
           }
         ]
       },
@@ -816,11 +817,11 @@ export const definition = {
         "order": 40,
         "organisms": [
           {
-            "id": "org-ai-sales-summary-panel",
+            "id": "org-ai-sales-trigger",
             "type": "queryResult",
             "organismName": "AiSalesSummaryPanel",
             "titleKey": "organism.dashboardWorkspace.getAiSalesSummary.title",
-            "purpose": "Permite ao gerente solicitar e ler o resumo narrativo de vendas do dia gerado pela IA, exibindo o texto gerado (summaryText) com metadados de período e data de geração.",
+            "purpose": "Permite ao gerente solicitar com um clique o resumo narrativo de vendas do dia gerado pela IA e exibe o texto resultante; operationalDashboardId é derivado automaticamente do dashboard carregado.",
             "userActions": [
               "getAiSalesSummary"
             ],
@@ -934,11 +935,11 @@ export const definition = {
         "order": 50,
         "organisms": [
           {
-            "id": "org-ai-promotion-suggestions-panel",
+            "id": "org-ai-promotion-cards",
             "type": "queryResult",
-            "organismName": "AiPromotionSuggestionsPanel",
+            "organismName": "AiPromotionSuggestionsBoard",
             "titleKey": "organism.dashboardWorkspace.getAiPromotionSuggestions.title",
-            "purpose": "Permite ao gerente solicitar e revisar as sugestões de itens a promover geradas pela IA, exibindo menuItemName, reason, confidenceScore e suggestedDiscountPercent para apoio à decisão.",
+            "purpose": "Permite ao gerente solicitar sugestões de itens a promover geradas pela IA e exibe cada sugestão como cartão com menuItemName, reason, confidenceScore e suggestedDiscountPercent para apoio à decisão.",
             "userActions": [
               "getAiPromotionSuggestions"
             ],

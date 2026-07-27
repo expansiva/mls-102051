@@ -1,11 +1,11 @@
 {
-  "savedAt": "2026-07-22T21:29:09.656Z",
+  "savedAt": "2026-07-25T03:57:07.524Z",
   "agentName": "agentCbSeeds",
   "stepId": 99,
   "planning": {
     "planId": "cb-gen-seeds",
     "dependsOn": [
-      "cb-validate-all-g1"
+      "cb-validate-before-seeds"
     ],
     "executionMode": "sequential",
     "executionHost": "client"
@@ -18,7 +18,7 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "summary": "Wave 1 seeds cafe menu categories and stock catalog items, including one low-stock item for dashboard visibility.",
+          "summary": "Wave 1 seeds cafe menu categories (beverages, food, desserts, specials) and core stock items (coffee, milk, bread, sugar) for later menu/ingredient and inventory flows.",
           "localTables": [],
           "mdmEntities": [
             {
@@ -51,11 +51,11 @@
                   "relationships": []
                 },
                 {
-                  "key": "bakery",
+                  "key": "food",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Bakery"
+                      "value": "Food"
                     },
                     {
                       "name": "displayOrder",
@@ -77,11 +77,11 @@
                   "relationships": []
                 },
                 {
-                  "key": "meals",
+                  "key": "desserts",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Meals"
+                      "value": "Desserts"
                     },
                     {
                       "name": "displayOrder",
@@ -97,17 +97,17 @@
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-02T09:00:00.000Z"
+                      "value": "2026-07-02T10:00:00.000Z"
                     }
                   ],
                   "relationships": []
                 },
                 {
-                  "key": "seasonal",
+                  "key": "specials",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Seasonal Specials"
+                      "value": "Specials"
                     },
                     {
                       "name": "displayOrder",
@@ -123,7 +123,7 @@
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-03T11:30:00.000Z"
+                      "value": "2026-07-03T14:30:00.000Z"
                     }
                   ],
                   "relationships": []
@@ -134,11 +134,11 @@
               "entityId": "StockItem",
               "rows": [
                 {
-                  "key": "coffeeBeans",
+                  "key": "coffee-beans",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Coffee Beans"
+                      "value": "Coffee beans"
                     },
                     {
                       "name": "unit",
@@ -150,29 +150,29 @@
                     },
                     {
                       "name": "minimumLevel",
-                      "value": 5
+                      "value": 3
                     },
                     {
                       "name": "description",
-                      "value": "Medium roast beans for espresso and filter."
+                      "value": "Medium roast arabica beans"
                     },
                     {
                       "name": "createdAt",
-                      "value": "2026-07-01T08:20:00.000Z"
+                      "value": "2026-07-01T09:00:00.000Z"
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-05T14:00:00.000Z"
+                      "value": "2026-07-05T11:00:00.000Z"
                     }
                   ],
                   "relationships": []
                 },
                 {
-                  "key": "wholeMilk",
+                  "key": "whole-milk",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Whole Milk"
+                      "value": "Whole milk"
                     },
                     {
                       "name": "unit",
@@ -180,67 +180,33 @@
                     },
                     {
                       "name": "currentBalance",
-                      "value": 2
+                      "value": 18
                     },
                     {
                       "name": "minimumLevel",
-                      "value": 8
+                      "value": 5
                     },
                     {
                       "name": "description",
-                      "value": "Fresh whole milk for drinks and recipes."
+                      "value": "Fresh whole milk for espresso drinks"
                     },
                     {
                       "name": "createdAt",
-                      "value": "2026-07-01T08:25:00.000Z"
+                      "value": "2026-07-01T09:05:00.000Z"
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-06T10:15:00.000Z"
+                      "value": "2026-07-04T16:20:00.000Z"
                     }
                   ],
                   "relationships": []
                 },
                 {
-                  "key": "wheatFlour",
+                  "key": "sourdough-loaf",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Wheat Flour"
-                    },
-                    {
-                      "name": "unit",
-                      "value": "kg"
-                    },
-                    {
-                      "name": "currentBalance",
-                      "value": 20
-                    },
-                    {
-                      "name": "minimumLevel",
-                      "value": 4
-                    },
-                    {
-                      "name": "description",
-                      "value": "All-purpose flour for bakery items."
-                    },
-                    {
-                      "name": "createdAt",
-                      "value": "2026-07-01T08:30:00.000Z"
-                    },
-                    {
-                      "name": "updatedAt",
-                      "value": "2026-07-04T16:45:00.000Z"
-                    }
-                  ],
-                  "relationships": []
-                },
-                {
-                  "key": "sugarPackets",
-                  "fields": [
-                    {
-                      "name": "name",
-                      "value": "Sugar Packets"
+                      "value": "Sourdough loaf"
                     },
                     {
                       "name": "unit",
@@ -248,57 +214,57 @@
                     },
                     {
                       "name": "currentBalance",
-                      "value": 150
+                      "value": 8
                     },
                     {
                       "name": "minimumLevel",
-                      "value": 50
+                      "value": 4
                     },
                     {
                       "name": "description",
-                      "value": "Single-serve white sugar packets."
+                      "value": "Daily bakery sourdough for sandwiches"
                     },
                     {
                       "name": "createdAt",
-                      "value": "2026-07-01T08:35:00.000Z"
+                      "value": "2026-07-01T09:10:00.000Z"
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-03T12:00:00.000Z"
+                      "value": "2026-07-06T07:45:00.000Z"
                     }
                   ],
                   "relationships": []
                 },
                 {
-                  "key": "soupPortion",
+                  "key": "white-sugar",
                   "fields": [
                     {
                       "name": "name",
-                      "value": "Daily Soup Base"
+                      "value": "White sugar"
                     },
                     {
                       "name": "unit",
-                      "value": "portion"
+                      "value": "kg"
                     },
                     {
                       "name": "currentBalance",
-                      "value": 6
+                      "value": 2.2
                     },
                     {
                       "name": "minimumLevel",
-                      "value": 10
+                      "value": 2.5
                     },
                     {
                       "name": "description",
-                      "value": "Prepared soup base portions for lunch service."
+                      "value": "Granulated sugar; below minimum level"
                     },
                     {
                       "name": "createdAt",
-                      "value": "2026-07-01T08:40:00.000Z"
+                      "value": "2026-07-01T09:15:00.000Z"
                     },
                     {
                       "name": "updatedAt",
-                      "value": "2026-07-06T18:20:00.000Z"
+                      "value": "2026-07-06T18:00:00.000Z"
                     }
                   ],
                   "relationships": []
@@ -309,15 +275,13 @@
         },
         "questions": [],
         "trace": [
-          "Wave 1 limited to MenuCategory and StockItem per planning wave.",
-          "4 menu categories with active/inactive and display order.",
-          "5 stock items with mixed units; wholeMilk and soupPortion below minimum for lowStockMustBeVisible.",
-          "No local tables in this wave; StockAdjustment rule deferred to later wave."
+          "Wave 1: MDM only MenuCategory (4 rows, active/inactive) and StockItem (4 rows, varied units and one below minimum).",
+          "No local tables in this wave; no MDM-to-MDM relationships to seed."
         ]
       }
     },
     "status": "completed",
-    "stepId": 6,
+    "stepId": 7,
     "interaction": null,
     "nextSteps": null
   }

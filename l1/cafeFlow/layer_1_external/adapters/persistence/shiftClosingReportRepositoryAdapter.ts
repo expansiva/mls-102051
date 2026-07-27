@@ -57,7 +57,7 @@ function parseDetails(row: ShiftClosingReportRow): ShiftClosingReportDetails {
     return JSON.parse(row.details ?? '{}') as ShiftClosingReportDetails;
   } catch {
     return {
-      shiftDate: '',
+      shiftDate: row.created_at,
       totalSalesAmount: 0,
       totalOrdersCount: 0,
       totalItemsSold: 0,
@@ -97,24 +97,29 @@ function toDomain(row: ShiftClosingReportRow): ShiftClosingReport {
 export function createShiftClosingReportRepositoryAdapter(
   ctx: RequestContext,
 ): IShiftClosingReportRepository {
-  const getTable = () => ctx.data.moduleData.getTable<ShiftClosingReportRow>('shift_closing_report');
+  const getTable = () =>
+    ctx.data.moduleData.getTable<ShiftClosingReportRow>('shift_closing_report');
 
   return {
     async getById(id) {
-      const row = await (await getTable()).findOne({ where: { shift_closing_report_id: id } });
+      const row = await (
+        await getTable()
+      ).findOne({ where: { shift_closing_report_id: id } });
       return row ? toDomain(row) : null;
     },
 
     async list(filter?: ShiftClosingReportFilter) {
       const where: Partial<ShiftClosingReportRow> = {};
       if (filter?.dailyShiftId) where.daily_shift_id = filter.dailyShiftId;
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         where,
         orderBy: { field: 'created_at', direction: 'desc' },
       });
       let reports = rows.map(toDomain);
       if (filter?.shiftDate) {
-        reports = reports.filter((report) => report.shiftDate === filter.shiftDate);
+        reports = reports.filter((r) => r.shiftDate === filter.shiftDate);
       }
       return reports;
     },
@@ -135,17 +140,21 @@ export function createShiftClosingReportRepositoryAdapter(
     },
 
     async findByDailyShiftId(dailyShiftId) {
-      const row = await (await getTable()).findOne({ where: { daily_shift_id: dailyShiftId } });
+      const row = await (
+        await getTable()
+      ).findOne({ where: { daily_shift_id: dailyShiftId } });
       return row ? toDomain(row) : null;
     },
 
     async findByPeriod(period: DateRange) {
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         orderBy: { field: 'created_at', direction: 'desc' },
       });
       return rows
         .map(toDomain)
-        .filter((report) => report.shiftDate >= period.from && report.shiftDate <= period.to);
+        .filter((r) => r.shiftDate >= period.from && r.shiftDate <= period.to);
     },
   };
 }

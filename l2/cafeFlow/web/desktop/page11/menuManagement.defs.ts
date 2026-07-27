@@ -121,7 +121,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "MenuItemTable",
           "titleKey": "organism.menuManagement.listMenuItems.title",
-          "purpose": "Primary surface showing all menu items in a paginated table so the manager can scan name, category, price, status and display order at a glance.",
+          "purpose": "Primary surface showing all menu items with name, category, price, status and display order; supports row selection to trigger edit.",
           "userActions": [
             "listMenuItems"
           ],
@@ -144,37 +144,11 @@ export const definition = {
           ]
         },
         {
-          "id": "menuItemCreateForm",
+          "id": "updateMenuItemForm",
           "type": "commandForm",
-          "organismName": "MenuItemCreateForm",
-          "titleKey": "organism.menuManagement.createMenuItemCmd.title",
-          "purpose": "Form revealed from the toolbar Add button so the manager can fill in name, category, price and optional details to create a new menu item.",
-          "userActions": [
-            "createMenuItemCmd"
-          ],
-          "requiredEntities": [],
-          "readsFields": [],
-          "writesFields": [],
-          "rulesApplied": [
-            "menuItemNeedsCategoryAndPrice",
-            "onlyActiveMenuItemsCanBeOrdered"
-          ],
-          "order": 30,
-          "intentionRefs": [
-            {
-              "id": "intent.menuManagement.createMenuItemCmd.form",
-              "intent": "commandForm",
-              "submitAction": "createMenuItemCmd",
-              "order": 10
-            }
-          ]
-        },
-        {
-          "id": "menuItemEditForm",
-          "type": "commandForm",
-          "organismName": "MenuItemEditForm",
+          "organismName": "UpdateMenuItemForm",
           "titleKey": "organism.menuManagement.updateMenuItemCmd.title",
-          "purpose": "Inline or slide-over form pre-populated from the selected row so the manager can update name, category, price, status, pause reason, image, display order and stock link.",
+          "purpose": "Inline edit form pre-populated from the selected row, letting the manager update name, category, price, description, image, display order, stock link and status/pause reason.",
           "userActions": [
             "updateMenuItemCmd"
           ],
@@ -185,12 +159,48 @@ export const definition = {
             "onlyActiveMenuItemsCanBeOrdered",
             "menuItemNeedsCategoryAndPrice"
           ],
-          "order": 40,
+          "order": 30,
           "intentionRefs": [
             {
               "id": "intent.menuManagement.updateMenuItemCmd.form",
               "intent": "commandForm",
               "submitAction": "updateMenuItemCmd",
+              "order": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section.menuManagement.createMenuItemSection",
+      "type": "section",
+      "sectionName": "Create Menu Item",
+      "titleKey": "section.menuManagement.createMenuItemSection.title",
+      "mode": "edit",
+      "order": 20,
+      "organisms": [
+        {
+          "id": "createMenuItemForm",
+          "type": "commandForm",
+          "organismName": "CreateMenuItemForm",
+          "titleKey": "organism.menuManagement.createMenuItemCmd.title",
+          "purpose": "Form for the manager to register a new menu item with category, name, price, description, image, display order, stock link requirement and initial status.",
+          "userActions": [
+            "createMenuItemCmd"
+          ],
+          "requiredEntities": [],
+          "readsFields": [],
+          "writesFields": [],
+          "rulesApplied": [
+            "menuItemNeedsCategoryAndPrice",
+            "onlyActiveMenuItemsCanBeOrdered"
+          ],
+          "order": 10,
+          "intentionRefs": [
+            {
+              "id": "intent.menuManagement.createMenuItemCmd.form",
+              "intent": "commandForm",
+              "submitAction": "createMenuItemCmd",
               "order": 10
             }
           ]
@@ -299,14 +309,14 @@ export const definition = {
                 "stateKey": "ui.menuManagement.data.listMenuItems"
               }
             ],
-            "displayHint": "form"
+            "displayHint": "inline-row-command"
           },
           {
             "id": "menuItemTable",
             "type": "queryResult",
             "organismName": "MenuItemTable",
             "titleKey": "organism.menuManagement.listMenuItems.title",
-            "purpose": "Primary surface showing all menu items in a paginated table so the manager can scan name, category, price, status and display order at a glance.",
+            "purpose": "Primary surface showing all menu items with name, category, price, status and display order; supports row selection to trigger edit.",
             "userActions": [
               "listMenuItems"
             ],
@@ -391,112 +401,11 @@ export const definition = {
             "displayHint": "master-detail"
           },
           {
-            "id": "menuItemCreateForm",
+            "id": "updateMenuItemForm",
             "type": "commandForm",
-            "organismName": "MenuItemCreateForm",
-            "titleKey": "organism.menuManagement.createMenuItemCmd.title",
-            "purpose": "Form revealed from the toolbar Add button so the manager can fill in name, category, price and optional details to create a new menu item.",
-            "userActions": [
-              "createMenuItemCmd"
-            ],
-            "requiredEntities": [],
-            "readsFields": [],
-            "writesFields": [],
-            "rulesApplied": [
-              "menuItemNeedsCategoryAndPrice",
-              "onlyActiveMenuItemsCanBeOrdered"
-            ],
-            "order": 30,
-            "intentions": [
-              {
-                "id": "intent.menuManagement.createMenuItemCmd.form",
-                "intent": "commandForm",
-                "order": 10,
-                "titleKey": "intent.menuManagement.createMenuItemCmd.form.title",
-                "source": "bff.createMenuItemCmd",
-                "binding": "binding.menuManagement.createMenuItemCmd",
-                "submitAction": "createMenuItemCmd",
-                "fields": [
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId",
-                    "field": "menuCategoryId",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label",
-                    "order": 10,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.menuCategoryId"
-                  },
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.name",
-                    "field": "name",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.name.label",
-                    "order": 20,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.name"
-                  },
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.description",
-                    "field": "description",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.description.label",
-                    "order": 30,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.description"
-                  },
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.price",
-                    "field": "price",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.price.label",
-                    "order": 40,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.price"
-                  },
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.status",
-                    "field": "status",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.status.label",
-                    "order": 50,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.status"
-                  },
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.imageUrl",
-                    "field": "imageUrl",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label",
-                    "order": 60,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.imageUrl"
-                  },
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.displayOrder",
-                    "field": "displayOrder",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label",
-                    "order": 70,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.displayOrder"
-                  },
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink",
-                    "field": "requiresStockLink",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label",
-                    "order": 80,
-                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.requiresStockLink"
-                  }
-                ],
-                "columns": [],
-                "filters": [],
-                "toolbar": [],
-                "rowActions": [],
-                "actions": [
-                  {
-                    "id": "intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd",
-                    "action": "createMenuItemCmd",
-                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd",
-                    "order": 10,
-                    "actionKey": "createMenuItemCmd"
-                  }
-                ]
-              }
-            ],
-            "displayHint": "form"
-          },
-          {
-            "id": "menuItemEditForm",
-            "type": "commandForm",
-            "organismName": "MenuItemEditForm",
+            "organismName": "UpdateMenuItemForm",
             "titleKey": "organism.menuManagement.updateMenuItemCmd.title",
-            "purpose": "Inline or slide-over form pre-populated from the selected row so the manager can update name, category, price, status, pause reason, image, display order and stock link.",
+            "purpose": "Inline edit form pre-populated from the selected row, letting the manager update name, category, price, description, image, display order, stock link and status/pause reason.",
             "userActions": [
               "updateMenuItemCmd"
             ],
@@ -507,7 +416,7 @@ export const definition = {
               "onlyActiveMenuItemsCanBeOrdered",
               "menuItemNeedsCategoryAndPrice"
             ],
-            "order": 40,
+            "order": 30,
             "intentions": [
               {
                 "id": "intent.menuManagement.updateMenuItemCmd.form",
@@ -598,6 +507,117 @@ export const definition = {
               }
             ],
             "displayHint": "contextual-transition-actions"
+          }
+        ]
+      },
+      {
+        "id": "section.menuManagement.createMenuItemSection",
+        "type": "section",
+        "sectionName": "Create Menu Item",
+        "titleKey": "section.menuManagement.createMenuItemSection.title",
+        "mode": "edit",
+        "order": 20,
+        "organisms": [
+          {
+            "id": "createMenuItemForm",
+            "type": "commandForm",
+            "organismName": "CreateMenuItemForm",
+            "titleKey": "organism.menuManagement.createMenuItemCmd.title",
+            "purpose": "Form for the manager to register a new menu item with category, name, price, description, image, display order, stock link requirement and initial status.",
+            "userActions": [
+              "createMenuItemCmd"
+            ],
+            "requiredEntities": [],
+            "readsFields": [],
+            "writesFields": [],
+            "rulesApplied": [
+              "menuItemNeedsCategoryAndPrice",
+              "onlyActiveMenuItemsCanBeOrdered"
+            ],
+            "order": 10,
+            "intentions": [
+              {
+                "id": "intent.menuManagement.createMenuItemCmd.form",
+                "intent": "commandForm",
+                "order": 10,
+                "titleKey": "intent.menuManagement.createMenuItemCmd.form.title",
+                "source": "bff.createMenuItemCmd",
+                "binding": "binding.menuManagement.createMenuItemCmd",
+                "submitAction": "createMenuItemCmd",
+                "fields": [
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId",
+                    "field": "menuCategoryId",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label",
+                    "order": 10,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.menuCategoryId"
+                  },
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.name",
+                    "field": "name",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.name.label",
+                    "order": 20,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.name"
+                  },
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.description",
+                    "field": "description",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.description.label",
+                    "order": 30,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.description"
+                  },
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.price",
+                    "field": "price",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.price.label",
+                    "order": 40,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.price"
+                  },
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.status",
+                    "field": "status",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.status.label",
+                    "order": 50,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.status"
+                  },
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.imageUrl",
+                    "field": "imageUrl",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label",
+                    "order": 60,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.imageUrl"
+                  },
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.displayOrder",
+                    "field": "displayOrder",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label",
+                    "order": 70,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.displayOrder"
+                  },
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink",
+                    "field": "requiresStockLink",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label",
+                    "order": 80,
+                    "stateKey": "ui.menuManagement.input.createMenuItemCmd.requiresStockLink"
+                  }
+                ],
+                "columns": [],
+                "filters": [],
+                "toolbar": [],
+                "rowActions": [],
+                "actions": [
+                  {
+                    "id": "intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd",
+                    "action": "createMenuItemCmd",
+                    "labelKey": "intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd",
+                    "order": 10,
+                    "actionKey": "createMenuItemCmd"
+                  }
+                ]
+              }
+            ],
+            "displayHint": "form"
           }
         ]
       }

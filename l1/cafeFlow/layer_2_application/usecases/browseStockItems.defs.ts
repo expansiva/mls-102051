@@ -24,22 +24,26 @@ export const browseStockItemsUsecase = {
             "name": "nameFilter",
             "type": "string",
             "required": false,
+            "description": "Filtro opcional pelo nome do item de estoque",
             "fieldRef": "StockItem.name"
           },
           {
             "name": "lowStockOnly",
             "type": "boolean",
-            "required": false
+            "required": false,
+            "description": "Quando verdadeiro, retorna apenas itens com saldo atual menor ou igual ao nível mínimo"
           },
           {
             "name": "page",
             "type": "number",
-            "required": false
+            "required": false,
+            "description": "Número da página para paginação da lista"
           },
           {
             "name": "pageSize",
             "type": "number",
-            "required": false
+            "required": false,
+            "description": "Quantidade de itens retornados por página"
           }
         ],
         "output": [
@@ -60,13 +64,13 @@ export const browseStockItemsUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "list StockItem records via ctx.mdm.collection.listByType for type StockItem",
-          "when nameFilter is provided, keep only items whose name matches the filter (case-insensitive contains)",
-          "for each item compute isLowStock inline per lowStockMustBeVisible: currentBalance <= minimumLevel",
-          "when lowStockOnly is true, keep only items where isLowStock is true",
-          "sort remaining items by name ascending",
-          "compute total as the count after filters",
-          "apply optional page/pageSize pagination and return stockItems page plus total"
+          "List StockItem records via ctx.mdm.collection.listByType (StockItem is MDM-owned; no repository port)",
+          "When nameFilter is provided, keep only items whose name matches the filter (case-insensitive contains)",
+          "For each item apply lowStockMustBeVisible inline: isLowStock = currentBalance <= minimumLevel",
+          "When lowStockOnly is true, retain only items with isLowStock true",
+          "Sort remaining items by name ascending",
+          "Compute total as the count after filters",
+          "Apply optional page/pageSize pagination and return { stockItems, total } with projected fields stockItemId, name, unit, currentBalance, minimumLevel, description, updatedAt, isLowStock"
         ],
         "outputShape": {
           "kind": "paginated",

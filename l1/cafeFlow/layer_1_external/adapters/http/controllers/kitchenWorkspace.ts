@@ -19,10 +19,11 @@ function enforceActors(ctx: RequestContext, allowed: readonly string[], route: s
 export const kitchenWorkspaceFetchKitchenQueueHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.kitchenWorkspace.fetchKitchenQueue');
   if (denial) return denial;
-  // dailyShiftId is activeLifecycleInstance — resolved inside the usecase, not a public boundary input
-  void request;
+
+  // dailyShiftId is activeLifecycleInstance — resolved inside the usecase from ports/ctx.
   const input: ViewKitchenQueueInput = {};
   const result = await viewKitchenQueue(ctx, input);
+
   const items = (result ?? []).map((row) => ({
     orderId: row.orderId,
     orderType: row.orderType,
@@ -40,23 +41,29 @@ export const kitchenWorkspaceFetchKitchenQueueHandler: BffHandler = async ({ req
 export const kitchenWorkspaceChangeOrderStatusHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.kitchenWorkspace.changeOrderStatus');
   if (denial) return denial;
+
   const params = (request.params ?? {}) as {
     orderId?: string;
     status?: string;
     cancellationReason?: string;
   };
+
   if (!params.orderId) {
     throw new AppError('VALIDATION_ERROR', 'orderId is required', 400, { field: 'orderId' });
   }
   if (!params.status) {
     throw new AppError('VALIDATION_ERROR', 'status is required', 400, { field: 'status' });
   }
+
+  // updatedAt is systemDefault — resolved inside the usecase from ctx.clock.
   const input: UpdateOrderStatusInput = {
     orderId: params.orderId,
     status: params.status,
     cancellationReason: params.cancellationReason,
   };
+
   const result = await updateOrderStatus(ctx, input);
+
   return ok({
     orderId: result.orderId,
     status: result.status,

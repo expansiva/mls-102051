@@ -21,7 +21,7 @@ export const orderRepositoryPort = {
         "params": [
           "id: OrderId"
         ],
-        "description": "Load an order by its identity"
+        "description": "Load an order by identity"
       },
       {
         "name": "list",
@@ -37,7 +37,7 @@ export const orderRepositoryPort = {
         "params": [
           "aggregate: Order"
         ],
-        "description": "Persist order aggregate including items and payments"
+        "description": "Persist order aggregate with items and payments"
       },
       {
         "name": "findByDailyShiftId",
@@ -51,9 +51,9 @@ export const orderRepositoryPort = {
         "name": "findOpenByTable",
         "returns": "Order | null",
         "params": [
-          "tableId: TableId"
+          "tableRef: TableRef"
         ],
-        "description": "Find the open order for a table"
+        "description": "Find open order for a table"
       },
       {
         "name": "findByStatus",

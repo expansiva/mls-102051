@@ -26,22 +26,22 @@ interface AiSalesSummaryDetails {
   updatedAt: string;
 }
 
-function toRow(summary: AiSalesSummary): AiSalesSummaryRow {
+function toRow(aggregate: AiSalesSummary): AiSalesSummaryRow {
   const details: AiSalesSummaryDetails = {
-    summaryDate: summary.summaryDate,
-    periodStart: summary.periodStart,
-    periodEnd: summary.periodEnd,
-    summaryText: summary.summaryText,
-    promptTokens: summary.promptTokens,
-    completionTokens: summary.completionTokens,
-    generatedAt: summary.generatedAt,
-    updatedAt: summary.updatedAt,
+    summaryDate: aggregate.summaryDate,
+    periodStart: aggregate.periodStart,
+    periodEnd: aggregate.periodEnd,
+    summaryText: aggregate.summaryText,
+    promptTokens: aggregate.promptTokens,
+    completionTokens: aggregate.completionTokens,
+    generatedAt: aggregate.generatedAt,
+    updatedAt: aggregate.updatedAt,
   };
   return {
-    ai_sales_summary_id: summary.aiSalesSummaryId,
-    operational_dashboard_id: summary.operationalDashboardId,
-    model_id: summary.modelId,
-    created_at: summary.createdAt,
+    ai_sales_summary_id: aggregate.aiSalesSummaryId,
+    operational_dashboard_id: aggregate.operationalDashboardId,
+    model_id: aggregate.modelId,
+    created_at: aggregate.createdAt,
     details: JSON.stringify(details),
   };
 }
@@ -105,12 +105,6 @@ export function createAiSalesSummaryRepositoryAdapter(
       if (filter.summaryDate) {
         results = results.filter((item) => item.summaryDate === filter.summaryDate);
       }
-      if (filter.periodStart) {
-        results = results.filter((item) => item.periodStart === filter.periodStart);
-      }
-      if (filter.periodEnd) {
-        results = results.filter((item) => item.periodEnd === filter.periodEnd);
-      }
       return results;
     },
 
@@ -133,9 +127,9 @@ export function createAiSalesSummaryRepositoryAdapter(
       const rows = await (await getTable()).findMany({
         orderBy: { field: 'created_at', direction: 'desc' },
       });
-      const match = rows
-        .map(toDomain)
-        .find((item) => item.periodStart === period.start && item.periodEnd === period.end);
+      const match = rows.map(toDomain).find(
+        (item) => item.periodStart === period.start && item.periodEnd === period.end,
+      );
       return match ?? null;
     },
 
@@ -144,8 +138,7 @@ export function createAiSalesSummaryRepositoryAdapter(
         orderBy: { field: 'created_at', direction: 'desc' },
         limit: 1,
       });
-      const row = rows[0];
-      return row ? toDomain(row) : null;
+      return rows.length > 0 ? toDomain(rows[0]) : null;
     },
   };
 }

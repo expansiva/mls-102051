@@ -29,7 +29,7 @@ export const shiftClosingReportRepositoryPort = {
         "params": [
           "filter: ShiftClosingReportFilter"
         ],
-        "description": "List shift closing reports matching domain filter"
+        "description": "List closing reports matching domain filter"
       },
       {
         "name": "save",

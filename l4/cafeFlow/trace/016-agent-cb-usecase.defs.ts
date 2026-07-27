@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:48.574Z",
+  "savedAt": "2026-07-24T20:01:04.087Z",
   "agentName": "agentCbUsecase",
   "stepId": 16,
   "planning": null,
@@ -11,178 +11,193 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "updateStockItem",
-          "ports": [],
+          "usecaseId": "recordBasicPayment",
+          "ports": [
+            "Order",
+            "StockConsumption"
+          ],
           "functions": [
             {
-              "functionName": "updateStockItem",
-              "inputTypeName": "UpdateStockItemInput",
-              "outputTypeName": "UpdateStockItemOutput",
+              "functionName": "recordBasicPayment",
+              "inputTypeName": "RecordBasicPaymentInput",
+              "outputTypeName": "RecordBasicPaymentOutput",
               "input": [
                 {
-                  "name": "stockItemId",
+                  "name": "orderId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockItem",
-                  "fieldRef": "StockItem.stockItemId"
+                  "ofEntity": "Order",
+                  "fieldRef": "OrderPayment.orderId"
                 },
                 {
-                  "name": "name",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockItem",
-                  "fieldRef": "StockItem.name"
-                },
-                {
-                  "name": "unit",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockItem",
-                  "fieldRef": "StockItem.unit"
-                },
-                {
-                  "name": "minimumLevel",
+                  "name": "totalAmount",
                   "type": "number",
                   "required": true,
-                  "ofEntity": "StockItem",
-                  "fieldRef": "StockItem.minimumLevel"
+                  "fieldRef": "OrderPayment.totalAmount"
                 },
                 {
-                  "name": "description",
+                  "name": "paymentMethod",
+                  "type": "string",
+                  "required": true,
+                  "fieldRef": "OrderPayment.paymentMethod"
+                },
+                {
+                  "name": "notes",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "StockItem",
-                  "fieldRef": "StockItem.description"
+                  "fieldRef": "OrderPayment.notes"
                 }
               ],
               "output": [
                 {
-                  "name": "stockItemId",
+                  "name": "orderPaymentId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockItem"
+                  "ofEntity": "OrderPayment"
                 },
                 {
-                  "name": "name",
+                  "name": "orderId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockItem"
+                  "ofEntity": "OrderPayment"
                 },
                 {
-                  "name": "unit",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockItem"
-                },
-                {
-                  "name": "currentBalance",
+                  "name": "totalAmount",
                   "type": "number",
                   "required": true,
-                  "ofEntity": "StockItem"
+                  "ofEntity": "OrderPayment"
                 },
                 {
-                  "name": "minimumLevel",
-                  "type": "number",
+                  "name": "paymentMethod",
+                  "type": "string",
                   "required": true,
-                  "ofEntity": "StockItem"
+                  "ofEntity": "OrderPayment"
                 },
                 {
-                  "name": "description",
+                  "name": "status",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "OrderPayment"
+                },
+                {
+                  "name": "paidAt",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "StockItem"
+                  "ofEntity": "OrderPayment"
+                },
+                {
+                  "name": "notes",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "OrderPayment"
+                },
+                {
+                  "name": "createdAt",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "OrderPayment"
                 },
                 {
                   "name": "updatedAt",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockItem"
+                  "ofEntity": "OrderPayment"
                 }
               ],
-              "ports": [],
+              "ports": [
+                "Order",
+                "StockConsumption"
+              ],
               "rulesApplied": [
-                "lowStockMustBeVisible"
+                "shiftClosingRecordsBasicTotalsAndPayments"
               ],
               "transactional": true,
               "steps": [
-                "Resolve updatedAt from ctx.clock.now() (systemDefault); do not accept it from the client",
-                "Load existing StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); fail if not found",
-                "Validate name is non-empty",
-                "Validate unit is one of: kg, liter, portion, unit",
-                "Validate minimumLevel is >= 0",
-                "Apply lowStockMustBeVisible inline: after update, if currentBalance < new minimumLevel the item remains eligible for low-stock highlight/alerts (visibility is driven by comparing currentBalance to minimumLevel; do not hide or clear balance)",
-                "Do not modify currentBalance — cadastral update only",
-                "Persist via ctx.mdm.entity.update with name, unit, minimumLevel, description and updatedAt",
-                "Return stockItemId, name, unit, currentBalance (unchanged), minimumLevel, description, updatedAt"
+                "Validate paymentMethod is one of cash|pix|creditCard|debitCard|mixed (rule shiftClosingRecordsBasicTotalsAndPayments); reject with rule id in error details otherwise",
+                "Validate totalAmount is a positive money value",
+                "Resolve orderPaymentId via ctx.idGenerator and paidAt/createdAt/updatedAt via ctx.clock; set status to open",
+                "Inside ctx.data transaction: load parent Order by orderId through Order port (resolveRepository)",
+                "Reject if Order not found or status is cancelled",
+                "Enforce one-to-one: reject if Order already has an embedded OrderPayment that is not voided",
+                "Create OrderPayment {orderPaymentId, orderId, totalAmount, paymentMethod, status:'open', paidAt, notes, createdAt, updatedAt} and embed it on the Order aggregate collection",
+                "Save parent Order through Order port",
+                "Append persisted StockConsumption audit event through StockConsumption port in the same transaction (purpose audit, append-only)",
+                "Return the created OrderPayment fields per outputShape"
               ],
               "outputShape": {
                 "kind": "object",
                 "fields": [
                   {
-                    "name": "stockItemId",
+                    "name": "orderPaymentId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "StockItem.stockItemId"
+                    "fieldRef": "OrderPayment.orderPaymentId"
                   },
                   {
-                    "name": "name",
+                    "name": "orderId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "StockItem.name"
+                    "fieldRef": "OrderPayment.orderId"
                   },
                   {
-                    "name": "unit",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockItem.unit"
-                  },
-                  {
-                    "name": "currentBalance",
+                    "name": "totalAmount",
                     "type": "number",
                     "required": true,
-                    "fieldRef": "StockItem.currentBalance"
+                    "fieldRef": "OrderPayment.totalAmount"
                   },
                   {
-                    "name": "minimumLevel",
-                    "type": "number",
+                    "name": "paymentMethod",
+                    "type": "string",
                     "required": true,
-                    "fieldRef": "StockItem.minimumLevel"
+                    "fieldRef": "OrderPayment.paymentMethod"
                   },
                   {
-                    "name": "description",
+                    "name": "status",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "OrderPayment.status"
+                  },
+                  {
+                    "name": "paidAt",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "StockItem.description"
+                    "fieldRef": "OrderPayment.paidAt"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "OrderPayment.notes"
+                  },
+                  {
+                    "name": "createdAt",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "OrderPayment.createdAt"
                   },
                   {
                     "name": "updatedAt",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "StockItem.updatedAt"
+                    "fieldRef": "OrderPayment.updatedAt"
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "lowStockMustBeVisible"
+            "shiftClosingRecordsBasicTotalsAndPayments"
           ],
-          "mdmRefs": [
-            "StockItem"
-          ]
+          "mdmRefs": []
         },
         "questions": [],
         "trace": [
-          "StockItem is mdmRef — update via ctx.mdm.entity, ports empty",
-          "Public inputs: stockItemId (routeParam), name/unit/minimumLevel/description (userInput)",
-          "updatedAt from ctx.clock systemDefault",
-          "outputShape mirrored verbatim",
-          "lowStockMustBeVisible applied inline; currentBalance preserved"
+          "recordBasicPayment: child OrderPayment via parent Order port; public inputs orderId/totalAmount/paymentMethod/notes; systemDefaults for id/status/timestamps; emit StockConsumption audit in-tx"
         ]
       }
     },
     "status": "completed",
-    "stepId": 23,
+    "stepId": 24,
     "interaction": null,
     "nextSteps": null
   }

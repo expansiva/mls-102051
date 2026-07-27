@@ -39,57 +39,44 @@ export interface CloseDailyShiftOutput {
   generatedAt: string;
 }
 
-function isCancelledOrder(order: Order): boolean {
-  return String(order.status) === 'cancelled';
+interface TopSellerAgg {
+  menuItemId: string;
+  menuItemName: string;
+  quantity: number;
 }
 
-function isCancelledItem(item: OrderItem): boolean {
-  return String(item.status) === 'cancelled';
+function isNonCancelledOrder(order: Order): boolean {
+  return String(order.status) !== 'cancelled';
+}
+
+function isNonCancelledItem(item: OrderItem): boolean {
+  return String(item.status) !== 'cancelled';
 }
 
 function buildTopSellingItemsSummary(orders: Order[]): string | null {
-  const qtyByName = new Map<string, number>();
+  const byItem = new Map<string, TopSellerAgg>();
   for (const order of orders) {
-    if (isCancelledOrder(order)) {
-      continue;
-    }
+    if (!isNonCancelledOrder(order)) continue;
     for (const item of order.items ?? []) {
-      if (isCancelledItem(item)) {
-        continue;
+      if (!isNonCancelledItem(item)) continue;
+      const existing = byItem.get(item.menuItemId);
+      if (existing) {
+        existing.quantity += item.quantity;
+      } else {
+        byItem.set(item.menuItemId, {
+          menuItemId: item.menuItemId,
+          menuItemName: item.menuItemName,
+          quantity: item.quantity,
+        });
       }
-      const name = item.menuItemName?.trim() || item.menuItemId;
-      qtyByName.set(name, (qtyByName.get(name) ?? 0) + item.quantity);
     }
   }
-  const ranked = [...qtyByName.entries()]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  const ranked = [...byItem.values()].sort((a, b) => b.quantity - a.quantity);
+  if (ranked.length === 0) return null;
+  return ranked
     .slice(0, 10)
-    .map(([name, qty]) => `${name}: ${qty}`);
-  if (ranked.length === 0) {
-    return null;
-  }
-  return ranked.join('; ');
-}
-
-function derivePaymentTotals(orders: Order[]): { cash: number; other: number } {
-  let cash = 0;
-  let other = 0;
-  for (const order of orders) {
-    if (isCancelledOrder(order)) {
-      continue;
-    }
-    const payment = order.payment;
-    if (!payment || String(payment.status) === 'voided') {
-      continue;
-    }
-    const amount = payment.totalAmount ?? 0;
-    if (String(payment.paymentMethod) === 'cash') {
-      cash += amount;
-    } else {
-      other += amount;
-    }
-  }
-  return { cash, other };
+    .map((entry) => `${entry.menuItemName} (${entry.quantity})`)
+    .join(', ');
 }
 
 export async function closeDailyShift(
@@ -98,15 +85,14 @@ export async function closeDailyShift(
 ): Promise<CloseDailyShiftOutput> {
   const dailyShifts = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
   const ordersRepo = resolveRepository<IOrderRepository>(ctx, 'Order');
-  const shiftClosingReports = resolveRepository<IShiftClosingReportRepository>(
-    ctx,
-    'ShiftClosingReport',
-  );
+  const reports = resolveRepository<IShiftClosingReportRepository>(ctx, 'ShiftClosingReport');
 
   const closedAt = ctx.clock.nowIso();
-  const closedByUserId = ctx.sessionContext.actorId ?? ctx.sessionContext.actorSession?.actorId;
+  const closedByUserId = ctx.sessionContext.actorId;
   if (!closedByUserId) {
-    throw new AppError('VALIDATION_ERROR', 'Actor session is required to close a daily shift.', 400);
+    throw new AppError('VALIDATION_ERROR', 'Actor session is required to close a daily shift.', 400, {
+      field: 'closedByUserId',
+    });
   }
 
   // rule: ordersRequireOpenDailyShift — resolve the single open DailyShift (activeLifecycleInstance)
@@ -120,95 +106,77 @@ export async function closeDailyShift(
     );
   }
   const openShift = openShifts[0]!;
-  const dailyShift = await dailyShifts.getById(openShift.dailyShiftId);
-  if (!dailyShift || String(dailyShift.status) !== 'open') {
-    throw new AppError(
-      'VALIDATION_ERROR',
-      'ordersRequireOpenDailyShift: somente turnos abertos podem ser fechados.',
-      400,
-      { ruleId: 'ordersRequireOpenDailyShift', dailyShiftId: openShift.dailyShiftId },
-    );
+  const shift = await dailyShifts.getById(openShift.dailyShiftId);
+  if (!shift) {
+    throw new AppError('NOT_FOUND', `DailyShift not found: ${openShift.dailyShiftId}`, 404, {
+      dailyShiftId: openShift.dailyShiftId,
+    });
   }
-  if (!canTransitionDailyShift(dailyShift.status, 'closed')) {
+  if (String(shift.status) !== 'open' || !canTransitionDailyShift(shift.status, 'closed')) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'ordersRequireOpenDailyShift: transição de status do turno não permitida.',
+      'ordersRequireOpenDailyShift: somente um turno aberto pode ser fechado.',
       400,
-      { ruleId: 'ordersRequireOpenDailyShift', from: dailyShift.status, to: 'closed' },
+      { ruleId: 'ordersRequireOpenDailyShift', status: shift.status },
     );
   }
 
-  const orders = await ordersRepo.findByDailyShiftId(dailyShift.dailyShiftId);
-  const activeOrders = orders.filter((order) => !isCancelledOrder(order));
+  const orders = await ordersRepo.findByDailyShiftId(shift.dailyShiftId);
+  const activeOrders = orders.filter(isNonCancelledOrder);
 
   const totalOrders = activeOrders.length;
-  const totalSalesAmount = activeOrders.reduce((sum, order) => sum + (order.totalAmount ?? 0), 0);
+  const totalSalesAmount = activeOrders.reduce((sum, order) => sum + order.totalAmount, 0);
   let totalItemsSold = 0;
   for (const order of activeOrders) {
     for (const item of order.items ?? []) {
-      if (!isCancelledItem(item)) {
+      if (isNonCancelledItem(item)) {
         totalItemsSold += item.quantity;
       }
     }
   }
 
-  const derivedPayments = derivePaymentTotals(orders);
-  const cashTotal = input.cashTotal ?? derivedPayments.cash;
-  const otherPaymentsTotal = input.otherPaymentsTotal ?? derivedPayments.other;
-  const cashPaymentsAmount = cashTotal;
-  const otherPaymentsAmount = otherPaymentsTotal;
+  let cashPaymentsAmount = 0;
+  let otherPaymentsAmount = 0;
+  for (const order of activeOrders) {
+    const payment = order.payment;
+    if (!payment || String(payment.status) === 'voided') continue;
+    if (String(payment.paymentMethod) === 'cash') {
+      cashPaymentsAmount += payment.totalAmount;
+    } else {
+      otherPaymentsAmount += payment.totalAmount;
+    }
+  }
 
-  // rule: shiftClosingReportContents — top sellers + stock signal counts
+  const cashTotal = input.cashTotal ?? cashPaymentsAmount;
+  const otherPaymentsTotal = input.otherPaymentsTotal ?? otherPaymentsAmount;
+  const notes = input.notes ?? shift.notes ?? null;
+
+  // rule: shiftClosingReportContents — top sellers + stock signal counts from MDM StockItem
   const topSellingItemsSummary = buildTopSellingItemsSummary(orders);
-
-  const stockList = await ctx.mdm.collection.listByType({ type: 'cafeFlow.StockItem' });
-  const stockMdmIds = stockList.items.map((item) => item.mdmId);
-  const stockEntities =
-    stockMdmIds.length > 0
-      ? await ctx.mdm.collection.getMany({ mdmIds: stockMdmIds })
-      : [];
 
   let lowStockSignalsCount = 0;
   let stockoutSignalsCount = 0;
-  for (const entity of stockEntities) {
-    const details = (entity.details ?? {}) as unknown as Record<string, unknown>;
-    const moduleDetails = (details.cafeFlow ?? details) as Record<string, unknown>;
-    const currentBalance = Number(
-      moduleDetails.currentBalance ?? details.currentBalance ?? 0,
-    );
-    const minimumLevel = Number(
-      moduleDetails.minimumLevel ?? details.minimumLevel ?? 0,
-    );
-    if (currentBalance <= 0) {
-      stockoutSignalsCount += 1;
-    } else if (currentBalance <= minimumLevel) {
-      lowStockSignalsCount += 1;
+  const stockList = await ctx.mdm.collection.listByType({ type: 'cafeFlow.StockItem' });
+  const stockMdmIds = stockList.items.map((item) => item.mdmId);
+  if (stockMdmIds.length > 0) {
+    const stockEntities = await ctx.mdm.collection.getMany({ mdmIds: stockMdmIds });
+    for (const entity of stockEntities) {
+      const details = entity.details as unknown as Record<string, unknown>;
+      const moduleDetails = (details.cafeFlow ?? details) as Record<string, unknown>;
+      const currentBalance = Number(moduleDetails.currentBalance ?? 0);
+      const minimumLevel = Number(moduleDetails.minimumLevel ?? 0);
+      if (currentBalance <= 0) {
+        stockoutSignalsCount += 1;
+      } else if (currentBalance <= minimumLevel) {
+        lowStockSignalsCount += 1;
+      }
     }
   }
 
   const shiftClosingReportId = ctx.idGenerator.newId();
-  const notes = input.notes ?? dailyShift.notes ?? null;
-
-  const report: ShiftClosingReport = {
-    shiftClosingReportId,
-    dailyShiftId: dailyShift.dailyShiftId,
-    shiftDate: dailyShift.shiftDate,
-    totalSalesAmount,
-    totalOrdersCount: totalOrders,
-    totalItemsSold,
-    cashPaymentsAmount,
-    otherPaymentsAmount,
-    topSellingItemsSummary,
-    lowStockSignalsCount,
-    stockoutSignalsCount,
-    closingNotes: notes,
-    generatedAt: closedAt,
-    createdAt: closedAt,
-    updatedAt: closedAt,
-  };
 
   const closedShift: DailyShift = {
-    ...dailyShift,
+    ...shift,
     status: 'closed',
     closedByUserId,
     closedAt,
@@ -221,9 +189,27 @@ export async function closeDailyShift(
     updatedAt: closedAt,
   };
 
+  const report: ShiftClosingReport = {
+    shiftClosingReportId,
+    dailyShiftId: shift.dailyShiftId,
+    shiftDate: shift.shiftDate,
+    totalSalesAmount,
+    totalOrdersCount: totalOrders,
+    totalItemsSold,
+    cashPaymentsAmount: cashTotal,
+    otherPaymentsAmount: otherPaymentsTotal,
+    topSellingItemsSummary,
+    lowStockSignalsCount,
+    stockoutSignalsCount,
+    closingNotes: notes,
+    generatedAt: closedAt,
+    createdAt: closedAt,
+    updatedAt: closedAt,
+  };
+
   await ctx.data.runInTransaction(async () => {
-    await shiftClosingReports.save(report);
     await dailyShifts.save(closedShift);
+    await reports.save(report);
   });
 
   return {

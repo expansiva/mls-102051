@@ -14,7 +14,8 @@ export const createStockAdjustmentUsecase = {
   "data": {
     "usecaseId": "createStockAdjustment",
     "ports": [
-      "DailyShift"
+      "DailyShift",
+      "StockAdjustment"
     ],
     "functions": [
       {
@@ -127,7 +128,8 @@ export const createStockAdjustmentUsecase = {
           }
         ],
         "ports": [
-          "DailyShift"
+          "DailyShift",
+          "StockAdjustment"
         ],
         "rulesApplied": [
           "managerManualStockAdjustmentAllowed"
@@ -136,12 +138,12 @@ export const createStockAdjustmentUsecase = {
         "steps": [
           "Resolve managerUserId from ctx.sessionContext.actorId (actorSession)",
           "Generate stockAdjustmentId via ctx.idGenerator and createdAt via ctx.clock.now()",
-          "Resolve optional active DailyShift: query DailyShift port for status 'open'; use dailyShiftId as shiftId when found, else leave shiftId unset",
+          "Resolve optional active DailyShift: list via DailyShift port where status is open; if found set shiftId to its dailyShiftId, otherwise leave shiftId unset",
           "Load StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); fail if not found",
-          "Validate direction in [in, out, correction] and reason in [count, loss, expiration, divergence, other]; quantity must be > 0 (rule managerManualStockAdjustmentAllowed)",
-          "Compute resultingBalance from StockItem.currentBalance and direction/quantity (in: +quantity, out: -quantity, correction: set to quantity)",
-          "Reject if resultingBalance would be negative",
-          "Inside ctx.data transaction: create StockAdjustment with status 'posted' via StockAdjustment port; update StockItem.currentBalance to resultingBalance and updatedAt via ctx.mdm.entity.update",
+          "Apply managerManualStockAdjustmentAllowed inline: ensure actor is a manager authorized to perform manual stock adjustments; reject with rule id in error details if not",
+          "Validate direction is one of in|out|correction and reason is one of count|loss|expiration|divergence|other; quantity must be > 0",
+          "Compute resultingBalance from StockItem.currentBalance and direction/quantity (in adds, out subtracts, correction sets/adjusts per domain convention); reject if resultingBalance would be negative for out",
+          "Within ctx.data transaction: create StockAdjustment with status posted via StockAdjustment port; update StockItem.currentBalance to resultingBalance via ctx.mdm.entity.update",
           "Return the created StockAdjustment fields matching outputShape"
         ],
         "outputShape": {
@@ -236,7 +238,9 @@ export const pipeline = [
     "defPath": "_102051_/l1/cafeFlow/layer_2_application/usecases/createStockAdjustment.defs.ts",
     "dependsFiles": [
       "_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.d.ts",
-      "_102051_/l1/cafeFlow/layer_3_domain/entities/dailyShift.d.ts"
+      "_102051_/l1/cafeFlow/layer_2_application/ports/stockAdjustmentRepository.d.ts",
+      "_102051_/l1/cafeFlow/layer_3_domain/entities/dailyShift.d.ts",
+      "_102051_/l1/cafeFlow/layer_3_domain/entities/stockAdjustment.d.ts"
     ],
     "dependsOn": [],
     "skills": [

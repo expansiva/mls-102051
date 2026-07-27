@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:20:17.610Z",
+  "savedAt": "2026-07-24T20:01:25.904Z",
   "agentName": "agentCbUsecase",
   "stepId": 17,
   "planning": null,
@@ -91,13 +91,13 @@
               ],
               "transactional": false,
               "steps": [
-                "Resolve the single open DailyShift via DailyShift port (status === 'open'); this supplies dailyShiftId from activeLifecycleInstance — never accept it as public input",
-                "If no open DailyShift exists, apply ordersRequireOpenDailyShift and return an empty kitchen queue (no missing-input error)",
-                "Via Order port, list orders where dailyShiftId equals the open shift id and status is in ['confirmed', 'inPreparation'] (orderEntersKitchenQueueAfterAttendantConfirmation: exclude registered; completedOrdersLeaveKitchenQueue: exclude ready, served, cancelled)",
-                "Sort the matched orders by confirmedAt ascending to prioritize kitchen flow",
-                "For each order, project embedded OrderItems as prep reference (orderItemsArePrepReference): orderItemId, menuItemName, quantity, observations, status",
-                "Map each order to the canonical output shape: orderId, orderType, tableNumber, customerName, notes, status, confirmedAt, inPreparationAt, items (orderRequiresTableOrTakeout is reflected by orderType/tableNumber already on the aggregate)",
-                "Return the ordered list of kitchen-queue projections"
+                "Resolve the single open DailyShift (status 'open') via the DailyShift port; do not accept dailyShiftId from the client (activeLifecycleInstance).",
+                "If no open DailyShift exists, return an empty list (ordersRequireOpenDailyShift) — kitchen queue has no data without an open shift.",
+                "Via the Order port, list orders filtered by dailyShiftId = open shift id and status in ['confirmed', 'inPreparation'] (orderEntersKitchenQueueAfterAttendantConfirmation; completedOrdersLeaveKitchenQueue excludes registered/ready/served/cancelled).",
+                "Sort the matching orders by confirmedAt ascending to prioritize kitchen flow.",
+                "For each order, project orderId, orderType, tableNumber, customerName, notes, status, confirmedAt, inPreparationAt; ensure orderType is table or takeout (orderRequiresTableOrTakeout).",
+                "Include embedded OrderItem collection as items with orderItemId, menuItemName, quantity, observations, status as prep reference (orderItemsArePrepReference).",
+                "Return the projected list matching outputShape."
               ],
               "outputShape": {
                 "kind": "list",
@@ -204,7 +204,7 @@
         },
         "questions": [],
         "trace": [
-          "viewKitchenQueue: list query over Order+DailyShift ports; dailyShiftId from activeLifecycleInstance; outputShape pinned; rules applied inline; no public inputs; non-transactional read"
+          "viewKitchenQueue: list query over Order+DailyShift; dailyShiftId from active open DailyShift; filter confirmed|inPreparation; outputShape verbatim; no public input; non-transactional read"
         ]
       }
     },

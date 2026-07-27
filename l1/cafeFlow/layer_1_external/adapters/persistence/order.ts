@@ -6,7 +6,7 @@ export const orderTableDef: TableDefinition = {
   repositoryName: 'cafeFlowOrder',
   tableName: 'order',
   purpose: 'transacao',
-  description: 'Pedidos. Itens e campos não indexados em details (JSONB).',
+  description: 'Pedidos. Itens, pagamentos e campos não indexados em details (JSONB).',
   backupHot: false,
   storageProfile: 'postgres',
   writeMode: 'sync',

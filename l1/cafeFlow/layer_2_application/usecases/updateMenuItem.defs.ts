@@ -173,12 +173,12 @@ export const updateMenuItemUsecase = {
         "transactional": true,
         "steps": [
           "Load existing MenuItem by input.menuItemId via ctx.mdm.entity.get({ mdmId: menuItemId }); fail if not found",
-          "Validate menuCategoryId is present and price is defined and > 0 (rule menuItemNeedsCategoryAndPrice); include rule id in validation error details when blocked",
-          "Verify target MenuCategory exists via ctx.mdm.entity.get({ mdmId: menuCategoryId }) and is usable; fail if missing",
-          "Validate status is 'active' or 'paused'; when status is 'paused', item becomes unavailable for new POS orders (rule onlyActiveMenuItemsCanBeOrdered); when status is 'active', item is available again",
-          "Resolve updatedAt from ctx.clock.now(); if status is 'paused', set pausedAt to ctx.clock.now() (keep or set pauseReason from input); if status is 'active', clear pausedAt and pauseReason",
-          "Persist via ctx.mdm.entity.update with menuItemId and fields: menuCategoryId, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, updatedAt",
-          "Return the updated MenuItem projection: menuItemId, menuCategoryId, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, updatedAt"
+          "Apply menuItemNeedsCategoryAndPrice inline: require non-empty menuCategoryId and price > 0; on violation raise validation error with rule id menuItemNeedsCategoryAndPrice",
+          "Validate menuCategoryId exists via ctx.mdm.entity.get({ mdmId: menuCategoryId }); fail if category missing",
+          "Resolve now = ctx.clock.now(); set updatedAt = now",
+          "Apply status transition for onlyActiveMenuItemsCanBeOrdered: if status === 'paused', set pausedAt = now (keep pauseReason from input); if status === 'active', clear pausedAt and pauseReason so item is orderable again; reject status values outside active|paused with rule id onlyActiveMenuItemsCanBeOrdered",
+          "Persist via ctx.mdm.entity.update with menuItemId and fields: menuCategoryId, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, updatedAt (module-specific fields under details.cafeFlow as applicable)",
+          "Return the updated MenuItem projection matching outputShape: menuItemId, menuCategoryId, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, updatedAt"
         ],
         "outputShape": {
           "kind": "object",

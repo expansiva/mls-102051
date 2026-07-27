@@ -3,19 +3,9 @@ import { AppError, type RequestContext } from '/_102034_/l1/server/layer_2_contr
 import { resolveRepository } from '/_102034_/l1/server/layer_2_application/repositoryRegistry.js';
 import type { IOrderRepository } from '/_102051_/l1/cafeFlow/layer_2_application/ports/orderRepository.js';
 import type { IStockConsumptionRepository } from '/_102051_/l1/cafeFlow/layer_2_application/ports/stockConsumptionRepository.js';
-import type {
-  OrderPayment,
-  OrderPaymentMethod,
-} from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
+import type { OrderPayment, OrderPaymentMethod } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
+import { paymentMatchesOrderTotal } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/order.js';
 import type { StockConsumption } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/stockConsumption.js';
-
-const VALID_PAYMENT_METHODS: ReadonlySet<string> = new Set([
-  'cash',
-  'pix',
-  'creditCard',
-  'debitCard',
-  'mixed',
-]);
 
 export interface RecordBasicPaymentInput {
   orderId: string;
@@ -36,6 +26,18 @@ export interface RecordBasicPaymentOutput {
   updatedAt: string;
 }
 
+const VALID_PAYMENT_METHODS: readonly OrderPaymentMethod[] = [
+  'cash',
+  'pix',
+  'creditCard',
+  'debitCard',
+  'mixed',
+] as const;
+
+function isValidPaymentMethod(method: string): method is OrderPaymentMethod {
+  return (VALID_PAYMENT_METHODS as readonly string[]).includes(method);
+}
+
 export async function recordBasicPayment(
   ctx: RequestContext,
   input: RecordBasicPaymentInput,
@@ -43,10 +45,7 @@ export async function recordBasicPayment(
   const orders = resolveRepository<IOrderRepository>(ctx, 'Order');
   const stockConsumptions = resolveRepository<IStockConsumptionRepository>(ctx, 'StockConsumption');
 
-  const now = ctx.clock.nowIso();
-  const orderPaymentId = ctx.idGenerator.newId();
-
-  if (!VALID_PAYMENT_METHODS.has(input.paymentMethod)) {
+  if (!isValidPaymentMethod(input.paymentMethod)) {
     throw new AppError(
       'VALIDATION_ERROR',
       'shiftClosingRecordsBasicTotalsAndPayments: paymentMethod must be one of cash|pix|creditCard|debitCard|mixed.',
@@ -55,18 +54,34 @@ export async function recordBasicPayment(
     );
   }
 
-  if (!(input.totalAmount > 0)) {
+  if (!(typeof input.totalAmount === 'number' && Number.isFinite(input.totalAmount) && input.totalAmount > 0)) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'shiftClosingRecordsBasicTotalsAndPayments: totalAmount must be greater than zero.',
+      'shiftClosingRecordsBasicTotalsAndPayments: totalAmount must be a positive money value.',
       400,
       { ruleId: 'shiftClosingRecordsBasicTotalsAndPayments', totalAmount: input.totalAmount },
     );
   }
 
-  const paymentMethod = input.paymentMethod as OrderPaymentMethod;
+  const now = ctx.clock.nowIso();
+  const orderPaymentId = ctx.idGenerator.newId();
 
-  const payment = await ctx.data.runInTransaction(async () => {
+  const payment: OrderPayment = {
+    orderPaymentId,
+    orderId: input.orderId,
+    totalAmount: input.totalAmount,
+    paymentMethod: input.paymentMethod,
+    status: 'open',
+    paidAt: now,
+    closedAt: null,
+    voidedAt: null,
+    voidReason: null,
+    notes: input.notes ?? null,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  await ctx.data.runInTransaction(async () => {
     const order = await orders.getById(input.orderId);
     if (!order) {
       throw new AppError('NOT_FOUND', `Order not found: ${input.orderId}`, 404, {
@@ -74,56 +89,52 @@ export async function recordBasicPayment(
       });
     }
 
-    // rule: shiftClosingRecordsBasicTotalsAndPayments — one-to-one non-voided payment
-    if (order.payment !== null && order.payment.status !== 'voided') {
+    // one-to-one: reject when a non-voided payment already exists
+    if (order.payment !== null && String(order.payment.status) !== 'voided') {
       throw new AppError(
-        'CONFLICT',
+        'VALIDATION_ERROR',
         'shiftClosingRecordsBasicTotalsAndPayments: order already has a non-voided payment.',
-        409,
+        400,
+        { ruleId: 'shiftClosingRecordsBasicTotalsAndPayments', orderId: input.orderId },
+      );
+    }
+
+    if (!paymentMatchesOrderTotal(order, payment)) {
+      throw new AppError(
+        'VALIDATION_ERROR',
+        'shiftClosingRecordsBasicTotalsAndPayments: payment totalAmount must match order totalAmount.',
+        400,
         {
           ruleId: 'shiftClosingRecordsBasicTotalsAndPayments',
-          orderId: order.orderId,
-          existingOrderPaymentId: order.payment.orderPaymentId,
-          existingStatus: order.payment.status,
+          orderTotal: order.totalAmount,
+          paymentTotal: payment.totalAmount,
         },
       );
     }
 
-    const orderPayment: OrderPayment = {
-      orderPaymentId,
-      orderId: order.orderId,
-      totalAmount: input.totalAmount,
-      paymentMethod,
-      status: 'open',
-      paidAt: now,
-      closedAt: null,
-      voidedAt: null,
-      voidReason: null,
-      notes: input.notes ?? null,
-      createdAt: now,
+    const updatedOrder = {
+      ...order,
+      payment,
       updatedAt: now,
     };
+    await orders.save(updatedOrder);
 
-    order.payment = orderPayment;
-    order.updatedAt = now;
-
-    await orders.save(order);
-
-    const stockConsumption: StockConsumption = {
-      stockConsumptionId: ctx.idGenerator.newId(),
-      orderId: order.orderId,
-      stockItemId: orderPayment.orderPaymentId,
-      quantity: 1,
-      occurredAt: now,
-      status: 'posted',
-      voidedAt: null,
-      voidReason: null,
-      createdAt: now,
-    };
-    // rule: shiftClosingRecordsBasicTotalsAndPayments — append-only payment audit trail
-    await stockConsumptions.append(stockConsumption);
-
-    return orderPayment;
+    // rule: shiftClosingRecordsBasicTotalsAndPayments — append stock consumption audit per non-cancelled item
+    for (const item of order.items) {
+      if (String(item.status) === 'cancelled') continue;
+      const consumption: StockConsumption = {
+        stockConsumptionId: ctx.idGenerator.newId(),
+        orderId: order.orderId,
+        stockItemId: item.menuItemId,
+        quantity: item.quantity,
+        occurredAt: now,
+        status: 'posted',
+        voidedAt: null,
+        voidReason: null,
+        createdAt: now,
+      };
+      await stockConsumptions.append(consumption);
+    }
   });
 
   return {

@@ -82,29 +82,36 @@ export const definition = {
   "navigationRefs": [],
   "sections": [
     {
-      "id": "section.menuManagement.sec-menu-item-workbench",
+      "id": "section.menuManagement.sec-menu-item-list",
       "type": "section",
-      "sectionName": "Menu Item Workbench",
-      "titleKey": "section.menuManagement.sec-menu-item-workbench.title",
+      "sectionName": "Lista de Itens do Cardápio",
+      "titleKey": "section.menuManagement.sec-menu-item-list.title",
       "mode": "edit",
       "order": 10,
       "organisms": [
         {
-          "id": "org-menu-item-filter-bar",
-          "type": "content",
+          "id": "org-menu-item-filters",
+          "type": "queryResult",
           "organismName": "MenuItemFilterBar",
-          "titleKey": "organism.menuManagement.summary-first10.title",
-          "purpose": "Permite ao gerente filtrar a lista de itens por categoria, status e nome antes de navegar ou selecionar um item para edição.",
-          "userActions": [],
+          "titleKey": "organism.menuManagement.listMenuItems.title",
+          "purpose": "Permite ao gerente filtrar a lista de itens por categoria, status e nome antes de navegar pelos resultados, reduzindo o tempo de localização.",
+          "userActions": [
+            "listMenuItems"
+          ],
           "requiredEntities": [],
           "readsFields": [],
           "writesFields": [],
-          "rulesApplied": [],
+          "rulesApplied": [
+            "onlyActiveMenuItemsCanBeOrdered",
+            "menuItemNeedsCategoryAndPrice"
+          ],
           "order": 10,
           "intentionRefs": [
             {
-              "id": "intent.menuManagement.summary-first10.content",
-              "intent": "summary-first",
+              "id": "intent.menuManagement.listMenuItems.list",
+              "intent": "queryList",
+              "stateKey": "ui.menuManagement.data.listMenuItems",
+              "action": "listMenuItems",
               "order": 10
             }
           ]
@@ -114,7 +121,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "MenuItemTable",
           "titleKey": "organism.menuManagement.listMenuItems.title",
-          "purpose": "Exibe a lista paginada de itens do cardápio com nome, categoria, preço, status e ordem de exibição; é a superfície primária de navegação e seleção.",
+          "purpose": "Exibe a lista paginada de itens do cardápio com colunas de nome, categoria, preço, status e ordem; cada linha expõe ações contextuais de edição e transição de status.",
           "userActions": [
             "listMenuItems"
           ],
@@ -128,7 +135,7 @@ export const definition = {
           "order": 20,
           "intentionRefs": [
             {
-              "id": "intent.menuManagement.listMenuItems.list",
+              "id": "intent.menuManagement.listMenuItems.list2",
               "intent": "queryList",
               "stateKey": "ui.menuManagement.data.listMenuItems",
               "action": "listMenuItems",
@@ -141,7 +148,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "MenuItemDetailPanel",
           "titleKey": "organism.menuManagement.updateMenuItemCmd.title",
-          "purpose": "Painel lateral contextual que exibe e permite editar os dados do item selecionado, incluindo transições de status (ativo/pausado) como botões explícitos.",
+          "purpose": "Painel lateral que exibe os dados completos do item selecionado e permite editar nome, categoria, preço, descrição, imagem, ordem e vínculo de estoque; apresenta botões de transição de status (Ativar / Pausar) em vez de select livre.",
           "userActions": [
             "updateMenuItemCmd"
           ],
@@ -167,7 +174,7 @@ export const definition = {
     {
       "id": "section.menuManagement.sec-create-menu-item",
       "type": "section",
-      "sectionName": "Criar Item do Cardápio",
+      "sectionName": "Criar Novo Item",
       "titleKey": "section.menuManagement.sec-create-menu-item.title",
       "mode": "edit",
       "order": 20,
@@ -177,7 +184,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "CreateMenuItemForm",
           "titleKey": "organism.menuManagement.createMenuItemCmd.title",
-          "purpose": "Formulário de criação de novo item do cardápio, acessado via botão 'Novo item' na toolbar; coleta apenas as decisões reais do gerente (nome, categoria, preço, descrição, imagem, ordem, vínculo de estoque).",
+          "purpose": "Formulário modal ou painel de criação acionado pelo botão primário 'Novo item' na toolbar; coleta os dados obrigatórios (nome, categoria, preço) e opcionais para cadastrar um novo item no cardápio.",
           "userActions": [
             "createMenuItemCmd"
           ],
@@ -205,45 +212,43 @@ export const definition = {
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "pageObjective": {
     "actor": "Gerente de café",
-    "jobToBeDone": "Visualizar, filtrar, cadastrar e editar itens do cardápio — incluindo preço, categoria, status e vínculo de estoque — para manter o cardápio do PDV sempre atualizado.",
-    "primaryDecision": "Selecionar um item existente para editar ou iniciar o cadastro de um novo item do cardápio.",
+    "jobToBeDone": "Manter o cardápio atualizado cadastrando novos itens, editando dados existentes e controlando a disponibilidade (ativo/pausado) de cada item.",
+    "primaryDecision": "Selecionar um item do cardápio para editar seus dados ou alterar sua disponibilidade, ou criar um novo item.",
     "decisiveInfo": [
       "name",
-      "menuCategoryId",
       "price",
+      "menuCategoryId",
       "status",
       "displayOrder",
-      "requiresStockLink",
-      "pauseReason"
+      "requiresStockLink"
     ],
     "usageFrequency": "Ocasional / back-office — o gerente acessa para manutenção do cardápio, não em fluxo contínuo de operação.",
     "criticalActions": [
       {
-        "action": "listMenuItems",
-        "presentation": "primary-surface — tabela paginada com filtros embutidos por categoria, status e nome"
-      },
-      {
         "action": "createMenuItemCmd",
-        "presentation": "primary-button na toolbar que abre painel lateral de criação"
+        "presentation": "primary-button abrindo painel lateral de criação"
       },
       {
         "action": "updateMenuItemCmd",
-        "presentation": "master-detail — painel de edição contextual ao selecionar linha; transições de status (ativo/pausado) como botões explícitos, nunca select livre"
+        "presentation": "master-detail — seleção de linha abre painel de edição com contextual-transition-actions para status ativo/pausado"
+      },
+      {
+        "action": "listMenuItems",
+        "presentation": "tabela paginada com filtros integrados no topo"
       }
     ],
     "informationHierarchy": [
-      "1. Filtros de categoria e status (contexto de navegação)",
-      "2. Lista de itens com nome, categoria, preço, status e ordem de exibição",
-      "3. Painel de detalhe/edição do item selecionado (nome, categoria, preço, descrição, imagem, displayOrder, requiresStockLink, status)",
-      "4. Formulário de criação de novo item (acessado via toolbar)"
+      "1. Tabela de itens do cardápio (nome, categoria, preço, status, ordem) com filtros por categoria, status e nome",
+      "2. Painel de detalhe/edição do item selecionado (dados completos + ações de transição de status)",
+      "3. Formulário de criação de novo item (acessível via botão primário na toolbar)"
     ],
-    "successCriteria": "O gerente encontra qualquer item em menos de 3 cliques, edita campos e altera status sem sair da tela, e cria novos itens com mínimo de digitação obrigatória.",
+    "successCriteria": "O gerente consegue localizar qualquer item em menos de 3 cliques, editar seus dados sem sair da tela principal e alterar disponibilidade com um único clique de transição de status.",
     "antiPatterns": [
-      "Formulário de edição em seção separada abaixo da lista (empilhamento desnecessário)",
-      "Campo de status como <select> livre sobre todos os valores do enum",
-      "menuItemId como campo de entrada manual",
-      "Exibir timestamps de auditoria (createdAt, updatedAt) como campos editáveis",
-      "Uma seção por operação (create / update / list cada uma em seu próprio bloco independente)"
+      "Formulário de edição em página separada",
+      "Status editável via <select> livre sobre todos os valores do enum",
+      "menuItemId como campo digitável",
+      "Seção separada para cada operação (create / update como seções empilhadas independentes)",
+      "Campos de sistema (createdAt, updatedAt, pausedAt) como inputs editáveis"
     ]
   },
   "layout": {
@@ -251,38 +256,98 @@ export const definition = {
     "type": "page",
     "sections": [
       {
-        "id": "section.menuManagement.sec-menu-item-workbench",
+        "id": "section.menuManagement.sec-menu-item-list",
         "type": "section",
-        "sectionName": "Menu Item Workbench",
-        "titleKey": "section.menuManagement.sec-menu-item-workbench.title",
+        "sectionName": "Lista de Itens do Cardápio",
+        "titleKey": "section.menuManagement.sec-menu-item-list.title",
         "mode": "edit",
         "order": 10,
         "organisms": [
           {
-            "id": "org-menu-item-filter-bar",
-            "type": "content",
+            "id": "org-menu-item-filters",
+            "type": "queryResult",
             "organismName": "MenuItemFilterBar",
-            "titleKey": "organism.menuManagement.summary-first10.title",
-            "purpose": "Permite ao gerente filtrar a lista de itens por categoria, status e nome antes de navegar ou selecionar um item para edição.",
-            "userActions": [],
+            "titleKey": "organism.menuManagement.listMenuItems.title",
+            "purpose": "Permite ao gerente filtrar a lista de itens por categoria, status e nome antes de navegar pelos resultados, reduzindo o tempo de localização.",
+            "userActions": [
+              "listMenuItems"
+            ],
             "requiredEntities": [],
             "readsFields": [],
             "writesFields": [],
-            "rulesApplied": [],
+            "rulesApplied": [
+              "onlyActiveMenuItemsCanBeOrdered",
+              "menuItemNeedsCategoryAndPrice"
+            ],
             "order": 10,
             "intentions": [
               {
-                "id": "intent.menuManagement.summary-first10.content",
-                "intent": "summary-first",
+                "id": "intent.menuManagement.listMenuItems.list",
+                "intent": "queryList",
                 "order": 10,
-                "titleKey": "intent.menuManagement.summary-first10.content.title",
-                "displayHint": "summary-first",
+                "titleKey": "intent.menuManagement.listMenuItems.list.title",
+                "source": "bff.listMenuItems",
+                "binding": "binding.menuManagement.listMenuItems",
+                "action": "listMenuItems",
+                "emptyKey": "intent.menuManagement.listMenuItems.list.empty",
                 "fields": [],
-                "columns": [],
-                "filters": [],
+                "columns": [
+                  {
+                    "id": "intent.menuManagement.listMenuItems.list.column.menuItems",
+                    "field": "menuItems",
+                    "labelKey": "intent.menuManagement.listMenuItems.list.column.menuItems.label",
+                    "order": 10,
+                    "stateKey": "ui.menuManagement.data.listMenuItems"
+                  },
+                  {
+                    "id": "intent.menuManagement.listMenuItems.list.column.total",
+                    "field": "total",
+                    "labelKey": "intent.menuManagement.listMenuItems.list.column.total.label",
+                    "order": 20,
+                    "stateKey": "ui.menuManagement.data.listMenuItems"
+                  }
+                ],
+                "filters": [
+                  {
+                    "id": "intent.menuManagement.listMenuItems.list.filter.status",
+                    "field": "status",
+                    "labelKey": "intent.menuManagement.listMenuItems.list.filter.status.label",
+                    "order": 10,
+                    "stateKey": "ui.menuManagement.input.listMenuItems.status"
+                  },
+                  {
+                    "id": "intent.menuManagement.listMenuItems.list.filter.menuCategoryId",
+                    "field": "menuCategoryId",
+                    "labelKey": "intent.menuManagement.listMenuItems.list.filter.menuCategoryId.label",
+                    "order": 20,
+                    "stateKey": "ui.menuManagement.input.listMenuItems.menuCategoryId"
+                  },
+                  {
+                    "id": "intent.menuManagement.listMenuItems.list.filter.name",
+                    "field": "name",
+                    "labelKey": "intent.menuManagement.listMenuItems.list.filter.name.label",
+                    "order": 30,
+                    "stateKey": "ui.menuManagement.input.listMenuItems.name"
+                  },
+                  {
+                    "id": "intent.menuManagement.listMenuItems.list.filter.page",
+                    "field": "page",
+                    "labelKey": "intent.menuManagement.listMenuItems.list.filter.page.label",
+                    "order": 40,
+                    "stateKey": "ui.menuManagement.input.listMenuItems.page"
+                  },
+                  {
+                    "id": "intent.menuManagement.listMenuItems.list.filter.pageSize",
+                    "field": "pageSize",
+                    "labelKey": "intent.menuManagement.listMenuItems.list.filter.pageSize.label",
+                    "order": 50,
+                    "stateKey": "ui.menuManagement.input.listMenuItems.pageSize"
+                  }
+                ],
                 "toolbar": [],
                 "rowActions": [],
-                "actions": []
+                "actions": [],
+                "stateKey": "ui.menuManagement.data.listMenuItems"
               }
             ],
             "displayHint": "summary-first"
@@ -292,7 +357,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "MenuItemTable",
             "titleKey": "organism.menuManagement.listMenuItems.title",
-            "purpose": "Exibe a lista paginada de itens do cardápio com nome, categoria, preço, status e ordem de exibição; é a superfície primária de navegação e seleção.",
+            "purpose": "Exibe a lista paginada de itens do cardápio com colunas de nome, categoria, preço, status e ordem; cada linha expõe ações contextuais de edição e transição de status.",
             "userActions": [
               "listMenuItems"
             ],
@@ -306,7 +371,7 @@ export const definition = {
             "order": 20,
             "intentions": [
               {
-                "id": "intent.menuManagement.listMenuItems.list",
+                "id": "intent.menuManagement.listMenuItems.list2",
                 "intent": "queryList",
                 "order": 10,
                 "titleKey": "intent.menuManagement.listMenuItems.list.title",
@@ -381,7 +446,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "MenuItemDetailPanel",
             "titleKey": "organism.menuManagement.updateMenuItemCmd.title",
-            "purpose": "Painel lateral contextual que exibe e permite editar os dados do item selecionado, incluindo transições de status (ativo/pausado) como botões explícitos.",
+            "purpose": "Painel lateral que exibe os dados completos do item selecionado e permite editar nome, categoria, preço, descrição, imagem, ordem e vínculo de estoque; apresenta botões de transição de status (Ativar / Pausar) em vez de select livre.",
             "userActions": [
               "updateMenuItemCmd"
             ],
@@ -489,7 +554,7 @@ export const definition = {
       {
         "id": "section.menuManagement.sec-create-menu-item",
         "type": "section",
-        "sectionName": "Criar Item do Cardápio",
+        "sectionName": "Criar Novo Item",
         "titleKey": "section.menuManagement.sec-create-menu-item.title",
         "mode": "edit",
         "order": 20,
@@ -499,7 +564,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "CreateMenuItemForm",
             "titleKey": "organism.menuManagement.createMenuItemCmd.title",
-            "purpose": "Formulário de criação de novo item do cardápio, acessado via botão 'Novo item' na toolbar; coleta apenas as decisões reais do gerente (nome, categoria, preço, descrição, imagem, ordem, vínculo de estoque).",
+            "purpose": "Formulário modal ou painel de criação acionado pelo botão primário 'Novo item' na toolbar; coleta os dados obrigatórios (nome, categoria, preço) e opcionais para cadastrar um novo item no cardápio.",
             "userActions": [
               "createMenuItemCmd"
             ],

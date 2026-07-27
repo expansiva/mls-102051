@@ -1,0 +1,50 @@
+{
+  "gen-domain": {
+    "cost": 0.1101,
+    "calls": 12,
+    "inputTokens": 24602,
+    "outputTokens": 4418
+  },
+  "gen-port": {
+    "cost": 0.032100000000000004,
+    "calls": 2,
+    "inputTokens": 1834,
+    "outputTokens": 3569
+  },
+  "gen-table": {
+    "cost": 0.0545,
+    "calls": 2,
+    "inputTokens": 5004,
+    "outputTokens": 5060
+  },
+  "gen-adapter": {
+    "cost": 0.0313,
+    "calls": 2,
+    "inputTokens": 4134,
+    "outputTokens": 2614
+  },
+  "gen-usecase": {
+    "cost": 1.0092000000000003,
+    "calls": 42,
+    "inputTokens": 221899,
+    "outputTokens": 40215
+  },
+  "judge": {
+    "cost": 0.2954,
+    "calls": 4,
+    "inputTokens": 94226,
+    "outputTokens": 851
+  },
+  "materialize": {
+    "cost": 10.174599999999996,
+    "calls": 278,
+    "inputTokens": 2633675,
+    "outputTokens": 314595
+  },
+  "seeds": {
+    "cost": 1.1082999999999998,
+    "calls": 28,
+    "inputTokens": 177246,
+    "outputTokens": 72881
+  }
+}

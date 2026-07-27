@@ -95,7 +95,7 @@ export const definition = {
   },
   "layoutRef": {
     "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/dashboardWorkspace.defs.ts",
-    "layoutId": "cfe-20260723170708.1000"
+    "layoutId": "cfe-20260727184832.1000"
   },
   "states": [
     {

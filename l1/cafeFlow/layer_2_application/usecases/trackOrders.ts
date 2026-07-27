@@ -42,18 +42,81 @@ export interface TrackOrdersOutput {
   total: number;
 }
 
-const KITCHEN_QUEUE_EXCLUDED: ReadonlySet<string> = new Set(['served', 'cancelled']);
+export async function trackOrders(
+  ctx: RequestContext,
+  input: TrackOrdersInput,
+): Promise<TrackOrdersOutput> {
+  const ordersRepo = resolveRepository<IOrderRepository>(ctx, 'Order');
+  const dailyShiftsRepo = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
 
-function mapOrderToTrackOutput(order: Order): TrackOrdersOrder {
+  // rule: ordersRequireOpenDailyShift
+  const openShifts = await dailyShiftsRepo.list({ status: 'open' });
+  const openShift = openShifts[0] ?? null;
+  if (!openShift) {
+    return { orders: [], total: 0 };
+  }
+
+  let orders = await ordersRepo.findByDailyShiftId(openShift.dailyShiftId);
+
+  // rule: completedOrdersLeaveKitchenQueue — exclude served/cancelled from default open-orders list
+  // unless the caller explicitly filters by those statuses
+  if (!input.status) {
+    orders = orders.filter((o) => o.status !== 'served' && o.status !== 'cancelled');
+  }
+
+  if (input.status) {
+    orders = orders.filter((o) => String(o.status) === input.status);
+  }
+
+  if (input.orderType) {
+    orders = orders.filter((o) => String(o.orderType) === input.orderType);
+  }
+
+  if (input.tableNumber) {
+    orders = orders.filter((o) => o.tableNumber === input.tableNumber);
+  }
+
+  // rule: orderRequiresTableOrTakeout — keep only orders that satisfy table/takeout invariants
+  orders = orders.filter((o) => {
+    if (o.orderType === 'table') {
+      return typeof o.tableNumber === 'string' && o.tableNumber.trim().length > 0;
+    }
+    if (o.orderType === 'takeout') {
+      return true;
+    }
+    return false;
+  });
+
+  // rule: onlyReadyOrdersCanBeServed — when filtering ready, surface only ready kitchen queue
+  if (input.status === 'ready') {
+    orders = orders.filter((o) => o.status === 'ready');
+  }
+
+  orders = [...orders].sort((a, b) => a.registeredAt.localeCompare(b.registeredAt));
+
+  const total = orders.length;
+
+  const page = input.page != null && input.page > 0 ? input.page : 1;
+  const pageSize =
+    input.pageSize != null && input.pageSize > 0 ? input.pageSize : total > 0 ? total : 20;
+  const start = (page - 1) * pageSize;
+  const pageOrders = orders.slice(start, start + pageSize);
+
+  const mapped: TrackOrdersOrder[] = pageOrders.map((order: Order) => mapOrder(order));
+
+  return { orders: mapped, total };
+}
+
+function mapOrder(order: Order): TrackOrdersOrder {
   return {
     orderId: order.orderId,
     dailyShiftId: order.dailyShiftId,
-    orderType: order.orderType,
+    orderType: order.orderType as OrderType,
     tableNumber: order.tableNumber ?? undefined,
     customerName: order.customerName ?? undefined,
     totalAmount: order.totalAmount,
     notes: order.notes ?? undefined,
-    status: order.status,
+    status: order.status as OrderStatus,
     registeredAt: order.registeredAt,
     confirmedAt: order.confirmedAt ?? undefined,
     inPreparationAt: order.inPreparationAt ?? undefined,
@@ -66,61 +129,4 @@ function mapOrderToTrackOutput(order: Order): TrackOrdersOrder {
       status: item.status,
     })),
   };
-}
-
-export async function trackOrders(
-  ctx: RequestContext,
-  input: TrackOrdersInput,
-): Promise<TrackOrdersOutput> {
-  const ordersRepo = resolveRepository<IOrderRepository>(ctx, 'Order');
-  const dailyShifts = resolveRepository<IDailyShiftRepository>(ctx, 'DailyShift');
-
-  // rule: ordersRequireOpenDailyShift
-  const openShifts = await dailyShifts.list({ status: 'open' });
-  const openShift = openShifts[0] ?? null;
-  if (!openShift) {
-    return { orders: [], total: 0 };
-  }
-
-  // dailyShiftId is resolved server-side from the active open shift — never from client input
-  let matched = await ordersRepo.findByDailyShiftId(openShift.dailyShiftId);
-
-  // rule: completedOrdersLeaveKitchenQueue — served/cancelled leave the open tracking queue
-  matched = matched.filter((order) => !KITCHEN_QUEUE_EXCLUDED.has(String(order.status)));
-
-  // rule: orderRequiresTableOrTakeout — table orders carry tableNumber; takeout may omit it
-  // rule: onlyReadyOrdersCanBeServed — tracking surface only lists non-terminal kitchen statuses
-  if (input.status !== undefined && input.status !== null && String(input.status).length > 0) {
-    const statusFilter = String(input.status);
-    matched = matched.filter((order) => String(order.status) === statusFilter);
-  }
-  if (input.orderType !== undefined && input.orderType !== null && String(input.orderType).length > 0) {
-    const orderTypeFilter = String(input.orderType) as OrderType;
-    matched = matched.filter((order) => String(order.orderType) === orderTypeFilter);
-  }
-  if (
-    input.tableNumber !== undefined &&
-    input.tableNumber !== null &&
-    String(input.tableNumber).length > 0
-  ) {
-    const tableNumberFilter = String(input.tableNumber);
-    matched = matched.filter((order) => (order.tableNumber ?? '') === tableNumberFilter);
-  }
-
-  matched = matched.slice().sort((a, b) => {
-    if (a.registeredAt < b.registeredAt) return -1;
-    if (a.registeredAt > b.registeredAt) return 1;
-    return 0;
-  });
-
-  const total = matched.length;
-  const page = input.page !== undefined && input.page > 0 ? input.page : 1;
-  const pageSize =
-    input.pageSize !== undefined && input.pageSize > 0 ? input.pageSize : total > 0 ? total : 1;
-  const offset = (page - 1) * pageSize;
-  const pageSlice = matched.slice(offset, offset + pageSize);
-
-  const orders: TrackOrdersOrder[] = pageSlice.map(mapOrderToTrackOutput);
-
-  return { orders, total };
 }

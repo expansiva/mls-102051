@@ -112,13 +112,14 @@ export const createStockItemUsecase = {
         ],
         "transactional": true,
         "steps": [
-          "Generate stockItemId via ctx.idGenerator and createdAt/updatedAt via ctx.clock.now()",
           "Validate name is non-empty",
           "Validate unit is one of: kg, liter, portion, unit",
-          "Validate currentBalance >= 0 and minimumLevel >= 0",
-          "Apply lowStockMustBeVisible inline: persist currentBalance and minimumLevel so the item is eligible for low-stock visibility whenever currentBalance <= minimumLevel (no extra flag; alert queries compare these fields)",
-          "Create StockItem via ctx.mdm.entity.create with mdmId=stockItemId, type StockItem, and fields name, unit, currentBalance, minimumLevel, description, createdAt, updatedAt (module-specific fields under details.cafeFlow when applicable)",
-          "Return the created stock item projection matching outputShape"
+          "Validate currentBalance is a non-negative number",
+          "Validate minimumLevel is a non-negative number",
+          "Generate stockItemId via ctx.idGenerator and createdAt/updatedAt via ctx.clock.now()",
+          "Create StockItem via ctx.mdm.entity.create with name, unit, currentBalance, minimumLevel, description and generated fields (StockItem is MDM-owned; no repository port)",
+          "Apply lowStockMustBeVisible inline: item is persisted with currentBalance and minimumLevel so it is eligible for low-stock visibility when currentBalance <= minimumLevel",
+          "Return the created stock item fields per outputShape"
         ],
         "outputShape": {
           "kind": "object",

@@ -28,78 +28,104 @@ export function canTransitionDailyShift(from: DailyShiftStatus, to: DailyShiftSt
   return DAILY_SHIFT_STATUS_TRANSITIONS[from]?.includes(to) ?? false;
 }
 
-export function dailyShiftHasOpenIdentity(
-  shift: Pick<DailyShift, 'openedByUserId' | 'openedAt'>,
-): boolean {
-  return Boolean(shift.openedByUserId) && Boolean(shift.openedAt);
+export function isDailyShiftImmutable(status: DailyShiftStatus): boolean {
+  return status === 'closed';
 }
 
-export function dailyShiftCloseFieldsConsistent(
-  shift: Pick<DailyShift, 'closedByUserId' | 'closedAt'>,
-): boolean {
-  const hasClosedBy = shift.closedByUserId != null;
-  const hasClosedAt = shift.closedAt != null;
-  return hasClosedBy === hasClosedAt;
-}
-
-export function dailyShiftOpenStatusHasNoCloseFields(
+export function dailyShiftClosureFieldsValid(
   shift: Pick<DailyShift, 'status' | 'closedByUserId' | 'closedAt'>,
 ): boolean {
-  if (shift.status !== 'open') {
-    return true;
+  if (shift.status === 'closed') {
+    return shift.closedByUserId != null && shift.closedAt != null;
   }
   return shift.closedByUserId == null && shift.closedAt == null;
 }
 
-export function dailyShiftClosedStatusHasCloseFields(
-  shift: Pick<DailyShift, 'status' | 'closedByUserId' | 'closedAt'>,
-): boolean {
-  if (shift.status !== 'closed') {
-    return true;
-  }
-  return shift.closedByUserId != null && shift.closedAt != null;
-}
-
 export function dailyShiftClosedAtAfterOpenedAt(
-  shift: Pick<DailyShift, 'openedAt' | 'closedAt'>,
+  shift: Pick<DailyShift, 'status' | 'openedAt' | 'closedAt'>,
 ): boolean {
-  if (shift.closedAt == null) {
+  if (shift.status !== 'closed' || shift.closedAt == null) {
     return true;
   }
   return shift.closedAt >= shift.openedAt;
-}
-
-export function dailyShiftNonNegativeTotals(
-  shift: Pick<
-    DailyShift,
-    'totalOrders' | 'totalItemsSold' | 'totalSalesAmount' | 'cashTotal' | 'otherPaymentsTotal'
-  >,
-): boolean {
-  const values = [
-    shift.totalOrders,
-    shift.totalItemsSold,
-    shift.totalSalesAmount,
-    shift.cashTotal,
-    shift.otherPaymentsTotal,
-  ];
-  return values.every((value) => value == null || value >= 0);
-}
-
-export function dailyShiftPaymentTotalsMatchSales(
-  shift: Pick<DailyShift, 'totalSalesAmount' | 'cashTotal' | 'otherPaymentsTotal'>,
-): boolean {
-  if (
-    shift.totalSalesAmount == null ||
-    shift.cashTotal == null ||
-    shift.otherPaymentsTotal == null
-  ) {
-    return true;
-  }
-  return shift.cashTotal + shift.otherPaymentsTotal === shift.totalSalesAmount;
 }
 
 export function dailyShiftUpdatedAtAfterCreatedAt(
   shift: Pick<DailyShift, 'createdAt' | 'updatedAt'>,
 ): boolean {
   return shift.updatedAt >= shift.createdAt;
+}
+
+function calendarDateOf(isoDateTime: string): string {
+  return isoDateTime.slice(0, 10);
+}
+
+export function dailyShiftOpenedAtMatchesShiftDate(
+  shift: Pick<DailyShift, 'shiftDate' | 'openedAt'>,
+): boolean {
+  return calendarDateOf(shift.openedAt) === shift.shiftDate;
+}
+
+export function dailyShiftClosedAtMatchesShiftDate(
+  shift: Pick<DailyShift, 'status' | 'shiftDate' | 'closedAt'>,
+): boolean {
+  if (shift.status !== 'closed' || shift.closedAt == null) {
+    return true;
+  }
+  return calendarDateOf(shift.closedAt) === shift.shiftDate;
+}
+
+export function dailyShiftNonNegativeCounts(
+  shift: Pick<DailyShift, 'totalOrders' | 'totalItemsSold'>,
+): boolean {
+  if (shift.totalOrders != null && shift.totalOrders < 0) {
+    return false;
+  }
+  if (shift.totalItemsSold != null && shift.totalItemsSold < 0) {
+    return false;
+  }
+  return true;
+}
+
+export function dailyShiftNonNegativeAmounts(
+  shift: Pick<DailyShift, 'totalSalesAmount' | 'cashTotal' | 'otherPaymentsTotal'>,
+): boolean {
+  if (shift.totalSalesAmount != null && shift.totalSalesAmount < 0) {
+    return false;
+  }
+  if (shift.cashTotal != null && shift.cashTotal < 0) {
+    return false;
+  }
+  if (shift.otherPaymentsTotal != null && shift.otherPaymentsTotal < 0) {
+    return false;
+  }
+  return true;
+}
+
+export function dailyShiftPaymentTotalsConsistent(
+  shift: Pick<DailyShift, 'status' | 'cashTotal' | 'otherPaymentsTotal' | 'totalSalesAmount'>,
+): boolean {
+  if (shift.status !== 'closed') {
+    return true;
+  }
+  if (
+    shift.cashTotal == null ||
+    shift.otherPaymentsTotal == null ||
+    shift.totalSalesAmount == null
+  ) {
+    return true;
+  }
+  return shift.cashTotal + shift.otherPaymentsTotal === shift.totalSalesAmount;
+}
+
+export function dailyShiftZeroOrdersImpliesZeroSales(
+  shift: Pick<DailyShift, 'totalOrders' | 'totalSalesAmount' | 'totalItemsSold'>,
+): boolean {
+  const orders = shift.totalOrders ?? 0;
+  if (orders !== 0) {
+    return true;
+  }
+  const salesOk = shift.totalSalesAmount == null || shift.totalSalesAmount === 0;
+  const itemsOk = shift.totalItemsSold == null || shift.totalItemsSold === 0;
+  return salesOk && itemsOk;
 }

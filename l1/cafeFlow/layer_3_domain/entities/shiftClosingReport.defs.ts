@@ -13,7 +13,7 @@ export const shiftClosingReportDomainEntity = {
   },
   "data": {
     "entityId": "ShiftClosingReport",
-    "title": "ShiftClosingReport",
+    "title": "Relatório de Fechamento de Turno",
     "fields": [
       {
         "fieldId": "shiftClosingReportId",
@@ -107,19 +107,26 @@ export const shiftClosingReportDomainEntity = {
       }
     ],
     "valueObjects": [],
+    "statusEnum": [],
     "invariants": [
-      "dailyShiftId referenciado deve corresponder a um DailyShift existente e em estado 'closed'.",
-      "totalSalesAmount deve ser igual a cashPaymentsAmount + otherPaymentsAmount.",
-      "totalOrdersCount deve ser maior ou igual a zero.",
-      "totalItemsSold deve ser maior ou igual a zero.",
-      "lowStockSignalsCount deve ser maior ou igual a zero.",
-      "stockoutSignalsCount deve ser maior ou igual a zero.",
-      "totalSalesAmount, cashPaymentsAmount e otherPaymentsAmount devem ser maiores ou iguais a zero.",
-      "generatedAt deve ser maior ou igual ao closedAt do DailyShift referenciado.",
-      "updatedAt deve ser maior ou igual a createdAt.",
-      "Não pode existir mais de um ShiftClosingReport para o mesmo dailyShiftId."
-    ],
-    "statusEnum": []
+      "totalSalesAmount >= 0",
+      "cashPaymentsAmount >= 0",
+      "otherPaymentsAmount >= 0",
+      "totalSalesAmount == cashPaymentsAmount + otherPaymentsAmount",
+      "totalOrdersCount >= 0",
+      "totalItemsSold >= 0",
+      "totalOrdersCount == 0 implies totalItemsSold == 0 and totalSalesAmount == 0",
+      "totalItemsSold > 0 implies totalOrdersCount >= 1",
+      "lowStockSignalsCount >= 0",
+      "stockoutSignalsCount >= 0",
+      "stockoutSignalsCount <= lowStockSignalsCount is not required; both are independent non-negative counts",
+      "generatedAt >= start of shiftDate (report generation cannot precede the shift reference date)",
+      "createdAt <= updatedAt",
+      "generatedAt <= updatedAt",
+      "createdAt and generatedAt are set at issuance and remain immutable after creation",
+      "dailyShiftId and shiftDate are immutable after creation",
+      "monetary and quantity totals are immutable snapshots after the report is generated"
+    ]
   }
 } as const;
 

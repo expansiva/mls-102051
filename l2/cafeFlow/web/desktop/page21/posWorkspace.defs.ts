@@ -138,11 +138,11 @@ export const definition = {
       "order": 10,
       "organisms": [
         {
-          "id": "org-open-orders-filters",
+          "id": "org-open-orders-filter",
           "type": "queryResult",
           "organismName": "OpenOrdersFilterBar",
           "titleKey": "organism.posWorkspace.queryOpenOrders.title",
-          "purpose": "Filtros rápidos de status, tipo de pedido e número de mesa vinculados à consulta de pedidos abertos, permitindo ao atendente e cozinheiro refinar a fila sem sair da tela.",
+          "purpose": "Filtros rápidos de status, tipo de pedido e número de mesa colapsados na barra superior da lista de pedidos abertos, permitindo ao atendente e cozinheiro focar nos pedidos relevantes sem sair da tela.",
           "userActions": [
             "queryOpenOrders"
           ],
@@ -171,7 +171,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "OpenOrdersBoard",
           "titleKey": "organism.posWorkspace.queryOpenOrders.title",
-          "purpose": "Exibe todos os pedidos abertos do turno agrupados por status em lanes (registered, confirmed, inPreparation, ready), permitindo ao atendente e cozinheiro identificar gargalos e selecionar um pedido para agir.",
+          "purpose": "Exibe todos os pedidos abertos do turno agrupados por status em lanes (registered, confirmed, inPreparation, ready), permitindo ao atendente e cozinheiro visualizar o fluxo completo e identificar gargalos em tempo real.",
           "userActions": [
             "queryOpenOrders"
           ],
@@ -200,7 +200,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "OrderStatusTransitionPanel",
           "titleKey": "organism.posWorkspace.cmdUpdateOrderStatus.title",
-          "purpose": "Exibe as transições de status permitidas para o pedido selecionado como botões de ação explícitos (ex: Confirmar, Iniciar Preparo, Pronto, Servido, Cancelar), nunca como select livre.",
+          "purpose": "Exibe as transições de status permitidas para o pedido selecionado como botões de ação explícitos (ex: Confirmar, Iniciar Preparo, Pronto, Servir, Cancelar), com campo de motivo de cancelamento aparecendo condicionalmente.",
           "userActions": [
             "cmdUpdateOrderStatus"
           ],
@@ -239,7 +239,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "MenuCategoryFilterBar",
           "titleKey": "organism.posWorkspace.queryMenuItems.title",
-          "purpose": "Filtro de categoria do cardápio que refina a grade de itens exibida ao atendente durante o lançamento do pedido, acelerando a seleção.",
+          "purpose": "Filtro de categoria do cardápio em chips horizontais, permitindo ao atendente navegar rapidamente entre categorias de itens durante o lançamento do pedido.",
           "userActions": [
             "queryMenuItems"
           ],
@@ -264,9 +264,9 @@ export const definition = {
         {
           "id": "org-menu-items-showcase",
           "type": "queryResult",
-          "organismName": "MenuItemsShowcase",
+          "organismName": "MenuItemsGrid",
           "titleKey": "organism.posWorkspace.queryMenuItems.title",
-          "purpose": "Grade visual de itens ativos do cardápio com nome, preço, descrição e imagem, permitindo ao atendente selecionar itens para compor o pedido por toque/clique.",
+          "purpose": "Grade visual de itens ativos do cardápio com nome, preço, descrição e imagem, permitindo ao atendente selecionar itens para compor o pedido com um toque.",
           "userActions": [
             "queryMenuItems"
           ],
@@ -293,7 +293,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "CreateOrderPanel",
           "titleKey": "organism.posWorkspace.cmdCreateOrder.title",
-          "purpose": "Painel de composição do pedido onde o atendente define o canal (mesa ou takeout), informa mesa/cliente, revisa os itens selecionados e confirma o envio à cozinha.",
+          "purpose": "Painel de composição do pedido onde o atendente define o tipo (mesa/takeout), número da mesa ou nome do cliente, revisa os itens selecionados com quantidades e observações, e confirma o envio à cozinha.",
           "userActions": [
             "cmdCreateOrder"
           ],
@@ -332,7 +332,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "BasicPaymentPanel",
           "titleKey": "organism.posWorkspace.cmdRecordBasicPayment.title",
-          "purpose": "Painel de fechamento de pagamento ativado ao selecionar um pedido totalizado, onde o atendente confirma o valor, escolhe a forma de pagamento e registra o fechamento básico.",
+          "purpose": "Painel contextual de fechamento de pagamento para o pedido selecionado, exibindo o total do pedido como âncora visual e permitindo ao atendente escolher a forma de pagamento e confirmar o lançamento.",
           "userActions": [
             "cmdRecordBasicPayment"
           ],
@@ -359,49 +359,48 @@ export const definition = {
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "pageObjective": {
     "actor": "Atendente de café (e cozinheiro para acompanhamento de fila)",
-    "jobToBeDone": "Lançar novos pedidos de mesa ou takeout, acompanhar o andamento dos pedidos abertos do turno, atualizar status ao longo do ciclo de vida e registrar o pagamento básico ao fechar o atendimento.",
-    "primaryDecision": "Criar um novo pedido selecionando itens do cardápio e confirmando o envio à cozinha.",
+    "jobToBeDone": "Lançar pedidos de mesa ou takeout com itens do cardápio, acompanhar o andamento dos pedidos abertos do turno e registrar o pagamento básico ao fechar o atendimento.",
+    "primaryDecision": "Criar um novo pedido selecionando itens ativos do cardápio e confirmando o envio à cozinha.",
     "decisiveInfo": [
       "orderType (mesa ou takeout)",
       "tableNumber / customerName",
-      "menuItemId + quantity + observations (itens do cardápio ativo)",
-      "status atual do pedido (para transições contextuais)",
-      "totalAmount + paymentMethod (para fechamento)"
+      "menuItemId + quantity + observations (itens do cardápio)",
+      "status atual de cada pedido aberto",
+      "totalAmount + paymentMethod (fechamento)"
     ],
-    "usageFrequency": "Contínuo / mãos ocupadas — o atendente usa o POS durante todo o turno, com alta frequência de lançamentos e transições rápidas.",
+    "usageFrequency": "Contínuo / mãos ocupadas — o atendente usa esta tela durante todo o turno, com múltiplos lançamentos por hora; velocidade e clareza são críticos.",
     "criticalActions": [
       {
         "action": "cmdCreateOrder",
-        "presentation": "primary-button dentro do painel de composição do pedido, após seleção de itens do cardápio"
+        "presentation": "primary-button dentro do painel de composição do pedido, ativado após selecionar pelo menos um item do cardápio"
       },
       {
         "action": "cmdUpdateOrderStatus",
-        "presentation": "contextual-transition-actions — um botão por transição válida exibido no card/linha do pedido selecionado"
+        "presentation": "contextual-transition-actions — um botão por transição válida exibido no card/linha do pedido selecionado, nunca um <select> livre"
       },
       {
         "action": "cmdRecordBasicPayment",
-        "presentation": "inline-row-command ou painel lateral ativado ao selecionar pedido pronto para pagamento"
+        "presentation": "inline-row-command ou painel lateral ativado ao selecionar pedido totalizado pronto para fechamento"
       }
     ],
     "informationHierarchy": [
-      "1. Lista de pedidos abertos do turno (status, tipo, mesa/cliente, horário) — visão operacional imediata",
-      "2. Filtros de pedidos (status, tipo, mesa) — refinamento rápido da fila",
-      "3. Ações de transição de status contextuais ao pedido selecionado",
-      "4. Painel de criação de novo pedido com cardápio navegável por categoria",
-      "5. Painel de registro de pagamento básico para pedido selecionado"
+      "1. Fila de pedidos abertos do turno (status, tipo, mesa/cliente, horário)",
+      "2. Ações de transição de status contextuais ao pedido selecionado",
+      "3. Painel de criação de novo pedido com cardápio navegável por categoria",
+      "4. Painel de registro de pagamento básico para pedido selecionado"
     ],
-    "successCriteria": "O atendente consegue lançar um pedido completo, acompanhar a fila e registrar pagamento sem sair da tela, sem digitar IDs e sem ambiguidade sobre o estado atual de cada pedido.",
+    "successCriteria": "O atendente consegue lançar um pedido completo em menos de 30 segundos, avançar o status de um pedido com um único toque e registrar o pagamento sem sair da tela principal.",
     "antiPatterns": [
-      "Campo de status como <select> livre sobre todos os valores do enum",
-      "Campo orderId digitado manualmente",
-      "Formulário de criação de pedido separado em página diferente",
-      "Exibir campos de sistema (dailyShiftId, registeredAt, createdAt) como inputs editáveis",
-      "Seção de filtros isolada sem vínculo visual com a lista que filtra",
-      "Persuasão ou urgência artificial em tela operacional"
+      "Campo de orderId digitado manualmente em qualquer formulário",
+      "Status editável via <select> livre sobre todos os valores do enum",
+      "Formulário de criação de pedido sem cardápio visível ao lado",
+      "Seção separada de filtros desconectada da lista de pedidos",
+      "dailyShiftId exposto como input manual (deve vir do activeLifecycleInstance)",
+      "Tela de pagamento em página separada — deve ser painel contextual na mesma workspace"
     ]
   },
   "layout": {
-    "id": "page21-goal-first",
+    "id": "page21",
     "type": "page",
     "sections": [
       {
@@ -413,11 +412,11 @@ export const definition = {
         "order": 10,
         "organisms": [
           {
-            "id": "org-open-orders-filters",
+            "id": "org-open-orders-filter",
             "type": "queryResult",
             "organismName": "OpenOrdersFilterBar",
             "titleKey": "organism.posWorkspace.queryOpenOrders.title",
-            "purpose": "Filtros rápidos de status, tipo de pedido e número de mesa vinculados à consulta de pedidos abertos, permitindo ao atendente e cozinheiro refinar a fila sem sair da tela.",
+            "purpose": "Filtros rápidos de status, tipo de pedido e número de mesa colapsados na barra superior da lista de pedidos abertos, permitindo ao atendente e cozinheiro focar nos pedidos relevantes sem sair da tela.",
             "userActions": [
               "queryOpenOrders"
             ],
@@ -515,7 +514,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "OpenOrdersBoard",
             "titleKey": "organism.posWorkspace.queryOpenOrders.title",
-            "purpose": "Exibe todos os pedidos abertos do turno agrupados por status em lanes (registered, confirmed, inPreparation, ready), permitindo ao atendente e cozinheiro identificar gargalos e selecionar um pedido para agir.",
+            "purpose": "Exibe todos os pedidos abertos do turno agrupados por status em lanes (registered, confirmed, inPreparation, ready), permitindo ao atendente e cozinheiro visualizar o fluxo completo e identificar gargalos em tempo real.",
             "userActions": [
               "queryOpenOrders"
             ],
@@ -613,7 +612,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "OrderStatusTransitionPanel",
             "titleKey": "organism.posWorkspace.cmdUpdateOrderStatus.title",
-            "purpose": "Exibe as transições de status permitidas para o pedido selecionado como botões de ação explícitos (ex: Confirmar, Iniciar Preparo, Pronto, Servido, Cancelar), nunca como select livre.",
+            "purpose": "Exibe as transições de status permitidas para o pedido selecionado como botões de ação explícitos (ex: Confirmar, Iniciar Preparo, Pronto, Servir, Cancelar), com campo de motivo de cancelamento aparecendo condicionalmente.",
             "userActions": [
               "cmdUpdateOrderStatus"
             ],
@@ -685,7 +684,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "MenuCategoryFilterBar",
             "titleKey": "organism.posWorkspace.queryMenuItems.title",
-            "purpose": "Filtro de categoria do cardápio que refina a grade de itens exibida ao atendente durante o lançamento do pedido, acelerando a seleção.",
+            "purpose": "Filtro de categoria do cardápio em chips horizontais, permitindo ao atendente navegar rapidamente entre categorias de itens durante o lançamento do pedido.",
             "userActions": [
               "queryMenuItems"
             ],
@@ -781,14 +780,14 @@ export const definition = {
                 "stateKey": "ui.posWorkspace.data.queryMenuItems"
               }
             ],
-            "displayHint": "summary-first"
+            "displayHint": "inline-row-command"
           },
           {
             "id": "org-menu-items-showcase",
             "type": "queryResult",
-            "organismName": "MenuItemsShowcase",
+            "organismName": "MenuItemsGrid",
             "titleKey": "organism.posWorkspace.queryMenuItems.title",
-            "purpose": "Grade visual de itens ativos do cardápio com nome, preço, descrição e imagem, permitindo ao atendente selecionar itens para compor o pedido por toque/clique.",
+            "purpose": "Grade visual de itens ativos do cardápio com nome, preço, descrição e imagem, permitindo ao atendente selecionar itens para compor o pedido com um toque.",
             "userActions": [
               "queryMenuItems"
             ],
@@ -891,7 +890,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "CreateOrderPanel",
             "titleKey": "organism.posWorkspace.cmdCreateOrder.title",
-            "purpose": "Painel de composição do pedido onde o atendente define o canal (mesa ou takeout), informa mesa/cliente, revisa os itens selecionados e confirma o envio à cozinha.",
+            "purpose": "Painel de composição do pedido onde o atendente define o tipo (mesa/takeout), número da mesa ou nome do cliente, revisa os itens selecionados com quantidades e observações, e confirma o envio à cozinha.",
             "userActions": [
               "cmdCreateOrder"
             ],
@@ -1005,7 +1004,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "BasicPaymentPanel",
             "titleKey": "organism.posWorkspace.cmdRecordBasicPayment.title",
-            "purpose": "Painel de fechamento de pagamento ativado ao selecionar um pedido totalizado, onde o atendente confirma o valor, escolhe a forma de pagamento e registra o fechamento básico.",
+            "purpose": "Painel contextual de fechamento de pagamento para o pedido selecionado, exibindo o total do pedido como âncora visual e permitindo ao atendente escolher a forma de pagamento e confirmar o lançamento.",
             "userActions": [
               "cmdRecordBasicPayment"
             ],
@@ -1063,7 +1062,7 @@ export const definition = {
                 ]
               }
             ],
-            "displayHint": "inline-row-command"
+            "displayHint": "summary-first"
           }
         ]
       }

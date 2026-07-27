@@ -8,7 +8,7 @@ export interface BrowseStockItemsInput {
   pageSize?: number;
 }
 
-export interface BrowseStockItemRow {
+export interface BrowseStockItem {
   stockItemId: string;
   name: string;
   unit: string;
@@ -20,17 +20,19 @@ export interface BrowseStockItemRow {
 }
 
 export interface BrowseStockItemsOutput {
-  stockItems: BrowseStockItemRow[];
+  stockItems: BrowseStockItem[];
   total: number;
 }
 
-interface StockItemModuleDetails {
+type CafeFlowStockItemDetails = {
+  stockItemId?: string;
+  name?: string;
   unit?: string;
   currentBalance?: number;
   minimumLevel?: number;
   description?: string | null;
   updatedAt?: string;
-}
+};
 
 export async function browseStockItems(
   ctx: RequestContext,
@@ -38,52 +40,36 @@ export async function browseStockItems(
 ): Promise<BrowseStockItemsOutput> {
   const listed = await ctx.mdm.collection.listByType({
     type: 'cafeFlow.StockItem',
-    page: 1,
-    pageSize: 10_000,
+    status: 'Active',
     sort: { field: 'name', direction: 'asc' },
   });
 
-  const entities = await ctx.mdm.collection.getMany({
-    mdmIds: listed.items.map((item) => item.mdmId),
-  });
+  const mdmIds = listed.items.map((item) => item.mdmId);
+  const entities = await ctx.mdm.collection.getMany({ mdmIds });
 
   const nameFilter = input.nameFilter?.trim().toLowerCase() ?? '';
 
-  let stockItems: BrowseStockItemRow[] = entities.map((entity) => {
-    const details = entity.details as unknown as Record<string, unknown>;
-    const moduleDetails = ((details.cafeFlow as StockItemModuleDetails | undefined) ??
-      (details as unknown as StockItemModuleDetails)) as StockItemModuleDetails;
-
-    const name = String(entity.details.name ?? entity.index.name ?? '');
-    const unit = String(moduleDetails.unit ?? '');
+  let stockItems: BrowseStockItem[] = entities.map((entity) => {
+    const moduleDetails = (entity.details as unknown as { cafeFlow?: CafeFlowStockItemDetails }).cafeFlow ?? {};
+    const baseName = entity.details.name ?? moduleDetails.name ?? '';
     const currentBalance = Number(moduleDetails.currentBalance ?? 0);
     const minimumLevel = Number(moduleDetails.minimumLevel ?? 0);
-    const rawDescription = moduleDetails.description;
-    const description =
-      rawDescription == null || String(rawDescription).trim() === ''
-        ? undefined
-        : String(rawDescription);
-    const updatedAt = String(moduleDetails.updatedAt ?? entity.index.updatedAt ?? '');
-
-    // rule: lowStockMustBeVisible — currentBalance <= minimumLevel must be flagged for the UI
+    // rule: lowStockMustBeVisible
     const isLowStock = currentBalance <= minimumLevel;
 
-    const row: BrowseStockItemRow = {
-      stockItemId: entity.mdmId,
-      name,
-      unit,
+    return {
+      stockItemId: moduleDetails.stockItemId ?? entity.mdmId,
+      name: baseName,
+      unit: String(moduleDetails.unit ?? ''),
       currentBalance,
       minimumLevel,
-      updatedAt,
+      description: moduleDetails.description ?? undefined,
+      updatedAt: moduleDetails.updatedAt ?? entity.index.updatedAt,
       isLowStock,
     };
-    if (description !== undefined) {
-      row.description = description;
-    }
-    return row;
   });
 
-  if (nameFilter.length > 0) {
+  if (nameFilter) {
     stockItems = stockItems.filter((item) => item.name.toLowerCase().includes(nameFilter));
   }
 
@@ -92,16 +78,16 @@ export async function browseStockItems(
     stockItems = stockItems.filter((item) => item.isLowStock);
   }
 
-  stockItems.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+  stockItems = stockItems.slice().sort((a, b) => a.name.localeCompare(b.name));
 
   const total = stockItems.length;
+  const page = Math.max(1, input.page ?? 1);
+  const pageSize = Math.max(1, input.pageSize ?? (total || 1));
+  const offset = (page - 1) * pageSize;
+  const paged = stockItems.slice(offset, offset + pageSize);
 
-  if (input.page != null || input.pageSize != null) {
-    const page = Math.max(1, input.page ?? 1);
-    const pageSize = Math.max(1, input.pageSize ?? 20);
-    const offset = (page - 1) * pageSize;
-    stockItems = stockItems.slice(offset, offset + pageSize);
-  }
-
-  return { stockItems, total };
+  return {
+    stockItems: paged,
+    total,
+  };
 }

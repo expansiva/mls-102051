@@ -11,8 +11,6 @@ export interface DateRange {
 export interface AiSalesSummaryFilter {
   operationalDashboardId?: string;
   summaryDate?: string;
-  periodStart?: string;
-  periodEnd?: string;
 }
 
 export interface IAiSalesSummaryRepository {

@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-22T21:19:47.994Z",
+  "savedAt": "2026-07-24T20:01:08.008Z",
   "agentName": "agentCbUsecase",
   "stepId": 18,
   "planning": null,
@@ -11,228 +11,218 @@
       "arguments": {
         "status": "ok",
         "result": {
-          "usecaseId": "createStockAdjustment",
+          "usecaseId": "viewShiftClosingReport",
           "ports": [
-            "DailyShift"
+            "ShiftClosingReport"
           ],
           "functions": [
             {
-              "functionName": "createStockAdjustment",
-              "inputTypeName": "CreateStockAdjustmentInput",
-              "outputTypeName": "CreateStockAdjustmentOutput",
+              "functionName": "viewShiftClosingReport",
+              "inputTypeName": "ViewShiftClosingReportInput",
+              "outputTypeName": "ViewShiftClosingReportOutput",
               "input": [
                 {
-                  "name": "stockItemId",
+                  "name": "shiftClosingReportId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.stockItemId"
-                },
-                {
-                  "name": "quantity",
-                  "type": "number",
-                  "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.quantity"
-                },
-                {
-                  "name": "direction",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.direction"
-                },
-                {
-                  "name": "reason",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.reason"
-                },
-                {
-                  "name": "notes",
-                  "type": "string",
-                  "required": false,
-                  "ofEntity": "StockAdjustment",
-                  "fieldRef": "StockAdjustment.notes"
+                  "ofEntity": "ShiftClosingReport",
+                  "fieldRef": "ShiftClosingReport.shiftClosingReportId"
                 }
               ],
               "output": [
                 {
-                  "name": "stockAdjustmentId",
+                  "name": "shiftClosingReportId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "ofEntity": "ShiftClosingReport"
                 },
                 {
-                  "name": "stockItemId",
+                  "name": "dailyShiftId",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "ofEntity": "ShiftClosingReport"
                 },
                 {
-                  "name": "quantity",
+                  "name": "shiftDate",
+                  "type": "string",
+                  "required": true,
+                  "ofEntity": "ShiftClosingReport"
+                },
+                {
+                  "name": "totalSalesAmount",
                   "type": "number",
                   "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "ofEntity": "ShiftClosingReport"
                 },
                 {
-                  "name": "direction",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "reason",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "managerUserId",
-                  "type": "string",
-                  "required": true,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "shiftId",
-                  "type": "string",
-                  "required": false,
-                  "ofEntity": "StockAdjustment"
-                },
-                {
-                  "name": "resultingBalance",
+                  "name": "totalOrdersCount",
                   "type": "number",
                   "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "ofEntity": "ShiftClosingReport"
                 },
                 {
-                  "name": "notes",
+                  "name": "totalItemsSold",
+                  "type": "number",
+                  "required": true,
+                  "ofEntity": "ShiftClosingReport"
+                },
+                {
+                  "name": "cashPaymentsAmount",
+                  "type": "number",
+                  "required": true,
+                  "ofEntity": "ShiftClosingReport"
+                },
+                {
+                  "name": "otherPaymentsAmount",
+                  "type": "number",
+                  "required": true,
+                  "ofEntity": "ShiftClosingReport"
+                },
+                {
+                  "name": "topSellingItemsSummary",
                   "type": "string",
                   "required": false,
-                  "ofEntity": "StockAdjustment"
+                  "ofEntity": "ShiftClosingReport"
                 },
                 {
-                  "name": "status",
-                  "type": "string",
+                  "name": "lowStockSignalsCount",
+                  "type": "number",
                   "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "ofEntity": "ShiftClosingReport"
                 },
                 {
-                  "name": "createdAt",
+                  "name": "stockoutSignalsCount",
+                  "type": "number",
+                  "required": true,
+                  "ofEntity": "ShiftClosingReport"
+                },
+                {
+                  "name": "closingNotes",
+                  "type": "string",
+                  "required": false,
+                  "ofEntity": "ShiftClosingReport"
+                },
+                {
+                  "name": "generatedAt",
                   "type": "string",
                   "required": true,
-                  "ofEntity": "StockAdjustment"
+                  "ofEntity": "ShiftClosingReport"
                 }
               ],
               "ports": [
-                "DailyShift"
+                "ShiftClosingReport"
               ],
               "rulesApplied": [
-                "managerManualStockAdjustmentAllowed"
+                "shiftClosingReportContents",
+                "shiftClosingRecordsBasicTotalsAndPayments"
               ],
-              "transactional": true,
+              "transactional": false,
               "steps": [
-                "Generate stockAdjustmentId via ctx.idGenerator and createdAt via ctx.clock",
-                "Resolve managerUserId from ctx.sessionContext (actorSession.actorId)",
-                "Resolve optional open DailyShift via DailyShift port (list/find by status 'open'); use its dailyShiftId as shiftId when present, otherwise leave shiftId unset",
-                "Load StockItem by stockItemId via ctx.mdm.entity.get({ mdmId: stockItemId }); fail if not found",
-                "Apply managerManualStockAdjustmentAllowed inline: only an authenticated manager may post a manual adjustment; include rule id in validation error details when blocked",
-                "Validate quantity > 0, direction in [in, out, correction], reason in [count, loss, expiration, divergence, other]",
-                "Compute resultingBalance from StockItem.currentBalance and direction (in: add quantity; out: subtract quantity; correction: set to quantity); reject if resultingBalance would be negative",
-                "Build StockAdjustment { stockAdjustmentId, stockItemId, quantity, direction, reason, managerUserId, shiftId?, resultingBalance, notes?, status: 'posted', createdAt }",
-                "Persist the new StockAdjustment aggregate (posted) inside ctx.data transaction wrapper",
-                "Update StockItem.currentBalance to resultingBalance (and updatedAt) via ctx.mdm.entity.update inside the same transaction",
-                "Return stockAdjustmentId, stockItemId, quantity, direction, reason, managerUserId, shiftId, resultingBalance, notes, status, createdAt"
+                "resolve ShiftClosingReport port via resolveRepository",
+                "load ShiftClosingReport by shiftClosingReportId (routeParam); if not found, fail validation",
+                "apply shiftClosingReportContents inline: ensure report exposes shiftClosingReportId, dailyShiftId, shiftDate, totals, payment breakdown, stock signal counts, optional topSellingItemsSummary/closingNotes, and generatedAt",
+                "apply shiftClosingRecordsBasicTotalsAndPayments inline: project totalSalesAmount, totalOrdersCount, totalItemsSold plus cashPaymentsAmount and otherPaymentsAmount as basic payment forms without advanced reconciliation",
+                "return the ShiftClosingReport projection matching outputShape"
               ],
               "outputShape": {
                 "kind": "object",
                 "fields": [
                   {
-                    "name": "stockAdjustmentId",
+                    "name": "shiftClosingReportId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "StockAdjustment.stockAdjustmentId"
+                    "fieldRef": "ShiftClosingReport.shiftClosingReportId"
                   },
                   {
-                    "name": "stockItemId",
+                    "name": "dailyShiftId",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "StockAdjustment.stockItemId"
+                    "fieldRef": "ShiftClosingReport.dailyShiftId"
                   },
                   {
-                    "name": "quantity",
+                    "name": "shiftDate",
+                    "type": "string",
+                    "required": true,
+                    "fieldRef": "ShiftClosingReport.shiftDate"
+                  },
+                  {
+                    "name": "totalSalesAmount",
                     "type": "number",
                     "required": true,
-                    "fieldRef": "StockAdjustment.quantity"
+                    "fieldRef": "ShiftClosingReport.totalSalesAmount"
                   },
                   {
-                    "name": "direction",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.direction"
-                  },
-                  {
-                    "name": "reason",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.reason"
-                  },
-                  {
-                    "name": "managerUserId",
-                    "type": "string",
-                    "required": true,
-                    "fieldRef": "StockAdjustment.managerUserId"
-                  },
-                  {
-                    "name": "shiftId",
-                    "type": "string",
-                    "required": false,
-                    "fieldRef": "StockAdjustment.shiftId"
-                  },
-                  {
-                    "name": "resultingBalance",
+                    "name": "totalOrdersCount",
                     "type": "number",
                     "required": true,
-                    "fieldRef": "StockAdjustment.resultingBalance"
+                    "fieldRef": "ShiftClosingReport.totalOrdersCount"
                   },
                   {
-                    "name": "notes",
+                    "name": "totalItemsSold",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "ShiftClosingReport.totalItemsSold"
+                  },
+                  {
+                    "name": "cashPaymentsAmount",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "ShiftClosingReport.cashPaymentsAmount"
+                  },
+                  {
+                    "name": "otherPaymentsAmount",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "ShiftClosingReport.otherPaymentsAmount"
+                  },
+                  {
+                    "name": "topSellingItemsSummary",
                     "type": "string",
                     "required": false,
-                    "fieldRef": "StockAdjustment.notes"
+                    "fieldRef": "ShiftClosingReport.topSellingItemsSummary"
                   },
                   {
-                    "name": "status",
-                    "type": "string",
+                    "name": "lowStockSignalsCount",
+                    "type": "number",
                     "required": true,
-                    "fieldRef": "StockAdjustment.status"
+                    "fieldRef": "ShiftClosingReport.lowStockSignalsCount"
                   },
                   {
-                    "name": "createdAt",
+                    "name": "stockoutSignalsCount",
+                    "type": "number",
+                    "required": true,
+                    "fieldRef": "ShiftClosingReport.stockoutSignalsCount"
+                  },
+                  {
+                    "name": "closingNotes",
+                    "type": "string",
+                    "required": false,
+                    "fieldRef": "ShiftClosingReport.closingNotes"
+                  },
+                  {
+                    "name": "generatedAt",
                     "type": "string",
                     "required": true,
-                    "fieldRef": "StockAdjustment.createdAt"
+                    "fieldRef": "ShiftClosingReport.generatedAt"
                   }
                 ]
               }
             }
           ],
           "rulesApplied": [
-            "managerManualStockAdjustmentAllowed"
+            "shiftClosingReportContents",
+            "shiftClosingRecordsBasicTotalsAndPayments"
           ],
-          "mdmRefs": [
-            "StockItem"
-          ]
+          "mdmRefs": []
         },
         "questions": [],
         "trace": [
-          "createStockAdjustment: commandInput create on StockAdjustment; public inputs stockItemId/quantity/direction/reason/notes; managerUserId/shiftId/ids/timestamps from context; StockItem via ctx.mdm; open DailyShift via port; rule managerManualStockAdjustmentAllowed inline; outputShape canonical fields"
+          "viewShiftClosingReport: getById on ShiftClosingReport via port, public input shiftClosingReportId from routeParam, output pinned to outputShape"
         ]
       }
     },
     "status": "completed",
-    "stepId": 6,
+    "stepId": 23,
     "interaction": null,
     "nextSteps": null
   }

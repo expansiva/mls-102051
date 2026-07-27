@@ -15,12 +15,13 @@ export const orderRepositoryAdapter = {
     "entityId": "Order",
     "className": "OrderRepositoryAdapter",
     "portRef": "IOrderRepository",
-    "tableRef": "order",
+    "tableRef": "cafe_flow_orders",
     "mdmReads": [],
     "notes": [
       "columns: order_id, daily_shift_id, order_type, status, created_at",
-      "details JSONB: tableNumber, customerName, totalAmount, notes, registeredAt, confirmedAt, inPreparationAt, readyAt, servedAt, cancelledAt, cancellationReason, updatedAt + embedded OrderItem[] and OrderPayment[]",
-      "map domain Order <-> row via ctx.data.moduleData; embedded members serialized inside details; no mdmRefs"
+      "details JSONB: tableNumber, customerName, totalAmount, notes, registeredAt, confirmedAt, inPreparationAt, readyAt, servedAt, cancelledAt, cancellationReason, updatedAt, OrderItem[], OrderPayment[]",
+      "embedded OrderItem and OrderPayment stored inside details JSONB",
+      "map domain Order <-> row via ctx.data.moduleData only"
     ]
   }
 } as const;

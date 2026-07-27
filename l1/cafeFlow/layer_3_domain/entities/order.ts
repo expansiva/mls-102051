@@ -16,7 +16,12 @@ export type OrderItemStatus =
   | 'ready'
   | 'cancelled';
 
-export type OrderPaymentMethod = 'cash' | 'pix' | 'creditCard' | 'debitCard' | 'mixed';
+export type OrderPaymentMethod =
+  | 'cash'
+  | 'pix'
+  | 'creditCard'
+  | 'debitCard'
+  | 'mixed';
 
 export type OrderPaymentStatus = 'open' | 'closed' | 'voided';
 
@@ -85,8 +90,33 @@ export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   cancelled: [],
 };
 
+export const ORDER_ITEM_STATUS_TRANSITIONS: Record<OrderItemStatus, OrderItemStatus[]> = {
+  pending: ['sentToKitchen'],
+  sentToKitchen: ['inPreparation', 'cancelled'],
+  inPreparation: ['ready', 'cancelled'],
+  ready: [],
+  cancelled: [],
+};
+
+export const ORDER_PAYMENT_STATUS_TRANSITIONS: Record<OrderPaymentStatus, OrderPaymentStatus[]> = {
+  open: ['closed', 'voided'],
+  closed: [],
+  voided: [],
+};
+
 export function canTransitionOrder(from: OrderStatus, to: OrderStatus): boolean {
   return ORDER_STATUS_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function canTransitionOrderItem(from: OrderItemStatus, to: OrderItemStatus): boolean {
+  return ORDER_ITEM_STATUS_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function canTransitionOrderPayment(
+  from: OrderPaymentStatus,
+  to: OrderPaymentStatus,
+): boolean {
+  return ORDER_PAYMENT_STATUS_TRANSITIONS[from]?.includes(to) ?? false;
 }
 
 export function orderRequiresItem(order: Pick<Order, 'items'>): boolean {
@@ -97,112 +127,49 @@ export function recomputeOrderTotal(items: OrderItem[]): number {
   return items.reduce((sum, item) => sum + item.subtotal, 0);
 }
 
-export function orderTotalMatchesItems(order: Pick<Order, 'totalAmount' | 'items'>): boolean {
-  return order.totalAmount === recomputeOrderTotal(order.items);
+export function computeOrderItemSubtotal(quantity: number, unitPrice: number): number {
+  return quantity * unitPrice;
 }
 
 export function orderRequiresTableNumber(order: Pick<Order, 'orderType' | 'tableNumber'>): boolean {
-  if (order.orderType !== 'table') {
-    return true;
-  }
-  return order.tableNumber !== null && order.tableNumber.trim().length > 0;
+  if (order.orderType !== 'table') return true;
+  return typeof order.tableNumber === 'string' && order.tableNumber.trim().length > 0;
 }
 
-export function orderRequiresCustomerName(order: Pick<Order, 'orderType' | 'customerName'>): boolean {
-  if (order.orderType !== 'takeout') {
-    return true;
-  }
-  return order.customerName !== null && order.customerName.trim().length > 0;
-}
-
-export function orderTerminalTimestampsExclusive(
-  order: Pick<Order, 'servedAt' | 'cancelledAt'>,
+export function orderRequiresCustomerName(
+  order: Pick<Order, 'orderType' | 'customerName'>,
 ): boolean {
-  return !(order.servedAt !== null && order.cancelledAt !== null);
+  if (order.orderType !== 'takeout') return true;
+  return typeof order.customerName === 'string' && order.customerName.trim().length > 0;
 }
 
-const ORDER_STATUS_RANK: Record<OrderStatus, number> = {
-  registered: 0,
-  confirmed: 1,
-  inPreparation: 2,
-  ready: 3,
-  served: 4,
-  cancelled: -1,
-};
+export function isValidOrderItemQuantity(quantity: number): boolean {
+  return quantity > 0;
+}
 
-export function orderHasRequiredLifecycleTimestamps(
-  order: Pick<
-    Order,
-    | 'status'
-    | 'confirmedAt'
-    | 'inPreparationAt'
-    | 'readyAt'
-    | 'servedAt'
-    | 'cancelledAt'
-    | 'cancellationReason'
-  >,
+export function isValidOrderItemUnitPrice(unitPrice: number): boolean {
+  return unitPrice >= 0;
+}
+
+export function isValidOrderItemSubtotal(
+  item: Pick<OrderItem, 'quantity' | 'unitPrice' | 'subtotal'>,
 ): boolean {
-  if (order.status === 'cancelled') {
-    return order.cancelledAt !== null && order.cancellationReason !== null;
-  }
-  const rank = ORDER_STATUS_RANK[order.status];
-  if (rank >= ORDER_STATUS_RANK.confirmed && order.confirmedAt === null) {
-    return false;
-  }
-  if (rank >= ORDER_STATUS_RANK.inPreparation && order.inPreparationAt === null) {
-    return false;
-  }
-  if (rank >= ORDER_STATUS_RANK.ready && order.readyAt === null) {
-    return false;
-  }
-  if (order.status === 'served' && order.servedAt === null) {
-    return false;
-  }
-  return true;
+  return item.subtotal >= 0 && item.subtotal === computeOrderItemSubtotal(item.quantity, item.unitPrice);
 }
 
-export function orderLifecycleTimestampsOrdered(
-  order: Pick<
-    Order,
-    | 'registeredAt'
-    | 'confirmedAt'
-    | 'inPreparationAt'
-    | 'readyAt'
-    | 'servedAt'
-    | 'createdAt'
-    | 'updatedAt'
-  >,
+export function isValidOrderTotal(
+  order: Pick<Order, 'totalAmount' | 'items'>,
 ): boolean {
-  if (order.updatedAt < order.createdAt) {
-    return false;
-  }
-  if (order.confirmedAt !== null && order.confirmedAt < order.registeredAt) {
-    return false;
-  }
-  if (
-    order.inPreparationAt !== null &&
-    order.confirmedAt !== null &&
-    order.inPreparationAt < order.confirmedAt
-  ) {
-    return false;
-  }
-  if (
-    order.readyAt !== null &&
-    order.inPreparationAt !== null &&
-    order.readyAt < order.inPreparationAt
-  ) {
-    return false;
-  }
-  if (order.servedAt !== null && order.readyAt !== null && order.servedAt < order.readyAt) {
-    return false;
-  }
-  return true;
+  return order.totalAmount >= 0 && order.totalAmount === recomputeOrderTotal(order.items);
 }
 
-export function orderItemSubtotalMatches(item: Pick<OrderItem, 'quantity' | 'unitPrice' | 'subtotal'>): boolean {
-  return item.subtotal === item.quantity * item.unitPrice;
+export function paymentMatchesOrderTotal(
+  order: Pick<Order, 'totalAmount'>,
+  payment: Pick<OrderPayment, 'totalAmount'>,
+): boolean {
+  return payment.totalAmount >= 0 && payment.totalAmount === order.totalAmount;
 }
 
-export function orderItemQuantityPositive(item: Pick<OrderItem, 'quantity'>): boolean {
-  return item.quantity > 0;
+export function paymentMayCloseForOrder(order: Pick<Order, 'status'>): boolean {
+  return order.status === 'served';
 }

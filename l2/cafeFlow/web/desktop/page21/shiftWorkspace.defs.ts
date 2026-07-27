@@ -111,7 +111,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "ShiftStatusBanner",
           "titleKey": "organism.shiftWorkspace.getShiftClosingReport.title",
-          "purpose": "Exibe o status atual do turno (aberto, fechado ou sem turno) como âncora visual imediata, permitindo ao gerente saber de relance em que estado a operação se encontra antes de agir.",
+          "purpose": "Exibe o estado atual do turno (sem turno / aberto / fechado) com data operacional e responsável, ancorando toda a página e determinando quais ações ficam visíveis.",
           "userActions": [
             "getShiftClosingReport"
           ],
@@ -138,7 +138,7 @@ export const definition = {
     {
       "id": "section.shiftWorkspace.sec-open-shift",
       "type": "section",
-      "sectionName": "Abrir Turno",
+      "sectionName": "Abertura de Turno",
       "titleKey": "section.shiftWorkspace.sec-open-shift.title",
       "mode": "edit",
       "order": 20,
@@ -148,7 +148,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "OpenShiftForm",
           "titleKey": "organism.shiftWorkspace.openDailyShiftCmd.title",
-          "purpose": "Permite ao gerente abrir o turno diário informando apenas a data operacional (pré-preenchida com hoje) e uma nota opcional; openedByUserId é derivado da sessão e nunca editável.",
+          "purpose": "Formulário mínimo para abertura do turno diário: data operacional (padrão = hoje) e notas opcionais; openedByUserId derivado da sessão. Visível apenas quando não há turno aberto.",
           "userActions": [
             "openDailyShiftCmd"
           ],
@@ -173,7 +173,7 @@ export const definition = {
     {
       "id": "section.shiftWorkspace.sec-close-shift",
       "type": "section",
-      "sectionName": "Fechar Turno",
+      "sectionName": "Fechamento de Turno",
       "titleKey": "section.shiftWorkspace.sec-close-shift.title",
       "mode": "edit",
       "order": 30,
@@ -183,7 +183,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "CloseShiftPanel",
           "titleKey": "organism.shiftWorkspace.closeDailyShiftCmd.title",
-          "purpose": "Apresenta os totais acumulados do turno aberto e coleta cashTotal e otherPaymentsTotal do gerente para confirmar o fechamento; dailyShiftId, closedByUserId e closedAt são todos derivados do contexto e nunca digitados.",
+          "purpose": "Painel de fechamento do turno ativo: exibe totais calculados pelo sistema (totalOrders, totalSalesAmount) como referência de ancoragem e coleta cashTotal, otherPaymentsTotal e notas do gerente antes de confirmar o encerramento.",
           "userActions": [
             "closeDailyShiftCmd"
           ],
@@ -209,7 +209,7 @@ export const definition = {
           "type": "queryResult",
           "organismName": "ShiftClosingReportDetail",
           "titleKey": "organism.shiftWorkspace.getShiftClosingReport.title",
-          "purpose": "Exibe o relatório completo de fechamento do turno imediatamente após o fechamento, com totais de vendas, pagamentos, itens mais vendidos e alertas de estoque — sem exigir navegação para outra tela.",
+          "purpose": "Painel de detalhe do relatório de fechamento gerado após o encerramento do turno: exibe totais de vendas, pedidos, itens vendidos, breakdown de pagamentos, top itens e sinais de estoque.",
           "userActions": [
             "getShiftClosingReport"
           ],
@@ -237,46 +237,47 @@ export const definition = {
   "templateId": "goal_first",
   "visualStyle": "POS-first, high-contrast, touch-friendly, status-driven UI",
   "pageObjective": {
-    "actor": "Gerente de turno (café)",
-    "jobToBeDone": "Abrir o turno diário no início do expediente, acompanhar a operação ao longo do dia e fechar o turno ao final, revisando o relatório de fechamento com totais de vendas, pagamentos e alertas de estoque.",
-    "primaryDecision": "Abrir ou fechar o turno diário — a ação que habilita ou encerra toda a operação do dia.",
+    "actor": "Gerente de turno (café/restaurante)",
+    "jobToBeDone": "Abrir o turno diário no início do expediente, acompanhar a operação ao longo do dia e, ao final, fechar o turno registrando os totais de caixa e revisando o relatório de fechamento gerado automaticamente.",
+    "primaryDecision": "O turno está aberto ou fechado? — a ação dominante muda completamente conforme o estado do turno: 'Abrir turno' quando não há turno ativo, 'Fechar turno' quando há um turno em andamento.",
     "decisiveInfo": [
       "shiftDate (data operacional do turno)",
-      "status do turno (aberto / fechado)",
-      "cashTotal e otherPaymentsTotal (totais de fechamento)",
-      "totalSalesAmount, totalOrdersCount, totalItemsSold (resumo do dia)",
-      "lowStockSignalsCount, stockoutSignalsCount (alertas de estoque)",
-      "topSellingItemsSummary (destaques de vendas)"
+      "status do turno (open / closed)",
+      "cashTotal (total em dinheiro no fechamento)",
+      "otherPaymentsTotal (outros meios de pagamento no fechamento)",
+      "totalSalesAmount, totalOrdersCount, totalItemsSold (resumo do relatório)",
+      "topSellingItemsSummary, lowStockSignalsCount, stockoutSignalsCount (destaques operacionais)"
     ],
-    "usageFrequency": "Diária / operacional — uma abertura e um fechamento por dia, com revisão do relatório imediatamente após o fechamento.",
+    "usageFrequency": "Diária / operacional — uma abertura e um fechamento por dia; o relatório é consultado imediatamente após o fechamento e eventualmente revisitado.",
     "criticalActions": [
       {
         "action": "openDailyShiftCmd",
-        "presentation": "primary-button com formulário mínimo (shiftDate pré-preenchida com hoje; openedByUserId derivado da sessão; notes opcional)"
+        "presentation": "primary-button — formulário mínimo (data já preenchida com hoje, usuário derivado da sessão) com botão 'Abrir turno' em destaque; visível apenas quando não há turno aberto."
       },
       {
         "action": "closeDailyShiftCmd",
-        "presentation": "contextual-transition-actions — botão de fechamento visível apenas quando o turno está aberto; cashTotal e otherPaymentsTotal como únicos inputs reais; confirmação antes de submeter"
+        "presentation": "contextual-transition-actions — painel de fechamento com campos de totais de caixa e observações, botão 'Fechar turno' com confirmação destrutiva; visível apenas quando há turno aberto."
       },
       {
         "action": "getShiftClosingReport",
-        "presentation": "summary-first — relatório exibido automaticamente após o fechamento, com totais em destaque e detalhes abaixo"
+        "presentation": "summary-first — relatório exibido automaticamente após o fechamento e acessível via painel de detalhe; nunca requer digitação de ID."
       }
     ],
     "informationHierarchy": [
-      "1. Status atual do turno (aberto / sem turno) — âncora visual imediata",
-      "2. Formulário de abertura de turno (quando não há turno aberto)",
-      "3. Painel de fechamento com totais do dia e inputs de caixa (quando turno está aberto)",
-      "4. Relatório de fechamento completo (após fechar o turno)"
+      "1. Status atual do turno (aberto / fechado / sem turno) — ancora toda a página",
+      "2. Ação primária contextual: 'Abrir turno' (sem turno) ou 'Fechar turno' (turno aberto)",
+      "3. Dados mínimos de entrada para abertura (data, notas opcionais)",
+      "4. Totais de caixa para fechamento (cashTotal, otherPaymentsTotal, notas)",
+      "5. Relatório de fechamento: totais de vendas, pedidos, itens, pagamentos",
+      "6. Destaques operacionais: top itens vendidos, sinais de estoque baixo/ruptura"
     ],
-    "successCriteria": "O gerente abre o turno em menos de 10 segundos, fecha informando apenas os totais de caixa e revisa o relatório sem precisar navegar para outra tela.",
+    "successCriteria": "O gerente abre o turno em menos de 10 segundos (data já preenchida), fecha o turno informando apenas os totais de caixa e lê o relatório completo sem sair da página — sem digitar IDs, sem selects de status livres.",
     "antiPatterns": [
-      "Campo de dailyShiftId como input manual — deve ser derivado do turno ativo",
-      "Status do turno como <select> livre — transições devem ser botões contextuais",
-      "Formulário de fechamento sempre visível independente do estado do turno",
-      "Relatório em página separada — deve aparecer inline após o fechamento",
-      "openedByUserId e closedByUserId como inputs editáveis — derivados da sessão",
-      "closedAt como input manual — gerado pelo sistema"
+      "Campo de status como <select> livre sobre todos os valores do enum",
+      "Digitação manual de dailyShiftId ou shiftClosingReportId",
+      "Formulário de abertura e fechamento sempre visíveis simultaneamente",
+      "Relatório em página separada exigindo navegação extra",
+      "Exibir campos system-owned (openedAt, closedAt, createdAt) como inputs editáveis"
     ]
   },
   "layout": {
@@ -296,7 +297,7 @@ export const definition = {
             "type": "queryResult",
             "organismName": "ShiftStatusBanner",
             "titleKey": "organism.shiftWorkspace.getShiftClosingReport.title",
-            "purpose": "Exibe o status atual do turno (aberto, fechado ou sem turno) como âncora visual imediata, permitindo ao gerente saber de relance em que estado a operação se encontra antes de agir.",
+            "purpose": "Exibe o estado atual do turno (sem turno / aberto / fechado) com data operacional e responsável, ancorando toda a página e determinando quais ações ficam visíveis.",
             "userActions": [
               "getShiftClosingReport"
             ],
@@ -426,7 +427,7 @@ export const definition = {
       {
         "id": "section.shiftWorkspace.sec-open-shift",
         "type": "section",
-        "sectionName": "Abrir Turno",
+        "sectionName": "Abertura de Turno",
         "titleKey": "section.shiftWorkspace.sec-open-shift.title",
         "mode": "edit",
         "order": 20,
@@ -436,7 +437,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "OpenShiftForm",
             "titleKey": "organism.shiftWorkspace.openDailyShiftCmd.title",
-            "purpose": "Permite ao gerente abrir o turno diário informando apenas a data operacional (pré-preenchida com hoje) e uma nota opcional; openedByUserId é derivado da sessão e nunca editável.",
+            "purpose": "Formulário mínimo para abertura do turno diário: data operacional (padrão = hoje) e notas opcionais; openedByUserId derivado da sessão. Visível apenas quando não há turno aberto.",
             "userActions": [
               "openDailyShiftCmd"
             ],
@@ -501,7 +502,7 @@ export const definition = {
       {
         "id": "section.shiftWorkspace.sec-close-shift",
         "type": "section",
-        "sectionName": "Fechar Turno",
+        "sectionName": "Fechamento de Turno",
         "titleKey": "section.shiftWorkspace.sec-close-shift.title",
         "mode": "edit",
         "order": 30,
@@ -511,7 +512,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "CloseShiftPanel",
             "titleKey": "organism.shiftWorkspace.closeDailyShiftCmd.title",
-            "purpose": "Apresenta os totais acumulados do turno aberto e coleta cashTotal e otherPaymentsTotal do gerente para confirmar o fechamento; dailyShiftId, closedByUserId e closedAt são todos derivados do contexto e nunca digitados.",
+            "purpose": "Painel de fechamento do turno ativo: exibe totais calculados pelo sistema (totalOrders, totalSalesAmount) como referência de ancoragem e coleta cashTotal, otherPaymentsTotal e notas do gerente antes de confirmar o encerramento.",
             "userActions": [
               "closeDailyShiftCmd"
             ],
@@ -591,14 +592,14 @@ export const definition = {
                 ]
               }
             ],
-            "displayHint": "contextual-transition-actions"
+            "displayHint": "summary-first"
           },
           {
             "id": "org-closing-report-detail",
             "type": "queryResult",
             "organismName": "ShiftClosingReportDetail",
             "titleKey": "organism.shiftWorkspace.getShiftClosingReport.title",
-            "purpose": "Exibe o relatório completo de fechamento do turno imediatamente após o fechamento, com totais de vendas, pagamentos, itens mais vendidos e alertas de estoque — sem exigir navegação para outra tela.",
+            "purpose": "Painel de detalhe do relatório de fechamento gerado após o encerramento do turno: exibe totais de vendas, pedidos, itens vendidos, breakdown de pagamentos, top itens e sinais de estoque.",
             "userActions": [
               "getShiftClosingReport"
             ],
@@ -721,7 +722,7 @@ export const definition = {
                 "stateKey": "ui.shiftWorkspace.data.getShiftClosingReport"
               }
             ],
-            "displayHint": "summary-first"
+            "displayHint": "master-detail"
           }
         ]
       }

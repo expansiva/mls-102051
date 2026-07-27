@@ -126,14 +126,15 @@ export const viewOperationalDashboardUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "Resolve the single open DailyShift (status 'open') via DailyShift port; if none is open, return validation error or empty dashboard per L4 (never treat dailyShiftId as missing client input)",
+          "Resolve the single active DailyShift with status 'open' via DailyShift port (activeLifecycleInstance); if none is open, return validation error per L4 (no open shift)",
           "Load OperationalDashboard for the resolved dailyShiftId via OperationalDashboard port (lookup by dailyShiftId)",
-          "List Orders for the open dailyShiftId via Order port; aggregate non-cancelled orders for todaySalesTotal, todayOrdersCount and todayItemsSold from order totals and embedded OrderItems",
-          "Aggregate OrderItems by menuItemId to rank top sellers; collect distinct menuItemIds and bulk-read MenuItem via ctx.mdm.collection.getMany",
-          "Build topSellingItems (menuItemId, name, quantitySold, unitPrice) and set topMenuItemId, topMenuItemQuantity, topSellingItemsCount (dashboardHighlightsCoreMetrics)",
-          "List StockItem via ctx.mdm.collection.listByType; select items where currentBalance <= minimumLevel (lowStockMustBeVisible); count lowStockItemsCount and outOfStockItemsCount (currentBalance <= 0); set hasLowStockAlert when any alert exists",
-          "Build lowStockAlerts with stockItemId, name, currentBalance, minimumLevel, unit, isOutOfStock",
-          "Compose output from OperationalDashboard snapshot fields plus computed topSellingItems and lowStockAlerts; expose lastComputedAt as the aggregation timestamp"
+          "If no dashboard snapshot exists yet, aggregate live metrics from Order port for that dailyShiftId: sum todaySalesTotal from non-cancelled orders, count todayOrdersCount, sum todayItemsSold from order items",
+          "Compute top-selling items from order line items (menuItemId + quantity), rank by quantitySold descending; set topMenuItemId, topMenuItemQuantity, topSellingItemsCount",
+          "Bulk-hydrate MenuItem MDM records via ctx.mdm.collection.getMany for the ranked menuItemIds; build topSellingItems with menuItemId, name, quantitySold, unitPrice",
+          "List StockItem MDM via ctx.mdm.collection.listByType; filter items where currentBalance <= minimumLevel (low stock) or currentBalance <= 0 (out of stock) — rule lowStockMustBeVisible",
+          "Build lowStockAlerts with stockItemId, name, currentBalance, minimumLevel, unit, isOutOfStock; set lowStockItemsCount, outOfStockItemsCount, hasLowStockAlert",
+          "Apply dashboardHighlightsCoreMetrics: ensure todaySalesTotal, todayOrdersCount, todayItemsSold and top/alert projections are present on the returned snapshot",
+          "Return the full OperationalDashboard projection matching outputShape including lastComputedAt and referenceDate from the open shift"
         ],
         "outputShape": {
           "kind": "object",

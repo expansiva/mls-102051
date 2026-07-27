@@ -13,17 +13,6 @@ declare const message_pt: {
     'intent.menuManagement.listMenuItems.list.filter.name.label': string;
     'intent.menuManagement.listMenuItems.list.filter.page.label': string;
     'intent.menuManagement.listMenuItems.list.filter.pageSize.label': string;
-    'organism.menuManagement.createMenuItemCmd.title': string;
-    'intent.menuManagement.createMenuItemCmd.form.title': string;
-    'intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.name.label': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.description.label': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.price.label': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.status.label': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label': string;
-    'intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label': string;
     'organism.menuManagement.updateMenuItemCmd.title': string;
     'intent.menuManagement.updateMenuItemCmd.form.title': string;
     'intent.menuManagement.updateMenuItemCmd.form.action.updateMenuItemCmd': string;
@@ -36,9 +25,19 @@ declare const message_pt: {
     'intent.menuManagement.updateMenuItemCmd.form.field.imageUrl.label': string;
     'intent.menuManagement.updateMenuItemCmd.form.field.displayOrder.label': string;
     'intent.menuManagement.updateMenuItemCmd.form.field.requiresStockLink.label': string;
-    'section.menuManagement.sec-menu-item-workbench.title': string;
-    'organism.menuManagement.summary-first10.title': string;
-    'intent.menuManagement.summary-first10.content.title': string;
+    'section.menuManagement.createMenuItemSection.title': string;
+    'organism.menuManagement.createMenuItemCmd.title': string;
+    'intent.menuManagement.createMenuItemCmd.form.title': string;
+    'intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.name.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.description.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.price.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.status.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label': string;
+    'intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label': string;
+    'section.menuManagement.sec-menu-item-list.title': string;
     'section.menuManagement.sec-create-menu-item.title': string;
 };
 type MessageType = typeof message_pt;
@@ -112,22 +111,25 @@ export declare class CafeFlowMenuManagementBase extends CollabLitElement {
     protected get msg(): MessageType;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    /** handleIcaStateChange — collabState notify contract */
     handleIcaStateChange(key: string, value: unknown): void;
+    private initStateValues;
     private applyRouteParams;
     private parseOptionalNumber;
-    private parseBoolean;
+    private parseRequiredNumber;
+    private parseBool;
     /** action listMenuItems (query) — route cafeFlow.menuManagement.listMenuItems; inputs: status, menuCategoryId, name, page, pageSize; writes ui.menuManagement.data.listMenuItems; status ui.menuManagement.action.listMenuItems.status */
     loadListMenuItems(): Promise<void>;
     /** handler for action listMenuItems — bind UI events here */
-    handleListMenuItemsClick(_event?: Event): void;
+    handleListMenuItemsClick(): Promise<void>;
     /** action createMenuItemCmd (command) — route cafeFlow.menuManagement.createMenuItemCmd; inputs: menuCategoryId, name, description, price, status, imageUrl, displayOrder, requiresStockLink; writes ui.menuManagement.output.createMenuItemCmd; status ui.menuManagement.action.createMenuItemCmd.status; feedback keys action.createMenuItemCmd.success / action.createMenuItemCmd.error */
     createMenuItemCmd(): Promise<void>;
     /** handler for action createMenuItemCmd — bind UI events here */
-    handleCreateMenuItemCmdClick(_event?: Event): void;
+    handleCreateMenuItemCmdClick(): Promise<void>;
     /** action updateMenuItemCmd (command) — route cafeFlow.menuManagement.updateMenuItemCmd; inputs: menuItemId, menuCategoryId, name, description, price, status, pauseReason, imageUrl, displayOrder, requiresStockLink; writes ui.menuManagement.output.updateMenuItemCmd; status ui.menuManagement.action.updateMenuItemCmd.status; feedback keys action.updateMenuItemCmd.success / action.updateMenuItemCmd.error */
     updateMenuItemCmd(): Promise<void>;
     /** handler for action updateMenuItemCmd — bind UI events here */
-    handleUpdateMenuItemCmdClick(_event?: Event): void;
+    handleUpdateMenuItemCmdClick(): Promise<void>;
     /** setter for state ui.menuManagement.input.listMenuItems.status */
     setListMenuItemsStatus(value: string): void;
     /** handler for action set.listMenuItemsStatus — bind UI events here */

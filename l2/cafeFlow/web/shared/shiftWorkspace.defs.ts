@@ -110,7 +110,7 @@ export const definition = {
   },
   "layoutRef": {
     "defPath": "_102051_/l2/cafeFlow/web/desktop/page11/shiftWorkspace.defs.ts",
-    "layoutId": "cfe-20260723170708.1000"
+    "layoutId": "cfe-20260727184832.1000"
   },
   "states": [
     {
@@ -546,8 +546,8 @@ export const definition = {
     "intent.shiftWorkspace.getShiftClosingReport.list.column.closingNotes.label": "Closing Notes",
     "intent.shiftWorkspace.getShiftClosingReport.list.column.generatedAt.label": "Generated At",
     "section.shiftWorkspace.sec-shift-status.title": "Estado do Turno",
-    "section.shiftWorkspace.sec-open-shift.title": "Abrir Turno",
-    "section.shiftWorkspace.sec-close-shift.title": "Fechar Turno"
+    "section.shiftWorkspace.sec-open-shift.title": "Abertura de Turno",
+    "section.shiftWorkspace.sec-close-shift.title": "Fechamento de Turno"
   },
   "automation": {
     "statePrefix": "ui.shiftWorkspace",

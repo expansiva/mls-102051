@@ -1,18 +1,6 @@
 {
   "defaultProjectId": "102051",
   "projects": {
-    "102020": {
-      "root": "../mls-102020",
-      "type": "lib"
-    },
-    "102025": {
-      "root": "../mls-102025",
-      "type": "lib"
-    },
-    "102027": {
-      "root": "../mls-102027",
-      "type": "lib"
-    },
     "102029": {
       "root": "../mls-102029",
       "type": "lib"
@@ -58,10 +46,6 @@
           "persistenceEntrypoint": "./_102034_/l1/monitor/persistence.js"
         }
       ]
-    },
-    "102036": {
-      "root": "../mls-102036",
-      "type": "lib"
     },
     "102051": {
       "root": ".",
@@ -115,6 +99,14 @@
           ],
           "frontend": {
             "layer": "l2",
+            "pageTests": [
+              "_102051_/l2/cafeFlow/web/desktop/page11/dashboardWorkspace.test.js",
+              "_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.test.js",
+              "_102051_/l2/cafeFlow/web/desktop/page11/menuManagement.test.js",
+              "_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.test.js",
+              "_102051_/l2/cafeFlow/web/desktop/page11/shiftWorkspace.test.js",
+              "_102051_/l2/cafeFlow/web/desktop/page11/stockManagement.test.js"
+            ],
             "pages": [
               {
                 "pageId": "dashboardWorkspace",
@@ -125,28 +117,12 @@
                 "title": "Dashboard operacional e IA"
               },
               {
-                "pageId": "dashboardWorkspace-page21",
-                "route": "/cafeFlow/dashboardWorkspace-page21",
-                "source": "l2/cafeFlow/web/desktop/page21/dashboardWorkspace.ts",
-                "definition": "l2/cafeFlow/web/desktop/page21/dashboardWorkspace.defs.ts",
-                "componentTag": "cafe-flow--web--desktop--page21--dashboard-workspace-102051",
-                "title": "Dashboard operacional e IA - PAGE21"
-              },
-              {
                 "pageId": "kitchenWorkspace",
                 "route": "/cafeFlow/kitchenWorkspace",
                 "source": "l2/cafeFlow/web/desktop/page11/kitchenWorkspace.ts",
                 "definition": "l2/cafeFlow/web/desktop/page11/kitchenWorkspace.defs.ts",
                 "componentTag": "cafe-flow--web--desktop--page11--kitchen-workspace-102051",
                 "title": "Fila da cozinha"
-              },
-              {
-                "pageId": "kitchenWorkspace-page21",
-                "route": "/cafeFlow/kitchenWorkspace-page21",
-                "source": "l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts",
-                "definition": "l2/cafeFlow/web/desktop/page21/kitchenWorkspace.defs.ts",
-                "componentTag": "cafe-flow--web--desktop--page21--kitchen-workspace-102051",
-                "title": "Fila da cozinha - PAGE21"
               },
               {
                 "pageId": "menuManagement",
@@ -157,28 +133,12 @@
                 "title": "Gerenciar cardápio"
               },
               {
-                "pageId": "menuManagement-page21",
-                "route": "/cafeFlow/menuManagement-page21/:menuItemId?",
-                "source": "l2/cafeFlow/web/desktop/page21/menuManagement.ts",
-                "definition": "l2/cafeFlow/web/desktop/page21/menuManagement.defs.ts",
-                "componentTag": "cafe-flow--web--desktop--page21--menu-management-102051",
-                "title": "Gerenciar cardápio - PAGE21"
-              },
-              {
                 "pageId": "posWorkspace",
                 "route": "/cafeFlow/posWorkspace",
                 "source": "l2/cafeFlow/web/desktop/page11/posWorkspace.ts",
                 "definition": "l2/cafeFlow/web/desktop/page11/posWorkspace.defs.ts",
                 "componentTag": "cafe-flow--web--desktop--page11--pos-workspace-102051",
                 "title": "Lançar e acompanhar pedidos"
-              },
-              {
-                "pageId": "posWorkspace-page21",
-                "route": "/cafeFlow/posWorkspace-page21",
-                "source": "l2/cafeFlow/web/desktop/page21/posWorkspace.ts",
-                "definition": "l2/cafeFlow/web/desktop/page21/posWorkspace.defs.ts",
-                "componentTag": "cafe-flow--web--desktop--page21--pos-workspace-102051",
-                "title": "Lançar e acompanhar pedidos - PAGE21"
               },
               {
                 "pageId": "shiftWorkspace",
@@ -189,20 +149,52 @@
                 "title": "Turno diário"
               },
               {
-                "pageId": "shiftWorkspace-page21",
-                "route": "/cafeFlow/shiftWorkspace-page21/:shiftClosingReportId?",
-                "source": "l2/cafeFlow/web/desktop/page21/shiftWorkspace.ts",
-                "definition": "l2/cafeFlow/web/desktop/page21/shiftWorkspace.defs.ts",
-                "componentTag": "cafe-flow--web--desktop--page21--shift-workspace-102051",
-                "title": "Turno diário - PAGE21"
-              },
-              {
                 "pageId": "stockManagement",
                 "route": "/cafeFlow/stockManagement/:stockItemId?",
                 "source": "l2/cafeFlow/web/desktop/page11/stockManagement.ts",
                 "definition": "l2/cafeFlow/web/desktop/page11/stockManagement.defs.ts",
                 "componentTag": "cafe-flow--web--desktop--page11--stock-management-102051",
                 "title": "Controlar estoque"
+              },
+              {
+                "pageId": "dashboardWorkspace-page21",
+                "route": "/cafeFlow/dashboardWorkspace-page21",
+                "source": "l2/cafeFlow/web/desktop/page21/dashboardWorkspace.ts",
+                "definition": "l2/cafeFlow/web/desktop/page21/dashboardWorkspace.defs.ts",
+                "componentTag": "cafe-flow--web--desktop--page21--dashboard-workspace-102051",
+                "title": "Dashboard operacional e IA - PAGE21"
+              },
+              {
+                "pageId": "kitchenWorkspace-page21",
+                "route": "/cafeFlow/kitchenWorkspace-page21",
+                "source": "l2/cafeFlow/web/desktop/page21/kitchenWorkspace.ts",
+                "definition": "l2/cafeFlow/web/desktop/page21/kitchenWorkspace.defs.ts",
+                "componentTag": "cafe-flow--web--desktop--page21--kitchen-workspace-102051",
+                "title": "Fila da cozinha - PAGE21"
+              },
+              {
+                "pageId": "menuManagement-page21",
+                "route": "/cafeFlow/menuManagement-page21/:menuItemId?",
+                "source": "l2/cafeFlow/web/desktop/page21/menuManagement.ts",
+                "definition": "l2/cafeFlow/web/desktop/page21/menuManagement.defs.ts",
+                "componentTag": "cafe-flow--web--desktop--page21--menu-management-102051",
+                "title": "Gerenciar cardápio - PAGE21"
+              },
+              {
+                "pageId": "posWorkspace-page21",
+                "route": "/cafeFlow/posWorkspace-page21",
+                "source": "l2/cafeFlow/web/desktop/page21/posWorkspace.ts",
+                "definition": "l2/cafeFlow/web/desktop/page21/posWorkspace.defs.ts",
+                "componentTag": "cafe-flow--web--desktop--page21--pos-workspace-102051",
+                "title": "Lançar e acompanhar pedidos - PAGE21"
+              },
+              {
+                "pageId": "shiftWorkspace-page21",
+                "route": "/cafeFlow/shiftWorkspace-page21/:shiftClosingReportId?",
+                "source": "l2/cafeFlow/web/desktop/page21/shiftWorkspace.ts",
+                "definition": "l2/cafeFlow/web/desktop/page21/shiftWorkspace.defs.ts",
+                "componentTag": "cafe-flow--web--desktop--page21--shift-workspace-102051",
+                "title": "Turno diário - PAGE21"
               },
               {
                 "pageId": "stockManagement-page21",
@@ -212,16 +204,25 @@
                 "componentTag": "cafe-flow--web--desktop--page21--stock-management-102051",
                 "title": "Controlar estoque - PAGE21"
               }
-            ],
-            "pageTests": [
-              "_102051_/l2/cafeFlow/web/desktop/page11/dashboardWorkspace.test.js",
-              "_102051_/l2/cafeFlow/web/desktop/page11/kitchenWorkspace.test.js",
-              "_102051_/l2/cafeFlow/web/desktop/page11/menuManagement.test.js",
-              "_102051_/l2/cafeFlow/web/desktop/page11/posWorkspace.test.js",
-              "_102051_/l2/cafeFlow/web/desktop/page11/shiftWorkspace.test.js",
-              "_102051_/l2/cafeFlow/web/desktop/page11/stockManagement.test.js"
             ]
-          }
+          },
+          "landings": [
+            {
+              "actorId": "atendente",
+              "pageId": "posWorkspace",
+              "route": "/cafeFlow/posWorkspace"
+            },
+            {
+              "actorId": "cozinheiro",
+              "pageId": "kitchenWorkspace",
+              "route": "/cafeFlow/kitchenWorkspace"
+            },
+            {
+              "actorId": "gerente",
+              "pageId": "dashboardWorkspace",
+              "route": "/cafeFlow/dashboardWorkspace"
+            }
+          ]
         }
       ],
       "persistenceModules": [
@@ -261,14 +262,6 @@
               "tag": "collab-aura-aside"
             },
             "widthPx": 280
-          },
-          "messages": {
-            "renderer": {
-              "entrypoint": "/_102025_/l2/collabMessages.js",
-              "source": "../mls-102025/l2/collabMessages.ts",
-              "tag": "collab-messages-102025"
-            },
-            "widthPx": 375
           }
         }
       }

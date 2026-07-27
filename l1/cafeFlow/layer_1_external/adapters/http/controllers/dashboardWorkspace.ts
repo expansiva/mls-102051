@@ -20,9 +20,11 @@ function enforceActors(ctx: RequestContext, allowed: readonly string[], route: s
 export const dashboardWorkspaceGetDashboardHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.dashboardWorkspace.getDashboard');
   if (denial) return denial;
+
   // dailyShiftId is activeLifecycleInstance — resolved inside the usecase from ctx/ports.
   const input: ViewOperationalDashboardInput = {};
   const result = await viewOperationalDashboard(ctx, input);
+
   return ok({
     operationalDashboardId: result.operationalDashboardId,
     dailyShiftId: result.dailyShiftId,
@@ -45,14 +47,17 @@ export const dashboardWorkspaceGetDashboardHandler: BffHandler = async ({ reques
 export const dashboardWorkspaceGetAiSalesSummaryHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.dashboardWorkspace.getAiSalesSummary');
   if (denial) return denial;
+
   const params = (request.params ?? {}) as { operationalDashboardId?: string };
   if (!params.operationalDashboardId) {
     throw new AppError('VALIDATION_ERROR', 'operationalDashboardId is required', 400, { field: 'operationalDashboardId' });
   }
+
   const input: GenerateAiSalesSummaryInput = {
     operationalDashboardId: params.operationalDashboardId,
   };
   const result = await generateAiSalesSummary(ctx, input);
+
   return ok({
     aiSalesSummaryId: result.aiSalesSummaryId,
     operationalDashboardId: result.operationalDashboardId,
@@ -70,14 +75,17 @@ export const dashboardWorkspaceGetAiSalesSummaryHandler: BffHandler = async ({ r
 export const dashboardWorkspaceGetAiPromotionSuggestionsHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.dashboardWorkspace.getAiPromotionSuggestions');
   if (denial) return denial;
+
   const params = (request.params ?? {}) as { operationalDashboardId?: string };
   if (!params.operationalDashboardId) {
     throw new AppError('VALIDATION_ERROR', 'operationalDashboardId is required', 400, { field: 'operationalDashboardId' });
   }
+
   const input: GenerateAiPromotionSuggestionsInput = {
     operationalDashboardId: params.operationalDashboardId,
   };
   const result = await generateAiPromotionSuggestions(ctx, input);
+
   const items = (result ?? []).map((row) => ({
     aiPromotionSuggestionId: row.aiPromotionSuggestionId,
     operationalDashboardId: row.operationalDashboardId,
@@ -94,6 +102,7 @@ export const dashboardWorkspaceGetAiPromotionSuggestionsHandler: BffHandler = as
     generatedAt: row.generatedAt,
     expiresAt: row.expiresAt,
   }));
+
   return ok(items);
 };
 

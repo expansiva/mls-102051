@@ -14,13 +14,13 @@ export interface BrowseMenuItemRow {
   menuCategoryId: string;
   categoryName: string;
   name: string;
-  description?: string;
+  description?: string | null;
   price: number;
   status: string;
-  pausedAt?: string;
-  pauseReason?: string;
-  imageUrl?: string;
-  displayOrder?: number;
+  pausedAt?: string | null;
+  pauseReason?: string | null;
+  imageUrl?: string | null;
+  displayOrder?: number | null;
   requiresStockLink: boolean;
   createdAt: string;
   updatedAt: string;
@@ -31,74 +31,41 @@ export interface BrowseMenuItemsOutput {
   total: number;
 }
 
-interface MenuItemDetails {
-  menuItemId?: string;
+interface CafeFlowMenuItemDetails {
   menuCategoryId?: string | null;
-  name?: string;
   description?: string | null;
   price?: number | null;
-  status?: string;
+  status?: string | null;
   pausedAt?: string | null;
   pauseReason?: string | null;
   imageUrl?: string | null;
   displayOrder?: number | null;
-  requiresStockLink?: boolean;
-  cafeFlow?: {
-    menuItemId?: string;
-    menuCategoryId?: string | null;
-    name?: string;
-    description?: string | null;
-    price?: number | null;
-    status?: string;
-    pausedAt?: string | null;
-    pauseReason?: string | null;
-    imageUrl?: string | null;
-    displayOrder?: number | null;
-    requiresStockLink?: boolean;
-  };
+  requiresStockLink?: boolean | null;
 }
 
-interface MenuCategoryDetails {
-  name?: string;
-  cafeFlow?: {
-    name?: string;
-  };
-}
-
-function readMenuItemFields(details: Record<string, unknown>, mdmId: string): {
+interface ParsedMenuItem {
   menuItemId: string;
-  menuCategoryId: string | null;
+  menuCategoryId: string;
   name: string;
   description: string | null;
-  price: number | null;
+  price: number;
   status: string;
   pausedAt: string | null;
   pauseReason: string | null;
   imageUrl: string | null;
   displayOrder: number | null;
   requiresStockLink: boolean;
-} {
-  const typed = details as unknown as MenuItemDetails;
-  const nested = typed.cafeFlow ?? {};
-  return {
-    menuItemId: nested.menuItemId ?? typed.menuItemId ?? mdmId,
-    menuCategoryId: (nested.menuCategoryId ?? typed.menuCategoryId ?? null) as string | null,
-    name: String(nested.name ?? typed.name ?? details['name'] ?? ''),
-    description: (nested.description ?? typed.description ?? null) as string | null,
-    price: (nested.price ?? typed.price ?? null) as number | null,
-    status: String(nested.status ?? typed.status ?? 'active'),
-    pausedAt: (nested.pausedAt ?? typed.pausedAt ?? null) as string | null,
-    pauseReason: (nested.pauseReason ?? typed.pauseReason ?? null) as string | null,
-    imageUrl: (nested.imageUrl ?? typed.imageUrl ?? null) as string | null,
-    displayOrder: (nested.displayOrder ?? typed.displayOrder ?? null) as number | null,
-    requiresStockLink: Boolean(nested.requiresStockLink ?? typed.requiresStockLink ?? false),
-  };
+  createdAt: string;
+  updatedAt: string;
 }
 
-function readCategoryName(details: Record<string, unknown>, fallbackName: string): string {
-  const typed = details as unknown as MenuCategoryDetails;
-  const nested = typed.cafeFlow ?? {};
-  return String(nested.name ?? typed.name ?? details['name'] ?? fallbackName);
+function readCafeFlowDetails(details: unknown): CafeFlowMenuItemDetails {
+  const root = (details ?? {}) as unknown as Record<string, unknown>;
+  const nested = root.cafeFlow;
+  if (nested && typeof nested === 'object') {
+    return nested as CafeFlowMenuItemDetails;
+  }
+  return root as unknown as CafeFlowMenuItemDetails;
 }
 
 export async function browseMenuItems(
@@ -115,94 +82,103 @@ export async function browseMenuItems(
     mdmIds: listed.items.map((item) => item.mdmId),
   });
 
-  const nameFilter = input.name?.trim().toLowerCase() ?? '';
-  const statusFilter = input.status?.trim();
-  const categoryFilter = input.menuCategoryId?.trim();
+  const parsed: ParsedMenuItem[] = [];
+  for (const entity of entities) {
+    const moduleDetails = readCafeFlowDetails(entity.details);
+    const menuCategoryId =
+      typeof moduleDetails.menuCategoryId === 'string' ? moduleDetails.menuCategoryId.trim() : '';
+    const price = moduleDetails.price;
 
-  const filtered = entities
-    .map((entity) => {
-      const details = entity.details as unknown as Record<string, unknown>;
-      const fields = readMenuItemFields(details, entity.mdmId);
-      return { entity, fields };
-    })
-    .filter(({ fields }) => {
-      // rule: menuItemNeedsCategoryAndPrice — only well-formed items with category and price are order-ready
-      if (!fields.menuCategoryId || fields.price === null || fields.price === undefined || Number.isNaN(Number(fields.price))) {
-        return false;
-      }
-      // rule: onlyActiveMenuItemsCanBeOrdered — managerial browse keeps paused items visible; filter only when caller asks
-      if (statusFilter && String(fields.status) !== statusFilter) {
-        return false;
-      }
-      if (categoryFilter && fields.menuCategoryId !== categoryFilter) {
-        return false;
-      }
-      if (nameFilter && !fields.name.toLowerCase().includes(nameFilter)) {
-        return false;
-      }
-      return true;
-    })
-    .sort((a, b) => {
-      const orderA = a.fields.displayOrder ?? Number.MAX_SAFE_INTEGER;
-      const orderB = b.fields.displayOrder ?? Number.MAX_SAFE_INTEGER;
-      if (orderA !== orderB) {
-        return orderA - orderB;
-      }
-      return a.fields.name.localeCompare(b.fields.name, undefined, { sensitivity: 'base' });
+    // rule: menuItemNeedsCategoryAndPrice — keep only items with category + numeric price
+    if (
+      !menuCategoryId ||
+      price == null ||
+      typeof price !== 'number' ||
+      Number.isNaN(price)
+    ) {
+      continue;
+    }
+
+    const name = entity.details.name ?? entity.index.name ?? '';
+    const status = String(moduleDetails.status ?? 'active');
+
+    parsed.push({
+      menuItemId: entity.mdmId,
+      menuCategoryId,
+      name,
+      description: moduleDetails.description ?? null,
+      price,
+      status,
+      pausedAt: moduleDetails.pausedAt ?? null,
+      pauseReason: moduleDetails.pauseReason ?? null,
+      imageUrl: moduleDetails.imageUrl ?? null,
+      displayOrder:
+        typeof moduleDetails.displayOrder === 'number' ? moduleDetails.displayOrder : null,
+      requiresStockLink: Boolean(moduleDetails.requiresStockLink),
+      createdAt: entity.index.createdAt,
+      updatedAt: entity.index.updatedAt,
     });
+  }
+
+  let filtered = parsed;
+
+  if (input.status != null && input.status !== '') {
+    filtered = filtered.filter((item) => String(item.status) === input.status);
+  }
+  if (input.menuCategoryId != null && input.menuCategoryId !== '') {
+    filtered = filtered.filter((item) => item.menuCategoryId === input.menuCategoryId);
+  }
+  if (input.name != null && input.name.trim() !== '') {
+    const needle = input.name.trim().toLowerCase();
+    filtered = filtered.filter((item) => item.name.toLowerCase().includes(needle));
+  }
+
+  // rule: onlyActiveMenuItemsCanBeOrdered — informational on browse; paused items stay visible
+  // (POS order flows enforce active-only; this managerial list does not hide paused)
+
+  filtered.sort((a, b) => {
+    const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
+    const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    return a.name.localeCompare(b.name);
+  });
 
   const total = filtered.length;
-  const page = Math.max(1, input.page ?? 1);
-  const pageSize = Math.max(1, input.pageSize ?? 50);
+  const page = input.page != null && input.page > 0 ? input.page : 1;
+  const pageSize = input.pageSize != null && input.pageSize > 0 ? input.pageSize : 50;
   const offset = (page - 1) * pageSize;
-  const pageSlice = filtered.slice(offset, offset + pageSize);
+  const pageItems = filtered.slice(offset, offset + pageSize);
 
   const categoryIds = [
-    ...new Set(
-      pageSlice
-        .map((row) => row.fields.menuCategoryId)
-        .filter((id): id is string => typeof id === 'string' && id.length > 0),
-    ),
+    ...new Set(pageItems.map((item) => item.menuCategoryId).filter((id) => id.length > 0)),
   ];
   const categories = await ctx.mdm.collection.getMany({ mdmIds: categoryIds });
   const categoryNameById = new Map<string, string>();
   for (const category of categories) {
-    const details = category.details as unknown as Record<string, unknown>;
     categoryNameById.set(
       category.mdmId,
-      readCategoryName(details, category.index.name ?? category.mdmId),
+      category.details.name ?? category.index.name ?? '',
     );
   }
 
-  const menuItems: BrowseMenuItemRow[] = pageSlice.map(({ entity, fields }) => {
-    const row: BrowseMenuItemRow = {
-      menuItemId: fields.menuItemId,
-      menuCategoryId: fields.menuCategoryId as string,
-      categoryName: categoryNameById.get(fields.menuCategoryId as string) ?? '',
-      name: fields.name,
-      price: Number(fields.price),
-      status: fields.status,
-      requiresStockLink: fields.requiresStockLink,
-      createdAt: entity.index.createdAt,
-      updatedAt: entity.index.updatedAt,
-    };
-    if (fields.description != null) {
-      row.description = fields.description;
-    }
-    if (fields.pausedAt != null) {
-      row.pausedAt = fields.pausedAt;
-    }
-    if (fields.pauseReason != null) {
-      row.pauseReason = fields.pauseReason;
-    }
-    if (fields.imageUrl != null) {
-      row.imageUrl = fields.imageUrl;
-    }
-    if (fields.displayOrder != null) {
-      row.displayOrder = fields.displayOrder;
-    }
-    return row;
-  });
+  const menuItems: BrowseMenuItemRow[] = pageItems.map((item) => ({
+    menuItemId: item.menuItemId,
+    menuCategoryId: item.menuCategoryId,
+    categoryName: categoryNameById.get(item.menuCategoryId) ?? '',
+    name: item.name,
+    description: item.description,
+    price: item.price,
+    status: item.status,
+    pausedAt: item.pausedAt,
+    pauseReason: item.pauseReason,
+    imageUrl: item.imageUrl,
+    displayOrder: item.displayOrder,
+    requiresStockLink: item.requiresStockLink,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+  }));
 
   return { menuItems, total };
 }

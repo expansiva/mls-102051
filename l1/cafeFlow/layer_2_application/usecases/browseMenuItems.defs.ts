@@ -71,16 +71,15 @@ export const browseMenuItemsUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "List MenuItem records via ctx.mdm.collection.listByType({ type: 'MenuItem' }) — MenuItem is MDM-owned; no repository port",
-          "Apply optional filters inline: status (active|paused), menuCategoryId equality, name substring match (case-insensitive)",
-          "Inline rule menuItemNeedsCategoryAndPrice: exclude or flag items missing menuCategoryId or price when projecting; only well-formed items with category and price are order-ready",
-          "Inline rule onlyActiveMenuItemsCanBeOrdered: managerial browse keeps paused items in the list (they remain visible for catalog maintenance) while noting only status=active is eligible for POS launch",
-          "Sort by displayOrder ascending then name ascending",
-          "Compute total as the count of items after filters (before pagination slice)",
-          "Apply optional pagination: page (default 1) and pageSize (default sensible page size); slice the sorted list",
-          "Collect distinct menuCategoryId values from the page; bulk-load categories via ctx.mdm.collection.getMany({ mdmIds }) — never get inside a loop",
-          "Map each MenuItem to the output row, joining categoryName from the loaded MenuCategory; project menuItemId, menuCategoryId, categoryName, name, description, price, status, pausedAt, pauseReason, imageUrl, displayOrder, requiresStockLink, createdAt, updatedAt",
-          "Return { menuItems, total }"
+          "list MenuItem records via ctx.mdm.collection.listByType({ type: 'MenuItem' })",
+          "apply optional filters inline: status (active|paused), menuCategoryId equality, name substring match (case-insensitive)",
+          "inline rule menuItemNeedsCategoryAndPrice: keep only items that have a non-empty menuCategoryId and a defined numeric price; exclude incomplete rows and include rule id in any validation detail if blocked",
+          "sort by displayOrder ascending then name ascending",
+          "compute total as the filtered collection length for pagination metadata",
+          "apply optional page/pageSize slice (defaults when omitted: page 1, reasonable pageSize)",
+          "collect distinct menuCategoryId values from the page; bulk-load categories via ctx.mdm.collection.getMany({ mdmIds }) — never get inside a loop",
+          "map each MenuItem to the output row, joining categoryName from the loaded MenuCategory; paused items remain visible for managerial browse (onlyActiveMenuItemsCanBeOrdered is informational here — POS order flows enforce active-only, this list does not hide paused)",
+          "return { menuItems, total }"
         ],
         "outputShape": {
           "kind": "paginated",

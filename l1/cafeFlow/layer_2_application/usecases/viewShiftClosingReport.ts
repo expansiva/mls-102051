@@ -31,17 +31,18 @@ export async function viewShiftClosingReport(
 
   const report = await shiftClosingReports.getById(input.shiftClosingReportId);
   if (!report) {
+    // rule: shiftClosingReportContents
     throw new AppError(
       'NOT_FOUND',
-      `ShiftClosingReport not found: ${input.shiftClosingReportId}`,
+      'shiftClosingReportContents: relatório de fechamento de turno não encontrado.',
       404,
-      { shiftClosingReportId: input.shiftClosingReportId },
+      { ruleId: 'shiftClosingReportContents', shiftClosingReportId: input.shiftClosingReportId },
     );
   }
 
   // rule: shiftClosingReportContents
   // rule: shiftClosingRecordsBasicTotalsAndPayments
-  const output: ViewShiftClosingReportOutput = {
+  return {
     shiftClosingReportId: report.shiftClosingReportId,
     dailyShiftId: report.dailyShiftId,
     shiftDate: report.shiftDate,
@@ -50,17 +51,10 @@ export async function viewShiftClosingReport(
     totalItemsSold: report.totalItemsSold,
     cashPaymentsAmount: report.cashPaymentsAmount,
     otherPaymentsAmount: report.otherPaymentsAmount,
+    topSellingItemsSummary: report.topSellingItemsSummary ?? undefined,
     lowStockSignalsCount: report.lowStockSignalsCount,
     stockoutSignalsCount: report.stockoutSignalsCount,
+    closingNotes: report.closingNotes ?? undefined,
     generatedAt: report.generatedAt,
   };
-
-  if (report.topSellingItemsSummary != null) {
-    output.topSellingItemsSummary = report.topSellingItemsSummary;
-  }
-  if (report.closingNotes != null) {
-    output.closingNotes = report.closingNotes;
-  }
-
-  return output;
 }

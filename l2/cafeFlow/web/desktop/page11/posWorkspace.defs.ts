@@ -171,7 +171,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "OrderStatusTransitionPanel",
           "titleKey": "organism.posWorkspace.cmdUpdateOrderStatus.title",
-          "purpose": "Apresenta as transições de status permitidas para o pedido selecionado no board, exibindo o estado atual e os próximos estados válidos como ações contextuais; inclui campo de motivo de cancelamento quando aplicável.",
+          "purpose": "Apresenta as transições de status permitidas para o pedido selecionado no board, exibindo o estado atual e os próximos estados válidos como ações contextuais; solicita motivo de cancelamento apenas quando o destino for 'cancelled'.",
           "userActions": [
             "cmdUpdateOrderStatus"
           ],
@@ -206,11 +206,11 @@ export const definition = {
       "order": 20,
       "organisms": [
         {
-          "id": "menuItemCatalog",
+          "id": "menuItemShowcase",
           "type": "queryResult",
-          "organismName": "MenuItemCatalog",
+          "organismName": "MenuItemShowcase",
           "titleKey": "organism.posWorkspace.queryMenuItems.title",
-          "purpose": "Exibe os itens ativos do cardápio com nome, preço, descrição e imagem para que o atendente selecione os itens a compor o pedido; suporta filtro por categoria.",
+          "purpose": "Lista os itens ativos do cardápio com nome, preço, descrição e imagem, permitindo ao atendente filtrar por categoria e selecionar itens para compor o pedido.",
           "userActions": [
             "queryMenuItems"
           ],
@@ -237,7 +237,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "CreateOrderForm",
           "titleKey": "organism.posWorkspace.cmdCreateOrder.title",
-          "purpose": "Formulário de lançamento de novo pedido: define canal (mesa ou takeout), identifica mesa ou cliente, adiciona itens selecionados do cardápio com quantidades e observações e confirma o envio à cozinha.",
+          "purpose": "Formulário para lançar um novo pedido: define canal (mesa ou takeout), identifica mesa ou cliente, adiciona itens com quantidade e observações em sub-formulário repetível e confirma o envio à cozinha.",
           "userActions": [
             "cmdCreateOrder"
           ],
@@ -276,7 +276,7 @@ export const definition = {
           "type": "commandForm",
           "organismName": "BasicPaymentForm",
           "titleKey": "organism.posWorkspace.cmdRecordBasicPayment.title",
-          "purpose": "Permite ao atendente selecionar o pedido totalizado, confirmar o valor, escolher a forma de pagamento e registrar o fechamento básico do pedido.",
+          "purpose": "Permite ao atendente selecionar o pedido totalizado, confirmar o valor total, escolher a forma de pagamento e registrar o fechamento básico do pedido.",
           "userActions": [
             "cmdRecordBasicPayment"
           ],
@@ -416,7 +416,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "OrderStatusTransitionPanel",
             "titleKey": "organism.posWorkspace.cmdUpdateOrderStatus.title",
-            "purpose": "Apresenta as transições de status permitidas para o pedido selecionado no board, exibindo o estado atual e os próximos estados válidos como ações contextuais; inclui campo de motivo de cancelamento quando aplicável.",
+            "purpose": "Apresenta as transições de status permitidas para o pedido selecionado no board, exibindo o estado atual e os próximos estados válidos como ações contextuais; solicita motivo de cancelamento apenas quando o destino for 'cancelled'.",
             "userActions": [
               "cmdUpdateOrderStatus"
             ],
@@ -484,11 +484,11 @@ export const definition = {
         "order": 20,
         "organisms": [
           {
-            "id": "menuItemCatalog",
+            "id": "menuItemShowcase",
             "type": "queryResult",
-            "organismName": "MenuItemCatalog",
+            "organismName": "MenuItemShowcase",
             "titleKey": "organism.posWorkspace.queryMenuItems.title",
-            "purpose": "Exibe os itens ativos do cardápio com nome, preço, descrição e imagem para que o atendente selecione os itens a compor o pedido; suporta filtro por categoria.",
+            "purpose": "Lista os itens ativos do cardápio com nome, preço, descrição e imagem, permitindo ao atendente filtrar por categoria e selecionar itens para compor o pedido.",
             "userActions": [
               "queryMenuItems"
             ],
@@ -591,7 +591,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "CreateOrderForm",
             "titleKey": "organism.posWorkspace.cmdCreateOrder.title",
-            "purpose": "Formulário de lançamento de novo pedido: define canal (mesa ou takeout), identifica mesa ou cliente, adiciona itens selecionados do cardápio com quantidades e observações e confirma o envio à cozinha.",
+            "purpose": "Formulário para lançar um novo pedido: define canal (mesa ou takeout), identifica mesa ou cliente, adiciona itens com quantidade e observações em sub-formulário repetível e confirma o envio à cozinha.",
             "userActions": [
               "cmdCreateOrder"
             ],
@@ -705,7 +705,7 @@ export const definition = {
             "type": "commandForm",
             "organismName": "BasicPaymentForm",
             "titleKey": "organism.posWorkspace.cmdRecordBasicPayment.title",
-            "purpose": "Permite ao atendente selecionar o pedido totalizado, confirmar o valor, escolher a forma de pagamento e registrar o fechamento básico do pedido.",
+            "purpose": "Permite ao atendente selecionar o pedido totalizado, confirmar o valor total, escolher a forma de pagamento e registrar o fechamento básico do pedido.",
             "userActions": [
               "cmdRecordBasicPayment"
             ],

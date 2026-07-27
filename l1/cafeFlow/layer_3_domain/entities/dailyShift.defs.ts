@@ -13,7 +13,7 @@ export const dailyShiftDomainEntity = {
   },
   "data": {
     "entityId": "DailyShift",
-    "title": "DailyShift",
+    "title": "Turno Diário",
     "fields": [
       {
         "fieldId": "dailyShiftId",
@@ -111,21 +111,22 @@ export const dailyShiftDomainEntity = {
       }
     ],
     "valueObjects": [],
-    "invariants": [
-      "Um turno deve sempre ter openedByUserId e openedAt definidos no momento da criação.",
-      "closedByUserId e closedAt devem ser preenchidos em conjunto (ambos presentes ou ambos nulos).",
-      "Quando status = 'open', closedAt e closedByUserId devem ser nulos.",
-      "Quando status = 'closed', closedAt e closedByUserId devem estar preenchidos.",
-      "closedAt, quando presente, deve ser maior ou igual a openedAt.",
-      "totalSalesAmount, quando presente, deve ser igual à soma dos pedidos confirmados vinculados ao turno.",
-      "cashTotal + otherPaymentsTotal, quando ambos presentes, deve ser igual a totalSalesAmount.",
-      "totalOrders, totalItemsSold, totalSalesAmount, cashTotal e otherPaymentsTotal, quando presentes, devem ser maiores ou iguais a zero.",
-      "updatedAt deve ser maior ou igual a createdAt.",
-      "Não pode existir mais de um DailyShift aberto (status = 'open') para a mesma shiftDate simultaneamente."
-    ],
     "statusEnum": [
       "open",
       "closed"
+    ],
+    "invariants": [
+      "status transitions only open → closed; once closed, immutable (no reopen)",
+      "closedByUserId and closedAt required iff status=closed; both must be absent when status=open",
+      "when closed: closedAt >= openedAt",
+      "updatedAt >= createdAt",
+      "openedAt calendar date must equal shiftDate",
+      "when closed: closedAt calendar date must equal shiftDate",
+      "totalOrders, totalItemsSold >= 0 when present",
+      "totalSalesAmount, cashTotal, otherPaymentsTotal >= 0 when present",
+      "when closed with payment totals present: cashTotal + otherPaymentsTotal = totalSalesAmount",
+      "when totalOrders=0 (or absent at open): totalSalesAmount and totalItemsSold must be 0 or absent",
+      "only one DailyShift may be open per shiftDate (business uniqueness of open shift per day)"
     ]
   }
 } as const;

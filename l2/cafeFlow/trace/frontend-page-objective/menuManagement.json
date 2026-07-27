@@ -1,48 +1,46 @@
 {
-  "savedAt": "2026-07-23T17:07:58.782Z",
+  "savedAt": "2026-07-27T18:49:28.426Z",
   "pageId": "menuManagement",
   "genome": "page21",
   "objective": {
     "actor": "Gerente de café",
-    "jobToBeDone": "Visualizar, filtrar, cadastrar e editar itens do cardápio — incluindo preço, categoria, status e vínculo de estoque — para manter o cardápio do PDV sempre atualizado.",
-    "primaryDecision": "Selecionar um item existente para editar ou iniciar o cadastro de um novo item do cardápio.",
+    "jobToBeDone": "Manter o cardápio atualizado cadastrando novos itens, editando dados existentes e controlando a disponibilidade (ativo/pausado) de cada item.",
+    "primaryDecision": "Selecionar um item do cardápio para editar seus dados ou alterar sua disponibilidade, ou criar um novo item.",
     "decisiveInfo": [
       "name",
-      "menuCategoryId",
       "price",
+      "menuCategoryId",
       "status",
       "displayOrder",
-      "requiresStockLink",
-      "pauseReason"
+      "requiresStockLink"
     ],
     "usageFrequency": "Ocasional / back-office — o gerente acessa para manutenção do cardápio, não em fluxo contínuo de operação.",
     "criticalActions": [
       {
-        "action": "listMenuItems",
-        "presentation": "primary-surface — tabela paginada com filtros embutidos por categoria, status e nome"
-      },
-      {
         "action": "createMenuItemCmd",
-        "presentation": "primary-button na toolbar que abre painel lateral de criação"
+        "presentation": "primary-button abrindo painel lateral de criação"
       },
       {
         "action": "updateMenuItemCmd",
-        "presentation": "master-detail — painel de edição contextual ao selecionar linha; transições de status (ativo/pausado) como botões explícitos, nunca select livre"
+        "presentation": "master-detail — seleção de linha abre painel de edição com contextual-transition-actions para status ativo/pausado"
+      },
+      {
+        "action": "listMenuItems",
+        "presentation": "tabela paginada com filtros integrados no topo"
       }
     ],
     "informationHierarchy": [
-      "1. Filtros de categoria e status (contexto de navegação)",
-      "2. Lista de itens com nome, categoria, preço, status e ordem de exibição",
-      "3. Painel de detalhe/edição do item selecionado (nome, categoria, preço, descrição, imagem, displayOrder, requiresStockLink, status)",
-      "4. Formulário de criação de novo item (acessado via toolbar)"
+      "1. Tabela de itens do cardápio (nome, categoria, preço, status, ordem) com filtros por categoria, status e nome",
+      "2. Painel de detalhe/edição do item selecionado (dados completos + ações de transição de status)",
+      "3. Formulário de criação de novo item (acessível via botão primário na toolbar)"
     ],
-    "successCriteria": "O gerente encontra qualquer item em menos de 3 cliques, edita campos e altera status sem sair da tela, e cria novos itens com mínimo de digitação obrigatória.",
+    "successCriteria": "O gerente consegue localizar qualquer item em menos de 3 cliques, editar seus dados sem sair da tela principal e alterar disponibilidade com um único clique de transição de status.",
     "antiPatterns": [
-      "Formulário de edição em seção separada abaixo da lista (empilhamento desnecessário)",
-      "Campo de status como <select> livre sobre todos os valores do enum",
-      "menuItemId como campo de entrada manual",
-      "Exibir timestamps de auditoria (createdAt, updatedAt) como campos editáveis",
-      "Uma seção por operação (create / update / list cada uma em seu próprio bloco independente)"
+      "Formulário de edição em página separada",
+      "Status editável via <select> livre sobre todos os valores do enum",
+      "menuItemId como campo digitável",
+      "Seção separada para cada operação (create / update como seções empilhadas independentes)",
+      "Campos de sistema (createdAt, updatedAt, pausedAt) como inputs editáveis"
     ]
   }
 }

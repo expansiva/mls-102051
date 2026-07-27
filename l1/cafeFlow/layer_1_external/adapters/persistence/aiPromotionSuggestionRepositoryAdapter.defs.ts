@@ -15,12 +15,13 @@ export const aiPromotionSuggestionRepositoryAdapter = {
     "entityId": "AiPromotionSuggestion",
     "className": "AiPromotionSuggestionRepositoryAdapter",
     "portRef": "IAiPromotionSuggestionRepository",
-    "tableRef": "ai_promotion_suggestion",
+    "tableRef": "cafe_flow_ai_promotion_suggestions",
     "mdmReads": [],
     "notes": [
       "columns: ai_promotion_suggestion_id, operational_dashboard_id, menu_item_id, menu_category_id, status, reviewed_by_user_id, created_at",
       "details JSONB: menuItemName, reason, salesLast7Days, salesToday, currentStockLevel, confidenceScore, suggestedDiscountPercent, reviewedAt, reviewNotes, generatedAt, expiresAt, updatedAt",
-      "map domain AiPromotionSuggestion <-> row via ctx.data.moduleData; menuItemId/menuCategoryId stored as local FK columns (not mdm entity.get loops); no mdmRefs"
+      "menu_item_id/menu_category_id are local FK-style ids on columns, not MDM index fields",
+      "map domain AiPromotionSuggestion <-> row via ctx.data.moduleData only"
     ]
   }
 } as const;

@@ -3,7 +3,6 @@ import { AppError, type RequestContext } from '/_102034_/l1/server/layer_2_contr
 import { resolveRepository } from '/_102034_/l1/server/layer_2_application/repositoryRegistry.js';
 import type { IDailyShiftRepository } from '/_102051_/l1/cafeFlow/layer_2_application/ports/dailyShiftRepository.js';
 import type { DailyShift } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/dailyShift.js';
-import { dailyShiftHasOpenIdentity } from '/_102051_/l1/cafeFlow/layer_3_domain/entities/dailyShift.js';
 
 export interface OpenDailyShiftInput {
   shiftDate: string;
@@ -35,14 +34,13 @@ export async function openDailyShift(
   const now = ctx.clock.nowIso();
   const dailyShiftId = ctx.idGenerator.newId();
 
-  const existingOpen = await dailyShifts.list({ status: 'open' });
-  if (existingOpen.length > 0) {
-    // rule: ordersRequireOpenDailyShift — only one open shift allowed at a time
+  const openShifts = await dailyShifts.list({ status: 'open' });
+  if (openShifts.length > 0) {
     throw new AppError(
       'VALIDATION_ERROR',
-      'ordersRequireOpenDailyShift: already exists an open daily shift; only one open shift is allowed.',
+      'ordersRequireOpenDailyShift: only one open daily shift is allowed at a time.',
       400,
-      { ruleId: 'ordersRequireOpenDailyShift', openDailyShiftIds: existingOpen.map((s) => s.dailyShiftId) },
+      { ruleId: 'ordersRequireOpenDailyShift', existingDailyShiftId: openShifts[0]?.dailyShiftId },
     );
   }
 
@@ -63,14 +61,6 @@ export async function openDailyShift(
     createdAt: now,
     updatedAt: now,
   };
-
-  if (!dailyShiftHasOpenIdentity(dailyShift)) {
-    throw new AppError(
-      'VALIDATION_ERROR',
-      'Daily shift must have openedByUserId and openedAt.',
-      400,
-    );
-  }
 
   await ctx.data.runInTransaction(async () => {
     await dailyShifts.save(dailyShift);

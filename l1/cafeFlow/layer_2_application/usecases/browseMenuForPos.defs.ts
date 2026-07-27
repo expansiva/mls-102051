@@ -85,13 +85,12 @@ export const browseMenuForPosUsecase = {
         ],
         "transactional": false,
         "steps": [
-          "List MenuItem records via ctx.mdm.collection.listByType for type MenuItem",
-          "Apply onlyActiveMenuItemsCanBeOrdered inline: keep only items whose status is active (exclude paused)",
-          "When menuCategoryId input is provided, filter items to those with matching menuCategoryId",
-          "Apply menuItemNeedsCategoryAndPrice inline: drop any item missing menuCategoryId or price; include rule id in error details if validation blocks",
-          "Sort remaining items by displayOrder ascending then name ascending",
-          "Project each item to output fields: menuItemId, menuCategoryId, name, description, price, status, imageUrl, displayOrder",
-          "Return the projected list for POS selection"
+          "List MenuItem records via ctx.mdm.collection.listByType({ type: 'MenuItem' }) (MDM-owned; no repository port)",
+          "Apply onlyActiveMenuItemsCanBeOrdered inline: keep only items whose status === 'active' (exclude paused so they cannot be ordered on POS)",
+          "When menuCategoryId is provided, filter the active set to items whose menuCategoryId matches",
+          "Apply menuItemNeedsCategoryAndPrice inline: drop any item missing menuCategoryId or price; if a candidate fails, treat as not orderable (do not return it)",
+          "Sort remaining items by displayOrder ascending then name ascending for POS display order",
+          "Project each item to { menuItemId, menuCategoryId, name, description, price, status, imageUrl, displayOrder } and return as menuItems"
         ],
         "outputShape": {
           "kind": "list",

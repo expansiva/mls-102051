@@ -1,5 +1,5 @@
 /// <mls fileReference="_102051_/l1/cafeFlow/layer_1_external/adapters/persistence/aiPromotionSuggestionRepositoryAdapter.ts" enhancement="_blank"/>
-import type { RequestContext } from '/_102034_/l1/server/layer_2_controllers/contracts.js';
+import { type RequestContext } from '/_102034_/l1/server/layer_2_controllers/contracts.js';
 import type {
   AiPromotionSuggestionFilter,
   DateRange,
@@ -117,9 +117,9 @@ export function createAiPromotionSuggestionRepositoryAdapter(
 
   return {
     async getById(id) {
-      const row = await (await getTable()).findOne({
-        where: { ai_promotion_suggestion_id: id },
-      });
+      const row = await (
+        await getTable()
+      ).findOne({ where: { ai_promotion_suggestion_id: id } });
       return row ? toDomain(row) : null;
     },
 
@@ -131,13 +131,15 @@ export function createAiPromotionSuggestionRepositoryAdapter(
       if (filter.menuItemId) {
         where.menu_item_id = filter.menuItemId;
       }
-      if (filter.menuCategoryId !== undefined) {
+      if (filter.menuCategoryId) {
         where.menu_category_id = filter.menuCategoryId;
       }
       if (filter.status) {
         where.status = filter.status;
       }
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         where,
         orderBy: { field: 'created_at', direction: 'desc' },
       });
@@ -160,28 +162,26 @@ export function createAiPromotionSuggestionRepositoryAdapter(
     },
 
     async findActiveByPeriod(period: DateRange) {
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         orderBy: { field: 'created_at', direction: 'desc' },
       });
       return rows
         .map(toDomain)
         .filter((suggestion) => {
-          if (suggestion.status === 'rejected' || suggestion.status === 'expired') {
+          if (suggestion.status !== 'pending' && suggestion.status !== 'accepted') {
             return false;
           }
-          const generatedAt = suggestion.generatedAt;
-          if (generatedAt < period.from || generatedAt > period.to) {
-            return false;
-          }
-          if (suggestion.expiresAt !== null && suggestion.expiresAt < period.from) {
-            return false;
-          }
-          return true;
+          const anchor = suggestion.generatedAt || suggestion.createdAt;
+          return anchor >= period.from && anchor <= period.to;
         });
     },
 
     async findPendingReview() {
-      const rows = await (await getTable()).findMany({
+      const rows = await (
+        await getTable()
+      ).findMany({
         where: { status: 'pending' },
         orderBy: { field: 'created_at', direction: 'desc' },
       });

@@ -6,8 +6,11 @@ import { execBff, type BffClientOptions } from '/_102029_/l2/bffClient.js';
 import { getState, setState, subscribe, unsubscribe } from '/_102029_/l2/collabState.js';
 import { runBlockingUiAction } from '/_102029_/l2/interactionRuntime.js';
 import type {
+  ListMenuItemsInput,
   ListMenuItemsOutput,
+  CreateMenuItemCmdInput,
   CreateMenuItemCmdOutput,
+  UpdateMenuItemCmdInput,
   UpdateMenuItemCmdOutput,
 } from '/_102051_/l2/cafeFlow/web/contracts/menuManagement.js';
 import {
@@ -15,6 +18,7 @@ import {
   createMenuItemCmdRoute,
   updateMenuItemCmdRoute,
 } from '/_102051_/l2/cafeFlow/web/contracts/menuManagement.js';
+
 export type {
   ListMenuItemsInput,
   ListMenuItemsOutput,
@@ -37,17 +41,6 @@ const message_pt = {
   'intent.menuManagement.listMenuItems.list.filter.name.label': 'Name',
   'intent.menuManagement.listMenuItems.list.filter.page.label': 'Page',
   'intent.menuManagement.listMenuItems.list.filter.pageSize.label': 'Page Size',
-  'organism.menuManagement.createMenuItemCmd.title': 'Criar item do cardápio',
-  'intent.menuManagement.createMenuItemCmd.form.title': 'Criar item do cardápio',
-  'intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd': 'Criar item do cardápio',
-  'intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label': 'Menu Category Id',
-  'intent.menuManagement.createMenuItemCmd.form.field.name.label': 'Name',
-  'intent.menuManagement.createMenuItemCmd.form.field.description.label': 'Description',
-  'intent.menuManagement.createMenuItemCmd.form.field.price.label': 'Price',
-  'intent.menuManagement.createMenuItemCmd.form.field.status.label': 'Status',
-  'intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label': 'Image Url',
-  'intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label': 'Display Order',
-  'intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label': 'Requires Stock Link',
   'organism.menuManagement.updateMenuItemCmd.title': 'Atualizar item do cardápio',
   'intent.menuManagement.updateMenuItemCmd.form.title': 'Atualizar item do cardápio',
   'intent.menuManagement.updateMenuItemCmd.form.action.updateMenuItemCmd': 'Atualizar item do cardápio',
@@ -60,10 +53,20 @@ const message_pt = {
   'intent.menuManagement.updateMenuItemCmd.form.field.imageUrl.label': 'Image Url',
   'intent.menuManagement.updateMenuItemCmd.form.field.displayOrder.label': 'Display Order',
   'intent.menuManagement.updateMenuItemCmd.form.field.requiresStockLink.label': 'Requires Stock Link',
-  'section.menuManagement.sec-menu-item-workbench.title': 'Menu Item Workbench',
-  'organism.menuManagement.summary-first10.title': 'Summary first',
-  'intent.menuManagement.summary-first10.content.title': 'Summary first',
-  'section.menuManagement.sec-create-menu-item.title': 'Criar Item do Cardápio',
+  'section.menuManagement.createMenuItemSection.title': 'Create Menu Item',
+  'organism.menuManagement.createMenuItemCmd.title': 'Criar item do cardápio',
+  'intent.menuManagement.createMenuItemCmd.form.title': 'Criar item do cardápio',
+  'intent.menuManagement.createMenuItemCmd.form.action.createMenuItemCmd': 'Criar item do cardápio',
+  'intent.menuManagement.createMenuItemCmd.form.field.menuCategoryId.label': 'Menu Category Id',
+  'intent.menuManagement.createMenuItemCmd.form.field.name.label': 'Name',
+  'intent.menuManagement.createMenuItemCmd.form.field.description.label': 'Description',
+  'intent.menuManagement.createMenuItemCmd.form.field.price.label': 'Price',
+  'intent.menuManagement.createMenuItemCmd.form.field.status.label': 'Status',
+  'intent.menuManagement.createMenuItemCmd.form.field.imageUrl.label': 'Image Url',
+  'intent.menuManagement.createMenuItemCmd.form.field.displayOrder.label': 'Display Order',
+  'intent.menuManagement.createMenuItemCmd.form.field.requiresStockLink.label': 'Requires Stock Link',
+  'section.menuManagement.sec-menu-item-list.title': 'Lista de Itens do Cardápio',
+  'section.menuManagement.sec-create-menu-item.title': 'Criar Novo Item',
 };
 type MessageType = typeof message_pt;
 const messages: { [key: string]: MessageType } = { pt: message_pt };
@@ -180,38 +183,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.status = (getState('ui.menuManagement.status') as string) ?? '';
-    this.listMenuItemsState = (getState('ui.menuManagement.action.listMenuItems.status') as 'idle' | 'loading' | 'success' | 'error') ?? 'idle';
-    this.listMenuItemsStatus = (getState('ui.menuManagement.input.listMenuItems.status') as string) ?? '';
-    this.listMenuItemsMenuCategoryId = (getState('ui.menuManagement.input.listMenuItems.menuCategoryId') as string) ?? '';
-    this.listMenuItemsName = (getState('ui.menuManagement.input.listMenuItems.name') as string) ?? '';
-    this.listMenuItemsPage = (getState('ui.menuManagement.input.listMenuItems.page') as string) ?? '';
-    this.listMenuItemsPageSize = (getState('ui.menuManagement.input.listMenuItems.pageSize') as string) ?? '';
-    this.listMenuItemsData = (getState('ui.menuManagement.data.listMenuItems') as ListMenuItemsOutput) ?? { menuItems: [], total: 0 };
-    this.createMenuItemCmdState = (getState('ui.menuManagement.action.createMenuItemCmd.status') as 'idle' | 'loading' | 'success' | 'error') ?? 'idle';
-    this.createMenuItemCmdMenuCategoryId = (getState('ui.menuManagement.input.createMenuItemCmd.menuCategoryId') as string) ?? '';
-    this.createMenuItemCmdName = (getState('ui.menuManagement.input.createMenuItemCmd.name') as string) ?? '';
-    this.createMenuItemCmdDescription = (getState('ui.menuManagement.input.createMenuItemCmd.description') as string) ?? '';
-    this.createMenuItemCmdPrice = (getState('ui.menuManagement.input.createMenuItemCmd.price') as string) ?? '';
-    this.createMenuItemCmdStatus = (getState('ui.menuManagement.input.createMenuItemCmd.status') as string) ?? '';
-    this.createMenuItemCmdImageUrl = (getState('ui.menuManagement.input.createMenuItemCmd.imageUrl') as string) ?? '';
-    this.createMenuItemCmdDisplayOrder = (getState('ui.menuManagement.input.createMenuItemCmd.displayOrder') as string) ?? '';
-    this.createMenuItemCmdRequiresStockLink = (getState('ui.menuManagement.input.createMenuItemCmd.requiresStockLink') as string) ?? '';
-    this.createMenuItemCmdOutput = (getState('ui.menuManagement.output.createMenuItemCmd') as CreateMenuItemCmdOutput | null) ?? null;
-    this.createMenuItemCmdError = (getState('ui.menuManagement.action.createMenuItemCmd.error') as string) ?? '';
-    this.updateMenuItemCmdState = (getState('ui.menuManagement.action.updateMenuItemCmd.status') as 'idle' | 'loading' | 'success' | 'error') ?? 'idle';
-    this.updateMenuItemCmdMenuItemId = (getState('ui.menuManagement.input.updateMenuItemCmd.menuItemId') as string) ?? '';
-    this.updateMenuItemCmdMenuCategoryId = (getState('ui.menuManagement.input.updateMenuItemCmd.menuCategoryId') as string) ?? '';
-    this.updateMenuItemCmdName = (getState('ui.menuManagement.input.updateMenuItemCmd.name') as string) ?? '';
-    this.updateMenuItemCmdDescription = (getState('ui.menuManagement.input.updateMenuItemCmd.description') as string) ?? '';
-    this.updateMenuItemCmdPrice = (getState('ui.menuManagement.input.updateMenuItemCmd.price') as string) ?? '';
-    this.updateMenuItemCmdStatus = (getState('ui.menuManagement.input.updateMenuItemCmd.status') as string) ?? '';
-    this.updateMenuItemCmdPauseReason = (getState('ui.menuManagement.input.updateMenuItemCmd.pauseReason') as string) ?? '';
-    this.updateMenuItemCmdImageUrl = (getState('ui.menuManagement.input.updateMenuItemCmd.imageUrl') as string) ?? '';
-    this.updateMenuItemCmdDisplayOrder = (getState('ui.menuManagement.input.updateMenuItemCmd.displayOrder') as string) ?? '';
-    this.updateMenuItemCmdRequiresStockLink = (getState('ui.menuManagement.input.updateMenuItemCmd.requiresStockLink') as string) ?? '';
-    this.updateMenuItemCmdOutput = (getState('ui.menuManagement.output.updateMenuItemCmd') as UpdateMenuItemCmdOutput | null) ?? null;
-    this.updateMenuItemCmdError = (getState('ui.menuManagement.action.updateMenuItemCmd.error') as string) ?? '';
+    this.initStateValues();
+    this.applyRouteParams();
     subscribe(this.subscribedKeys, this);
     void this.loadListMenuItems();
   }
@@ -221,6 +194,7 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
     super.disconnectedCallback();
   }
 
+  /** handleIcaStateChange — collabState notify contract */
   handleIcaStateChange(key: string, value: unknown): void {
     switch (key) {
       case 'ui.menuManagement.status':
@@ -325,28 +299,209 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
     this.requestUpdate();
   }
 
+  private initStateValues(): void {
+    const statusVal = getState('ui.menuManagement.status');
+    this.status = statusVal !== undefined && statusVal !== null ? (statusVal as string) : '';
+    const listMenuItemsStateVal = getState('ui.menuManagement.action.listMenuItems.status');
+    this.listMenuItemsState =
+      listMenuItemsStateVal !== undefined && listMenuItemsStateVal !== null
+        ? (listMenuItemsStateVal as 'idle' | 'loading' | 'success' | 'error')
+        : 'idle';
+    const listMenuItemsStatusVal = getState('ui.menuManagement.input.listMenuItems.status');
+    this.listMenuItemsStatus =
+      listMenuItemsStatusVal !== undefined && listMenuItemsStatusVal !== null
+        ? (listMenuItemsStatusVal as string)
+        : '';
+    const listMenuItemsMenuCategoryIdVal = getState('ui.menuManagement.input.listMenuItems.menuCategoryId');
+    this.listMenuItemsMenuCategoryId =
+      listMenuItemsMenuCategoryIdVal !== undefined && listMenuItemsMenuCategoryIdVal !== null
+        ? (listMenuItemsMenuCategoryIdVal as string)
+        : '';
+    const listMenuItemsNameVal = getState('ui.menuManagement.input.listMenuItems.name');
+    this.listMenuItemsName =
+      listMenuItemsNameVal !== undefined && listMenuItemsNameVal !== null
+        ? (listMenuItemsNameVal as string)
+        : '';
+    const listMenuItemsPageVal = getState('ui.menuManagement.input.listMenuItems.page');
+    this.listMenuItemsPage =
+      listMenuItemsPageVal !== undefined && listMenuItemsPageVal !== null
+        ? (listMenuItemsPageVal as string)
+        : '';
+    const listMenuItemsPageSizeVal = getState('ui.menuManagement.input.listMenuItems.pageSize');
+    this.listMenuItemsPageSize =
+      listMenuItemsPageSizeVal !== undefined && listMenuItemsPageSizeVal !== null
+        ? (listMenuItemsPageSizeVal as string)
+        : '';
+    const listMenuItemsDataVal = getState('ui.menuManagement.data.listMenuItems');
+    this.listMenuItemsData =
+      listMenuItemsDataVal !== undefined && listMenuItemsDataVal !== null
+        ? (listMenuItemsDataVal as ListMenuItemsOutput)
+        : { menuItems: [], total: 0 };
+    const createMenuItemCmdStateVal = getState('ui.menuManagement.action.createMenuItemCmd.status');
+    this.createMenuItemCmdState =
+      createMenuItemCmdStateVal !== undefined && createMenuItemCmdStateVal !== null
+        ? (createMenuItemCmdStateVal as 'idle' | 'loading' | 'success' | 'error')
+        : 'idle';
+    const createMenuItemCmdMenuCategoryIdVal = getState(
+      'ui.menuManagement.input.createMenuItemCmd.menuCategoryId',
+    );
+    this.createMenuItemCmdMenuCategoryId =
+      createMenuItemCmdMenuCategoryIdVal !== undefined && createMenuItemCmdMenuCategoryIdVal !== null
+        ? (createMenuItemCmdMenuCategoryIdVal as string)
+        : '';
+    const createMenuItemCmdNameVal = getState('ui.menuManagement.input.createMenuItemCmd.name');
+    this.createMenuItemCmdName =
+      createMenuItemCmdNameVal !== undefined && createMenuItemCmdNameVal !== null
+        ? (createMenuItemCmdNameVal as string)
+        : '';
+    const createMenuItemCmdDescriptionVal = getState(
+      'ui.menuManagement.input.createMenuItemCmd.description',
+    );
+    this.createMenuItemCmdDescription =
+      createMenuItemCmdDescriptionVal !== undefined && createMenuItemCmdDescriptionVal !== null
+        ? (createMenuItemCmdDescriptionVal as string)
+        : '';
+    const createMenuItemCmdPriceVal = getState('ui.menuManagement.input.createMenuItemCmd.price');
+    this.createMenuItemCmdPrice =
+      createMenuItemCmdPriceVal !== undefined && createMenuItemCmdPriceVal !== null
+        ? (createMenuItemCmdPriceVal as string)
+        : '';
+    const createMenuItemCmdStatusVal = getState('ui.menuManagement.input.createMenuItemCmd.status');
+    this.createMenuItemCmdStatus =
+      createMenuItemCmdStatusVal !== undefined && createMenuItemCmdStatusVal !== null
+        ? (createMenuItemCmdStatusVal as string)
+        : '';
+    const createMenuItemCmdImageUrlVal = getState('ui.menuManagement.input.createMenuItemCmd.imageUrl');
+    this.createMenuItemCmdImageUrl =
+      createMenuItemCmdImageUrlVal !== undefined && createMenuItemCmdImageUrlVal !== null
+        ? (createMenuItemCmdImageUrlVal as string)
+        : '';
+    const createMenuItemCmdDisplayOrderVal = getState(
+      'ui.menuManagement.input.createMenuItemCmd.displayOrder',
+    );
+    this.createMenuItemCmdDisplayOrder =
+      createMenuItemCmdDisplayOrderVal !== undefined && createMenuItemCmdDisplayOrderVal !== null
+        ? (createMenuItemCmdDisplayOrderVal as string)
+        : '';
+    const createMenuItemCmdRequiresStockLinkVal = getState(
+      'ui.menuManagement.input.createMenuItemCmd.requiresStockLink',
+    );
+    this.createMenuItemCmdRequiresStockLink =
+      createMenuItemCmdRequiresStockLinkVal !== undefined &&
+      createMenuItemCmdRequiresStockLinkVal !== null
+        ? (createMenuItemCmdRequiresStockLinkVal as string)
+        : '';
+    const createMenuItemCmdOutputVal = getState('ui.menuManagement.output.createMenuItemCmd');
+    this.createMenuItemCmdOutput =
+      createMenuItemCmdOutputVal !== undefined
+        ? (createMenuItemCmdOutputVal as CreateMenuItemCmdOutput | null)
+        : null;
+    const createMenuItemCmdErrorVal = getState('ui.menuManagement.action.createMenuItemCmd.error');
+    this.createMenuItemCmdError =
+      createMenuItemCmdErrorVal !== undefined && createMenuItemCmdErrorVal !== null
+        ? (createMenuItemCmdErrorVal as string)
+        : '';
+    const updateMenuItemCmdStateVal = getState('ui.menuManagement.action.updateMenuItemCmd.status');
+    this.updateMenuItemCmdState =
+      updateMenuItemCmdStateVal !== undefined && updateMenuItemCmdStateVal !== null
+        ? (updateMenuItemCmdStateVal as 'idle' | 'loading' | 'success' | 'error')
+        : 'idle';
+    const updateMenuItemCmdMenuItemIdVal = getState(
+      'ui.menuManagement.input.updateMenuItemCmd.menuItemId',
+    );
+    this.updateMenuItemCmdMenuItemId =
+      updateMenuItemCmdMenuItemIdVal !== undefined && updateMenuItemCmdMenuItemIdVal !== null
+        ? (updateMenuItemCmdMenuItemIdVal as string)
+        : '';
+    const updateMenuItemCmdMenuCategoryIdVal = getState(
+      'ui.menuManagement.input.updateMenuItemCmd.menuCategoryId',
+    );
+    this.updateMenuItemCmdMenuCategoryId =
+      updateMenuItemCmdMenuCategoryIdVal !== undefined && updateMenuItemCmdMenuCategoryIdVal !== null
+        ? (updateMenuItemCmdMenuCategoryIdVal as string)
+        : '';
+    const updateMenuItemCmdNameVal = getState('ui.menuManagement.input.updateMenuItemCmd.name');
+    this.updateMenuItemCmdName =
+      updateMenuItemCmdNameVal !== undefined && updateMenuItemCmdNameVal !== null
+        ? (updateMenuItemCmdNameVal as string)
+        : '';
+    const updateMenuItemCmdDescriptionVal = getState(
+      'ui.menuManagement.input.updateMenuItemCmd.description',
+    );
+    this.updateMenuItemCmdDescription =
+      updateMenuItemCmdDescriptionVal !== undefined && updateMenuItemCmdDescriptionVal !== null
+        ? (updateMenuItemCmdDescriptionVal as string)
+        : '';
+    const updateMenuItemCmdPriceVal = getState('ui.menuManagement.input.updateMenuItemCmd.price');
+    this.updateMenuItemCmdPrice =
+      updateMenuItemCmdPriceVal !== undefined && updateMenuItemCmdPriceVal !== null
+        ? (updateMenuItemCmdPriceVal as string)
+        : '';
+    const updateMenuItemCmdStatusVal = getState('ui.menuManagement.input.updateMenuItemCmd.status');
+    this.updateMenuItemCmdStatus =
+      updateMenuItemCmdStatusVal !== undefined && updateMenuItemCmdStatusVal !== null
+        ? (updateMenuItemCmdStatusVal as string)
+        : '';
+    const updateMenuItemCmdPauseReasonVal = getState(
+      'ui.menuManagement.input.updateMenuItemCmd.pauseReason',
+    );
+    this.updateMenuItemCmdPauseReason =
+      updateMenuItemCmdPauseReasonVal !== undefined && updateMenuItemCmdPauseReasonVal !== null
+        ? (updateMenuItemCmdPauseReasonVal as string)
+        : '';
+    const updateMenuItemCmdImageUrlVal = getState('ui.menuManagement.input.updateMenuItemCmd.imageUrl');
+    this.updateMenuItemCmdImageUrl =
+      updateMenuItemCmdImageUrlVal !== undefined && updateMenuItemCmdImageUrlVal !== null
+        ? (updateMenuItemCmdImageUrlVal as string)
+        : '';
+    const updateMenuItemCmdDisplayOrderVal = getState(
+      'ui.menuManagement.input.updateMenuItemCmd.displayOrder',
+    );
+    this.updateMenuItemCmdDisplayOrder =
+      updateMenuItemCmdDisplayOrderVal !== undefined && updateMenuItemCmdDisplayOrderVal !== null
+        ? (updateMenuItemCmdDisplayOrderVal as string)
+        : '';
+    const updateMenuItemCmdRequiresStockLinkVal = getState(
+      'ui.menuManagement.input.updateMenuItemCmd.requiresStockLink',
+    );
+    this.updateMenuItemCmdRequiresStockLink =
+      updateMenuItemCmdRequiresStockLinkVal !== undefined &&
+      updateMenuItemCmdRequiresStockLinkVal !== null
+        ? (updateMenuItemCmdRequiresStockLinkVal as string)
+        : '';
+    const updateMenuItemCmdOutputVal = getState('ui.menuManagement.output.updateMenuItemCmd');
+    this.updateMenuItemCmdOutput =
+      updateMenuItemCmdOutputVal !== undefined
+        ? (updateMenuItemCmdOutputVal as UpdateMenuItemCmdOutput | null)
+        : null;
+    const updateMenuItemCmdErrorVal = getState('ui.menuManagement.action.updateMenuItemCmd.error');
+    this.updateMenuItemCmdError =
+      updateMenuItemCmdErrorVal !== undefined && updateMenuItemCmdErrorVal !== null
+        ? (updateMenuItemCmdErrorVal as string)
+        : '';
+  }
+
   private applyRouteParams(): void {
-    const patternParts = '/cafeFlow/menuManagement/:menuItemId?'.split('/').filter(Boolean);
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const params: { [key: string]: string } = {};
-    for (let i = 0; i < patternParts.length; i++) {
-      const part = patternParts[i];
-      if (part.startsWith(':')) {
-        const optional = part.endsWith('?');
-        const name = optional ? part.slice(1, -1) : part.slice(1);
-        const raw = pathParts[i];
-        if (raw !== undefined && raw !== '') {
-          try {
-            params[name] = decodeURIComponent(raw);
-          } catch {
-            params[name] = raw;
-          }
+    const pathname = window.location.pathname;
+    const segments = pathname.split('/').filter((s: string) => s.length > 0);
+    // routePattern: /cafeFlow/menuManagement/:menuItemId?
+    if (segments.length >= 3 && segments[0] === 'cafeFlow' && segments[1] === 'menuManagement') {
+      const raw = segments[2];
+      if (raw) {
+        let decoded = raw;
+        try {
+          decoded = decodeURIComponent(raw);
+        } catch {
+          decoded = raw;
+        }
+        if (decoded && !this.updateMenuItemCmdMenuItemId) {
+          this.updateMenuItemCmdMenuItemId = decoded;
+          setState('ui.menuManagement.input.updateMenuItemCmd.menuItemId', decoded);
+        } else if (decoded) {
+          this.updateMenuItemCmdMenuItemId = decoded;
+          setState('ui.menuManagement.input.updateMenuItemCmd.menuItemId', decoded);
         }
       }
-    }
-    if (params['menuItemId'] !== undefined && params['menuItemId'] !== '') {
-      this.updateMenuItemCmdMenuItemId = params['menuItemId'];
-      setState('ui.menuManagement.input.updateMenuItemCmd.menuItemId', params['menuItemId']);
     }
   }
 
@@ -356,48 +511,48 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
     return Number.isFinite(n) ? n : undefined;
   }
 
-  private parseBoolean(value: string): boolean {
-    if (value === true as unknown as string) return true;
-    const normalized = String(value).trim().toLowerCase();
-    return normalized === 'true' || normalized === '1' || normalized === 'on' || normalized === 'yes';
+  private parseRequiredNumber(value: string): number {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  private parseBool(value: string): boolean {
+    const v = String(value).trim().toLowerCase();
+    return v === 'true' || v === '1' || v === 'yes' || v === 'on';
   }
 
   /** action listMenuItems (query) — route cafeFlow.menuManagement.listMenuItems; inputs: status, menuCategoryId, name, page, pageSize; writes ui.menuManagement.data.listMenuItems; status ui.menuManagement.action.listMenuItems.status */
   async loadListMenuItems(): Promise<void> {
     this.listMenuItemsState = 'loading';
     setState('ui.menuManagement.action.listMenuItems.status', 'loading');
-    const params: {
-      status?: string;
-      menuCategoryId?: string;
-      name?: string;
-      page?: number;
-      pageSize?: number;
-    } = {};
+    const params: ListMenuItemsInput = {};
     if (this.listMenuItemsStatus !== '') params.status = this.listMenuItemsStatus;
     if (this.listMenuItemsMenuCategoryId !== '') params.menuCategoryId = this.listMenuItemsMenuCategoryId;
     if (this.listMenuItemsName !== '') params.name = this.listMenuItemsName;
-    const page = this.parseOptionalNumber(this.listMenuItemsPage);
-    if (page !== undefined) params.page = page;
-    const pageSize = this.parseOptionalNumber(this.listMenuItemsPageSize);
-    if (pageSize !== undefined) params.pageSize = pageSize;
+    const pageNum = this.parseOptionalNumber(this.listMenuItemsPage);
+    if (pageNum !== undefined) params.page = pageNum;
+    const pageSizeNum = this.parseOptionalNumber(this.listMenuItemsPageSize);
+    if (pageSizeNum !== undefined) params.pageSize = pageSizeNum;
     const options: BffClientOptions = { mode: 'silent' };
     const response = await execBff<ListMenuItemsOutput>(listMenuItemsRoute, params, options);
-    if (response.ok) {
-      const data = response.data ?? LIST_MENU_ITEMS_DATA_DEFAULT;
-      this.listMenuItemsData = data;
-      setState('ui.menuManagement.data.listMenuItems', data);
-      this.listMenuItemsState = 'success';
-      setState('ui.menuManagement.action.listMenuItems.status', 'success');
-    } else {
-      console.error('listMenuItems failed', response.error);
+    if (!response.ok) {
       this.listMenuItemsState = 'error';
       setState('ui.menuManagement.action.listMenuItems.status', 'error');
+      return;
     }
+    const data: ListMenuItemsOutput =
+      response.data !== null && response.data !== undefined
+        ? response.data
+        : { menuItems: [], total: 0 };
+    this.listMenuItemsData = data;
+    setState('ui.menuManagement.data.listMenuItems', data);
+    this.listMenuItemsState = 'success';
+    setState('ui.menuManagement.action.listMenuItems.status', 'success');
   }
 
   /** handler for action listMenuItems — bind UI events here */
-  handleListMenuItemsClick(_event?: Event): void {
-    void this.loadListMenuItems();
+  async handleListMenuItemsClick(): Promise<void> {
+    await this.loadListMenuItems();
   }
 
   /** action createMenuItemCmd (command) — route cafeFlow.menuManagement.createMenuItemCmd; inputs: menuCategoryId, name, description, price, status, imageUrl, displayOrder, requiresStockLink; writes ui.menuManagement.output.createMenuItemCmd; status ui.menuManagement.action.createMenuItemCmd.status; feedback keys action.createMenuItemCmd.success / action.createMenuItemCmd.error */
@@ -406,49 +561,34 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
     setState('ui.menuManagement.action.createMenuItemCmd.status', 'loading');
     this.createMenuItemCmdError = '';
     setState('ui.menuManagement.action.createMenuItemCmd.error', '');
-    const params: {
-      menuCategoryId: string;
-      name: string;
-      description?: string;
-      price: number;
-      status?: string;
-      imageUrl?: string;
-      displayOrder?: number;
-      requiresStockLink: boolean;
-    } = {
+    const params: CreateMenuItemCmdInput = {
       menuCategoryId: this.createMenuItemCmdMenuCategoryId,
       name: this.createMenuItemCmdName,
-      price: this.parseOptionalNumber(this.createMenuItemCmdPrice) ?? 0,
-      requiresStockLink: this.parseBoolean(this.createMenuItemCmdRequiresStockLink),
+      price: this.parseRequiredNumber(this.createMenuItemCmdPrice),
+      requiresStockLink: this.parseBool(this.createMenuItemCmdRequiresStockLink),
     };
     if (this.createMenuItemCmdDescription !== '') params.description = this.createMenuItemCmdDescription;
     if (this.createMenuItemCmdStatus !== '') params.status = this.createMenuItemCmdStatus;
     if (this.createMenuItemCmdImageUrl !== '') params.imageUrl = this.createMenuItemCmdImageUrl;
-    const displayOrder = this.parseOptionalNumber(this.createMenuItemCmdDisplayOrder);
-    if (displayOrder !== undefined) params.displayOrder = displayOrder;
+    const displayOrderNum = this.parseOptionalNumber(this.createMenuItemCmdDisplayOrder);
+    if (displayOrderNum !== undefined) params.displayOrder = displayOrderNum;
     const options: BffClientOptions = { mode: 'blocking' };
     const response = await execBff<CreateMenuItemCmdOutput>(createMenuItemCmdRoute, params, options);
     if (!response.ok) {
-      const errMsg = response.error?.message ?? '';
+      const errMsg =
+        response.error && response.error.message ? String(response.error.message) : '';
       this.createMenuItemCmdError = errMsg;
       setState('ui.menuManagement.action.createMenuItemCmd.error', errMsg);
       this.createMenuItemCmdState = 'error';
       setState('ui.menuManagement.action.createMenuItemCmd.status', 'error');
-      console.error('createMenuItemCmd failed', response.error);
       return;
     }
-    const data = response.data ?? null;
-    this.createMenuItemCmdOutput = data;
-    setState('ui.menuManagement.output.createMenuItemCmd', data);
-    try {
-      await this.loadListMenuItems();
-      if (this.listMenuItemsState === 'error') {
-        this.createMenuItemCmdState = 'error';
-        setState('ui.menuManagement.action.createMenuItemCmd.status', 'error');
-        return;
-      }
-    } catch (err) {
-      console.error('createMenuItemCmd refresh failed', err);
+    const out: CreateMenuItemCmdOutput | null =
+      response.data !== null && response.data !== undefined ? response.data : null;
+    this.createMenuItemCmdOutput = out;
+    setState('ui.menuManagement.output.createMenuItemCmd', out);
+    await this.loadListMenuItems();
+    if (this.listMenuItemsState === 'error') {
       this.createMenuItemCmdState = 'error';
       setState('ui.menuManagement.action.createMenuItemCmd.status', 'error');
       return;
@@ -474,8 +614,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   }
 
   /** handler for action createMenuItemCmd — bind UI events here */
-  handleCreateMenuItemCmdClick(_event?: Event): void {
-    void runBlockingUiAction(async (_signal: AbortSignal) => {
+  async handleCreateMenuItemCmdClick(): Promise<void> {
+    await runBlockingUiAction(async (_signal: AbortSignal) => {
       await this.createMenuItemCmd();
     });
   }
@@ -486,59 +626,44 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
     if (!this.updateMenuItemCmdMenuItemId) {
       this.updateMenuItemCmdState = 'idle';
       setState('ui.menuManagement.action.updateMenuItemCmd.status', 'idle');
+      this.updateMenuItemCmdOutput = null;
+      setState('ui.menuManagement.output.updateMenuItemCmd', null);
       return;
     }
     this.updateMenuItemCmdState = 'loading';
     setState('ui.menuManagement.action.updateMenuItemCmd.status', 'loading');
     this.updateMenuItemCmdError = '';
     setState('ui.menuManagement.action.updateMenuItemCmd.error', '');
-    const params: {
-      menuItemId: string;
-      menuCategoryId: string;
-      name: string;
-      description?: string;
-      price: number;
-      status: string;
-      pauseReason?: string;
-      imageUrl?: string;
-      displayOrder?: number;
-      requiresStockLink: boolean;
-    } = {
+    const params: UpdateMenuItemCmdInput = {
       menuItemId: this.updateMenuItemCmdMenuItemId,
       menuCategoryId: this.updateMenuItemCmdMenuCategoryId,
       name: this.updateMenuItemCmdName,
-      price: this.parseOptionalNumber(this.updateMenuItemCmdPrice) ?? 0,
+      price: this.parseRequiredNumber(this.updateMenuItemCmdPrice),
       status: this.updateMenuItemCmdStatus,
-      requiresStockLink: this.parseBoolean(this.updateMenuItemCmdRequiresStockLink),
+      requiresStockLink: this.parseBool(this.updateMenuItemCmdRequiresStockLink),
     };
     if (this.updateMenuItemCmdDescription !== '') params.description = this.updateMenuItemCmdDescription;
     if (this.updateMenuItemCmdPauseReason !== '') params.pauseReason = this.updateMenuItemCmdPauseReason;
     if (this.updateMenuItemCmdImageUrl !== '') params.imageUrl = this.updateMenuItemCmdImageUrl;
-    const displayOrder = this.parseOptionalNumber(this.updateMenuItemCmdDisplayOrder);
-    if (displayOrder !== undefined) params.displayOrder = displayOrder;
+    const displayOrderNum = this.parseOptionalNumber(this.updateMenuItemCmdDisplayOrder);
+    if (displayOrderNum !== undefined) params.displayOrder = displayOrderNum;
     const options: BffClientOptions = { mode: 'blocking' };
     const response = await execBff<UpdateMenuItemCmdOutput>(updateMenuItemCmdRoute, params, options);
     if (!response.ok) {
-      const errMsg = response.error?.message ?? '';
+      const errMsg =
+        response.error && response.error.message ? String(response.error.message) : '';
       this.updateMenuItemCmdError = errMsg;
       setState('ui.menuManagement.action.updateMenuItemCmd.error', errMsg);
       this.updateMenuItemCmdState = 'error';
       setState('ui.menuManagement.action.updateMenuItemCmd.status', 'error');
-      console.error('updateMenuItemCmd failed', response.error);
       return;
     }
-    const data = response.data ?? null;
-    this.updateMenuItemCmdOutput = data;
-    setState('ui.menuManagement.output.updateMenuItemCmd', data);
-    try {
-      await this.loadListMenuItems();
-      if (this.listMenuItemsState === 'error') {
-        this.updateMenuItemCmdState = 'error';
-        setState('ui.menuManagement.action.updateMenuItemCmd.status', 'error');
-        return;
-      }
-    } catch (err) {
-      console.error('updateMenuItemCmd refresh failed', err);
+    const out: UpdateMenuItemCmdOutput | null =
+      response.data !== null && response.data !== undefined ? response.data : null;
+    this.updateMenuItemCmdOutput = out;
+    setState('ui.menuManagement.output.updateMenuItemCmd', out);
+    await this.loadListMenuItems();
+    if (this.listMenuItemsState === 'error') {
       this.updateMenuItemCmdState = 'error';
       setState('ui.menuManagement.action.updateMenuItemCmd.status', 'error');
       return;
@@ -566,8 +691,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   }
 
   /** handler for action updateMenuItemCmd — bind UI events here */
-  handleUpdateMenuItemCmdClick(_event?: Event): void {
-    void runBlockingUiAction(async (_signal: AbortSignal) => {
+  async handleUpdateMenuItemCmdClick(): Promise<void> {
+    await runBlockingUiAction(async (_signal: AbortSignal) => {
       await this.updateMenuItemCmd();
     });
   }
@@ -582,7 +707,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.listMenuItemsStatus — bind UI events here */
   handleListMenuItemsStatusChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setListMenuItemsStatus(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setListMenuItemsStatus(value);
   }
 
   /** setter for state ui.menuManagement.input.listMenuItems.menuCategoryId */
@@ -595,7 +721,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.listMenuItemsMenuCategoryId — bind UI events here */
   handleListMenuItemsMenuCategoryIdChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setListMenuItemsMenuCategoryId(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setListMenuItemsMenuCategoryId(value);
   }
 
   /** setter for state ui.menuManagement.input.listMenuItems.name */
@@ -608,7 +735,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.listMenuItemsName — bind UI events here */
   handleListMenuItemsNameChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setListMenuItemsName(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setListMenuItemsName(value);
   }
 
   /** setter for state ui.menuManagement.input.listMenuItems.page */
@@ -621,7 +749,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.listMenuItemsPage — bind UI events here */
   handleListMenuItemsPageChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setListMenuItemsPage(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setListMenuItemsPage(value);
   }
 
   /** setter for state ui.menuManagement.input.listMenuItems.pageSize */
@@ -634,7 +763,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.listMenuItemsPageSize — bind UI events here */
   handleListMenuItemsPageSizeChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setListMenuItemsPageSize(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setListMenuItemsPageSize(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.menuCategoryId */
@@ -647,7 +777,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.createMenuItemCmdMenuCategoryId — bind UI events here */
   handleCreateMenuItemCmdMenuCategoryIdChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setCreateMenuItemCmdMenuCategoryId(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdMenuCategoryId(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.name */
@@ -660,7 +791,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.createMenuItemCmdName — bind UI events here */
   handleCreateMenuItemCmdNameChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setCreateMenuItemCmdName(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdName(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.description */
@@ -673,7 +805,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.createMenuItemCmdDescription — bind UI events here */
   handleCreateMenuItemCmdDescriptionChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setCreateMenuItemCmdDescription(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdDescription(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.price */
@@ -686,7 +819,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.createMenuItemCmdPrice — bind UI events here */
   handleCreateMenuItemCmdPriceChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setCreateMenuItemCmdPrice(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdPrice(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.status */
@@ -699,7 +833,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.createMenuItemCmdStatus — bind UI events here */
   handleCreateMenuItemCmdStatusChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setCreateMenuItemCmdStatus(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdStatus(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.imageUrl */
@@ -712,7 +847,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.createMenuItemCmdImageUrl — bind UI events here */
   handleCreateMenuItemCmdImageUrlChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setCreateMenuItemCmdImageUrl(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdImageUrl(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.displayOrder */
@@ -725,7 +861,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.createMenuItemCmdDisplayOrder — bind UI events here */
   handleCreateMenuItemCmdDisplayOrderChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setCreateMenuItemCmdDisplayOrder(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdDisplayOrder(value);
   }
 
   /** setter for state ui.menuManagement.input.createMenuItemCmd.requiresStockLink */
@@ -742,7 +879,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
       this.setCreateMenuItemCmdRequiresStockLink(target.checked ? 'true' : 'false');
       return;
     }
-    this.setCreateMenuItemCmdRequiresStockLink(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setCreateMenuItemCmdRequiresStockLink(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.menuItemId */
@@ -755,7 +893,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdMenuItemId — bind UI events here */
   handleUpdateMenuItemCmdMenuItemIdChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdMenuItemId(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdMenuItemId(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.menuCategoryId */
@@ -768,7 +907,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdMenuCategoryId — bind UI events here */
   handleUpdateMenuItemCmdMenuCategoryIdChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdMenuCategoryId(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdMenuCategoryId(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.name */
@@ -781,7 +921,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdName — bind UI events here */
   handleUpdateMenuItemCmdNameChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdName(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdName(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.description */
@@ -794,7 +935,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdDescription — bind UI events here */
   handleUpdateMenuItemCmdDescriptionChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdDescription(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdDescription(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.price */
@@ -807,7 +949,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdPrice — bind UI events here */
   handleUpdateMenuItemCmdPriceChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdPrice(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdPrice(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.status */
@@ -820,7 +963,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdStatus — bind UI events here */
   handleUpdateMenuItemCmdStatusChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdStatus(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdStatus(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.pauseReason */
@@ -833,7 +977,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdPauseReason — bind UI events here */
   handleUpdateMenuItemCmdPauseReasonChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdPauseReason(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdPauseReason(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.imageUrl */
@@ -846,7 +991,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdImageUrl — bind UI events here */
   handleUpdateMenuItemCmdImageUrlChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdImageUrl(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdImageUrl(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.displayOrder */
@@ -859,7 +1005,8 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
   /** handler for action set.updateMenuItemCmdDisplayOrder — bind UI events here */
   handleUpdateMenuItemCmdDisplayOrderChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    this.setUpdateMenuItemCmdDisplayOrder(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdDisplayOrder(value);
   }
 
   /** setter for state ui.menuManagement.input.updateMenuItemCmd.requiresStockLink */
@@ -876,6 +1023,7 @@ export class CafeFlowMenuManagementBase extends CollabLitElement {
       this.setUpdateMenuItemCmdRequiresStockLink(target.checked ? 'true' : 'false');
       return;
     }
-    this.setUpdateMenuItemCmdRequiresStockLink(target?.value ?? '');
+    const value = target ? String(target.value) : '';
+    this.setUpdateMenuItemCmdRequiresStockLink(value);
   }
 }

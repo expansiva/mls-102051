@@ -9,7 +9,10 @@ const ALLOWED: readonly string[] = ['cafeFlow:gerente'];
 function enforceActors(ctx: RequestContext, allowed: readonly string[], route: string): BffResponse | null {
   if (allowed.length === 0) return null;
   const scope = ctx.sessionContext?.actorScope ?? [];
-  if (scope.length === 0) { ctx.log.info('bff.actor.no-scope', { route, allowed }); return null; }
+  if (scope.length === 0) {
+    ctx.log.info('bff.actor.no-scope', { route, allowed });
+    return null;
+  }
   if (scope.some((s) => allowed.includes(s))) return null;
   return fail(new AppError('FORBIDDEN_ACTOR', 'actor scope not permitted for ' + route, 403, { route }));
 }
@@ -17,6 +20,7 @@ function enforceActors(ctx: RequestContext, allowed: readonly string[], route: s
 export const menuManagementListMenuItemsHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.menuManagement.listMenuItems');
   if (denial) return denial;
+
   const params = (request.params ?? {}) as {
     status?: string;
     menuCategoryId?: string;
@@ -24,6 +28,7 @@ export const menuManagementListMenuItemsHandler: BffHandler = async ({ request, 
     page?: number;
     pageSize?: number;
   };
+
   const input: BrowseMenuItemsInput = {
     status: params.status,
     menuCategoryId: params.menuCategoryId,
@@ -31,7 +36,9 @@ export const menuManagementListMenuItemsHandler: BffHandler = async ({ request, 
     page: params.page,
     pageSize: params.pageSize,
   };
+
   const result = await browseMenuItems(ctx, input);
+
   const menuItems = (result.menuItems ?? []).map((row) => ({
     menuItemId: row.menuItemId,
     menuCategoryId: row.menuCategoryId,
@@ -48,12 +55,19 @@ export const menuManagementListMenuItemsHandler: BffHandler = async ({ request, 
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   }));
-  return ok({ menuItems, total: result.total, page: input.page ?? 1, pageSize: input.pageSize ?? 50 });
+
+  return ok({
+    menuItems,
+    total: result.total,
+    page: params.page != null && params.page > 0 ? params.page : 1,
+    pageSize: params.pageSize != null && params.pageSize > 0 ? params.pageSize : 50,
+  });
 };
 
 export const menuManagementCreateMenuItemCmdHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.menuManagement.createMenuItemCmd');
   if (denial) return denial;
+
   const params = (request.params ?? {}) as {
     menuCategoryId?: string;
     name?: string;
@@ -64,18 +78,20 @@ export const menuManagementCreateMenuItemCmdHandler: BffHandler = async ({ reque
     displayOrder?: number;
     requiresStockLink?: boolean;
   };
+
   if (!params.menuCategoryId) {
     throw new AppError('VALIDATION_ERROR', 'menuCategoryId is required', 400, { field: 'menuCategoryId' });
   }
   if (!params.name) {
     throw new AppError('VALIDATION_ERROR', 'name is required', 400, { field: 'name' });
   }
-  if (params.price === undefined || params.price === null) {
+  if (params.price == null) {
     throw new AppError('VALIDATION_ERROR', 'price is required', 400, { field: 'price' });
   }
-  if (params.requiresStockLink === undefined || params.requiresStockLink === null) {
+  if (params.requiresStockLink == null) {
     throw new AppError('VALIDATION_ERROR', 'requiresStockLink is required', 400, { field: 'requiresStockLink' });
   }
+
   const input: CreateMenuItemInput = {
     menuCategoryId: params.menuCategoryId,
     name: params.name,
@@ -86,7 +102,9 @@ export const menuManagementCreateMenuItemCmdHandler: BffHandler = async ({ reque
     displayOrder: params.displayOrder,
     requiresStockLink: params.requiresStockLink,
   };
+
   const result = await createMenuItem(ctx, input);
+
   return ok({
     menuItemId: result.menuItemId,
     menuCategoryId: result.menuCategoryId,
@@ -105,6 +123,7 @@ export const menuManagementCreateMenuItemCmdHandler: BffHandler = async ({ reque
 export const menuManagementUpdateMenuItemCmdHandler: BffHandler = async ({ request, ctx }) => {
   const denial = enforceActors(ctx, ALLOWED, 'cafeFlow.menuManagement.updateMenuItemCmd');
   if (denial) return denial;
+
   const params = (request.params ?? {}) as {
     menuItemId?: string;
     menuCategoryId?: string;
@@ -117,6 +136,7 @@ export const menuManagementUpdateMenuItemCmdHandler: BffHandler = async ({ reque
     displayOrder?: number;
     requiresStockLink?: boolean;
   };
+
   if (!params.menuItemId) {
     throw new AppError('VALIDATION_ERROR', 'menuItemId is required', 400, { field: 'menuItemId' });
   }
@@ -126,15 +146,16 @@ export const menuManagementUpdateMenuItemCmdHandler: BffHandler = async ({ reque
   if (!params.name) {
     throw new AppError('VALIDATION_ERROR', 'name is required', 400, { field: 'name' });
   }
-  if (params.price === undefined || params.price === null) {
+  if (params.price == null) {
     throw new AppError('VALIDATION_ERROR', 'price is required', 400, { field: 'price' });
   }
   if (!params.status) {
     throw new AppError('VALIDATION_ERROR', 'status is required', 400, { field: 'status' });
   }
-  if (params.requiresStockLink === undefined || params.requiresStockLink === null) {
+  if (params.requiresStockLink == null) {
     throw new AppError('VALIDATION_ERROR', 'requiresStockLink is required', 400, { field: 'requiresStockLink' });
   }
+
   const input: UpdateMenuItemInput = {
     menuItemId: params.menuItemId,
     menuCategoryId: params.menuCategoryId,
@@ -147,7 +168,9 @@ export const menuManagementUpdateMenuItemCmdHandler: BffHandler = async ({ reque
     displayOrder: params.displayOrder,
     requiresStockLink: params.requiresStockLink,
   };
+
   const result = await updateMenuItem(ctx, input);
+
   return ok({
     menuItemId: result.menuItemId,
     menuCategoryId: result.menuCategoryId,

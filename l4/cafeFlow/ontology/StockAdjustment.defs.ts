@@ -17,7 +17,7 @@ export const cafeFlowEntityStockAdjustment = {
       "fieldId": "stockItemId",
       "type": "uuid",
       "required": true,
-      "description": "Identificador do insumo cujo saldo foi选修"
+      "description": "Identificador do insumo"
     },
     {
       "fieldId": "quantity",

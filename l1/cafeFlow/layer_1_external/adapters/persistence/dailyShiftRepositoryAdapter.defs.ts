@@ -15,12 +15,12 @@ export const dailyShiftRepositoryAdapter = {
     "entityId": "DailyShift",
     "className": "DailyShiftRepositoryAdapter",
     "portRef": "IDailyShiftRepository",
-    "tableRef": "daily_shift",
+    "tableRef": "cafe_flow_daily_shifts",
     "mdmReads": [],
     "notes": [
       "columns: daily_shift_id, status, opened_by_user_id, closed_by_user_id, created_at",
       "details JSONB: shiftDate, openedAt, closedAt, totalOrders, totalSalesAmount, totalItemsSold, cashTotal, otherPaymentsTotal, notes, updatedAt",
-      "map domain DailyShift <-> row via ctx.data.moduleData; no mdmRefs"
+      "map domain DailyShift <-> row via ctx.data.moduleData only"
     ]
   }
 } as const;
