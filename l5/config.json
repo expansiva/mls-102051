@@ -231,6 +231,18 @@
           "tableDefsDir": "./_102051_/l1/cafeFlow/layer_1_external/adapters/persistence"
         }
       ]
+    },
+    "102025": {
+      "root": "../mls-102025",
+      "type": "lib"
+    },
+    "102027": {
+      "root": "../mls-102027",
+      "type": "lib"
+    },
+    "102036": {
+      "root": "../mls-102036",
+      "type": "lib"
     }
   },
   "shellTemplates": {
@@ -253,7 +265,7 @@
     "activeProfile": "production",
     "regions": {
       "aside": {
-        "activeProfile": "defaultAura",
+        "activeProfile": "messages",
         "profiles": {
           "defaultAura": {
             "renderer": {
@@ -262,6 +274,36 @@
               "tag": "collab-aura-aside"
             },
             "widthPx": 280
+          },
+          "messages": {
+            "renderer": {
+              "entrypoint": "/_102051_/l2/cafeFlow/messagesAside.js",
+              "source": "l2/cafeFlow/messagesAside.ts",
+              "tag": "cafe-flow-messages-aside-102051"
+            },
+            "widthPx": 400
+          }
+        }
+      },
+      "header": {
+        "activeProfile": "defaultAura",
+        "switchWithoutRouteReload": true,
+        "profiles": {
+          "defaultAura": {
+            "renderer": {
+              "entrypoint": "/_102033_/l2/shared/layout/aura-header.js",
+              "source": "../mls-102033/l2/shared/layout/aura-header.ts",
+              "tag": "collab-aura-header"
+            },
+            "heightPx": 66
+          },
+          "studio": {
+            "renderer": {
+              "entrypoint": "/_102033_/l2/cbe/studioHeader.js",
+              "source": "../mls-102033/l2/cbe/studioHeader.ts",
+              "tag": "collab-cbe-studio-header"
+            },
+            "heightPx": 66
           }
         }
       }
