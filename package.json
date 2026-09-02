@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "publish": "node ../scripts/runPublishMlsBase.mjs 102051 remote --sites",
+    "publish": "node ../scripts/runPublishMlsBase.mjs 102051 remote --sites --ssh-host=ubuntu@54.210.148.116 --remote-base=/data/mls-base",
     "publish:local": "node ../scripts/runPublishMlsBase.mjs 102051 local",
     "buildCI": "node ../scripts/buildCI/buildCI.mjs 102051"
   },
