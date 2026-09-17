@@ -1,4 +1,8 @@
 {
+  "projectSettings": {
+    "driver": "GitHub",
+    "url": "https://github.com/main/expansiva/mls-102051"
+  },
   "defaultProjectId": "102051",
   "workspaceDependencies": [
     "102029",
