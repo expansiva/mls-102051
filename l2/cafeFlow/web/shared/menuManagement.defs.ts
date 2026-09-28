@@ -903,7 +903,7 @@ export const pipeline = [
     ],
     "dependsOn": [],
     "skills": [
-      "_102020_/l2/agentChangeFrontend/skills/genCfeSharedTs.ts"
+      "_102020_/l2/agentMaterializeL2/skills/genCfeSharedTs.ts"
     ],
     "rulesApplied": [
       "onlyActiveMenuItemsCanBeOrdered",
